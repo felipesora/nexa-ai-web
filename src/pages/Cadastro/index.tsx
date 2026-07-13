@@ -70,7 +70,7 @@ const Cadastro = () => {
     return(
         <main className="flex min-h-screen bg-[#0A0A0C]">
 
-            <section className="relative overflow-hidden flex-1 min-h-screen bg-[#0E0E10] flex justify-center items-center px-8">
+            <section className="hidden min-[1025px]:flex relative overflow-hidden flex-1 min-h-screen bg-[#0E0E10] flex justify-center items-center px-8">
                 
                 <div className="absolute inset-0 bg-gradient-to-br from-[#13151B] via-[#0E0E10] to-[#09090B]" />
                 
@@ -79,22 +79,22 @@ const Cadastro = () => {
                 <div className="absolute bottom-0 right-0 w-[400px] h-[400px] rounded-full bg-blue-600/10 blur-[160px] animate-[float_15s_ease-in-out_infinite_reverse]" />
 
 
-                <div className="relative z-10 max-w-[750px] flex flex-col gap-4">
-                    <img src={LogoCompleta} alt="Logo Nexa AI" className="w-110 animate-[fadeUp_800ms_ease-out]" />
+                <div className="relative z-10 max-w-[520px] min-[1330px]:max-w-[650px] min-[1536px]:max-w-[750px] flex flex-col gap-4">
+                    <img src={LogoCompleta} alt="Logo Nexa AI" className="w-72 min-[1330px]:w-80 min-[1536px]:w-110 animate-[fadeUp_800ms_ease-out]" />
 
-                    <h2 className="font-bold text-3xl text-[#12B5FD] animate-[fadeUp_900ms_ease-out]">Build a Smarter Routine with AI.</h2>
+                    <h2 className="font-bold text-2xl min-[1330px]:text-3xl text-[#12B5FD] animate-[fadeUp_900ms_ease-out]">Build a Smarter Routine with AI.</h2>
 
-                    <p className="text-[#C2C6D8] text-justify animate-[fadeUp_1000ms_ease-out]">Crie sua conta e descubra uma nova forma de organizar sua rotina. Com a Nexa AI, você transforma tarefas em resultados através de uma experiência inteligente e personalizada.</p>
+                    <p className="text-[#C2C6D8] text-sm min-[1330px]:text-base text-justify animate-[fadeUp_1000ms_ease-out]">Crie sua conta e descubra uma nova forma de organizar sua rotina. Com a Nexa AI, você transforma tarefas em resultados através de uma experiência inteligente e personalizada.</p>
                 </div>
 
             </section>
 
             <section className="relative flex-1 bg-[#0A0A0C] flex justify-center items-center px-8 py-8">
 
-                <form onSubmit={handleSubmit} className="bg-[#0D0D0F] rounded-[10px] border border-white/8 p-12 flex flex-col gap-7 w-full max-w-md animate-[cardEnter_700ms_ease-out]">
+                <form onSubmit={handleSubmit} className="w-full max-w-sm min-[1330px]:max-w-md bg-[#0D0D0F] rounded-[10px] border border-white/8 p-12 flex flex-col gap-7 w-full max-w-md animate-[cardEnter_700ms_ease-out]">
                     <div className="flex flex-col justify-center items-center gap-2">
                         <h2 className="font-bold text-white text-2xl">Criar Conta</h2>
-                        <p className="text-[#C2C6D8]">Crie sua conta e comece gratuitamente.</p>
+                        <p className="text-center text-[#C2C6D8]">Crie sua conta e comece gratuitamente.</p>
                     </div>
 
                     <div className="flex flex-col gap-2">
@@ -213,12 +213,16 @@ const Cadastro = () => {
 
                     <div className="bg-white/10 w-full h-px"></div>
 
-                    <div className="text-[#C2C6D8] text-sm flex gap-1 justify-center">
-                        Já possui uma conta?
-                        <button onClick={() => navigate("/auth/login")} className="text-[#12B5FD] cursor-pointer hover:underline">
+                    <p className="text-[#C2C6D8] text-sm text-center">
+                        Já possui uma conta?{" "}
+                        <button
+                            type="button"
+                            onClick={() => navigate("/auth/login")}
+                            className="text-[#12B5FD] hover:underline cursor-pointer"
+                        >
                             Entrar.
                         </button>
-                    </div>
+                    </p>
                 </form>
 
             </section>
