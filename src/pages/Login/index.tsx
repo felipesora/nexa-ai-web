@@ -1,9 +1,16 @@
-import { useState } from "react";
+import { useState, type SubmitEvent } from "react";
 import LogoCompleta from "../../assets/logos/logo-completa-nexa-ai.png";
 import { ChevronRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+
+    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        console.log("Formulário enviado");
+    };
 
     return(
         <main className="flex h-screen">
@@ -28,7 +35,7 @@ const Login = () => {
 
             <section className="relative overflow-hidden flex-1 bg-[#0A0A0C] flex justify-center items-center px-8">
 
-                <form className="bg-[#0D0D0F] rounded-[10px] border border-white/8 p-12 flex flex-col gap-7 w-full max-w-md">
+                <form onSubmit={handleSubmit} className="bg-[#0D0D0F] rounded-[10px] border border-white/8 p-12 flex flex-col gap-7 w-full max-w-md">
                     <div className="flex flex-col justify-center items-center gap-2">
                         <h2 className="font-bold text-white text-2xl">Entrar</h2>
                         <p className="text-[#C2C6D8]">Acesse sua conta para continuar.</p>
@@ -83,7 +90,8 @@ const Login = () => {
                     </div>
 
                     <div>
-                        <button 
+                        <button
+                            type="submit"  
                             className="group w-full rounded-md bg-[#12B5FD] py-2 cursor-pointer flex gap justify-center items-center font-medium text-[#0A0A0C] transition-all duration-300 hover:bg-[#2BC2FF] hover:-translate-y-0.5 hover:shadow-[0_0_10px_rgba(18,181,253,0.35)]">
                             Entrar
 
@@ -93,8 +101,11 @@ const Login = () => {
 
                     <div className="bg-white/10 w-full h-px"></div>
 
-                    <div className="text-[#C2C6D8] text-sm text-center">
-                        Ainda não possui uma conta? <button className="text-[#12B5FD] cursor-pointer hover:underline">Criar conta.</button>
+                    <div className="text-[#C2C6D8] text-sm flex gap-1 justify-center">
+                        Ainda não possui uma conta? 
+                        <button onClick={() => navigate("/auth/cadastro")} className="text-[#12B5FD] cursor-pointer hover:underline">
+                            Criar conta.
+                        </button>
                     </div>
                 </form>
 
