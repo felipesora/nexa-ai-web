@@ -68,9 +68,9 @@ const Cadastro = () => {
     };
     
     return(
-        <main className="flex h-screen">
+        <main className="flex min-h-screen bg-[#0A0A0C]">
 
-            <section className="flex-1 bg-[#0E0E10] flex justify-center items-center px-8">
+            <section className="relative flex-1 min-h-screen bg-[#0E0E10] flex justify-center items-center px-8">
                 
                 <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-cyan-500/10 blur-[150px]" />
 
@@ -88,7 +88,7 @@ const Cadastro = () => {
 
             </section>
 
-            <section className="relative overflow-hidden flex-1 bg-[#0A0A0C] flex justify-center items-center px-8">
+            <section className="relative flex-1 bg-[#0A0A0C] flex justify-center items-center px-8 py-8">
 
                 <form onSubmit={handleSubmit} className="bg-[#0D0D0F] rounded-[10px] border border-white/8 p-12 flex flex-col gap-7 w-full max-w-md">
                     <div className="flex flex-col justify-center items-center gap-2">
