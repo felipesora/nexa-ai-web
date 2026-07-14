@@ -7,25 +7,34 @@
   }
 }
 
+/* ===========================
+   Animações
+=========================== */
+
 @keyframes float {
   0% {
     transform: translate(0px, 0px) scale(1);
+    opacity: .35;
   }
 
   25% {
-    transform: translate(50px, -35px) scale(1.12);
+    transform: translate(50px, -35px) scale(1.15);
+    opacity: .8;
   }
 
   50% {
-    transform: translate(20px, -70px) scale(1.05);
+    transform: translate(20px, -70px) scale(1);
+    opacity: 1;
   }
 
   75% {
-    transform: translate(-40px, -20px) scale(1.15);
+    transform: translate(-40px, -20px) scale(1.2);
+    opacity: .7;
   }
 
   100% {
     transform: translate(0px, 0px) scale(1);
+    opacity: .35;
   }
 }
 
@@ -51,4 +60,22 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* ===========================
+   Fireflies
+=========================== */
+
+.firefly {
+  position: absolute;
+  border-radius: 9999px;
+  background: #0E6C6D;
+  pointer-events: none;
+
+  box-shadow:
+    0 0 8px #0E6C6D,
+    0 0 20px #0E6C6D,
+    0 0 40px rgba(14,108,109,.7);
+
+  animation: float linear infinite;
 }
