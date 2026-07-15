@@ -4,6 +4,8 @@ import Antes from "./images/antes-de-Nexa-AI.png";
 import Depois from "./images/depois-de-Nexa-AI.png";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
+import CardInformativo from "./components/CardInformativo";
+import { dadosCardsInformativos } from "./data/dataCardsInformativos";
 
 const PaginaInicial = () => {
   const navigate = useNavigate();
@@ -108,13 +110,41 @@ const PaginaInicial = () => {
 
         <section className="bg-[#0D0D0F] flex flex-col items-center gap-10 px-6 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-12 min-[1490px]:py-12">
           <div className="flex flex-col gap-2 items-center">
-            <h2 className="font-bold text-lg text-white min-[560px]:text-xl">Mais que um gerenciador</h2>
+            <h2 className="font-bold text-lg text-center text-white min-[560px]:text-xl">Mais que um gerenciador</h2>
             <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-full">Nexa AI não apenas lista suas tarefas, ele entende o seu fluxo de trabalho e remove o atrito da organização manual.</p>
           </div>
 
           <div className="flex flex-col items-center gap-10 min-[1090px]:flex-row min-[1090px]:gap-14 min-[1090px]:items-start">
             <img src={Antes} alt="Antes de Nexa AI" className="w-full max-w-[480px] min-[1490px]:max-w-[580px]" />
             <img src={Depois} alt="Depois de Nexa AI" className="w-full max-w-[480px] min-[1490px]:max-w-[580px]" />
+          </div>
+        </section>
+
+        <section className="bg-[#0A0A0C] flex flex-col items-center gap-10 px-10 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-30 min-[1490px]:py-12">
+          <div className="flex flex-col gap-2 items-center">
+            <h2 className="text-lg font-bold text-white text-center min-[560px]:text-xl">
+              Tudo o que você precisa em uma interface
+            </h2>
+            <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8">
+              Organize sua rotina, converse com a IA e mantenha sua produtividade em um só lugar.
+            </p>
+          </div>
+
+          <div className="grid w-full grid-cols-1 gap-6 min-[700px]:grid-cols-2 min-[1090px]:grid-cols-6">
+              {dadosCardsInformativos.map((dadosCard, index) => (
+                <div key={dadosCard.titulo} className={
+                  index < 3
+                    ? "min-[1090px]:col-span-2"
+                    : "min-[1090px]:col-span-3"
+                }>
+                    <CardInformativo 
+                      key={dadosCard.titulo} 
+                      icone={dadosCard.icone}
+                      titulo={dadosCard.titulo}
+                      descricao={dadosCard.descricao}
+                    />
+                </div>
+              ))}
           </div>
         </section>
       </main>
