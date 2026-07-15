@@ -3,12 +3,24 @@ import Demonstracao from "./images/demonstracao-nexa.png";
 import Antes from "./images/antes-de-Nexa-AI.png";
 import Depois from "./images/depois-de-Nexa-AI.png";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, User } from "lucide-react";
 import CardInformativo from "./components/CardInformativo";
 import { dadosCardsInformativos } from "./data/dataCardsInformativos";
+import { dadosEtapasFluxo } from "./data/dataEtapasFluxo";
+import EtapaFluxo from "./components/EtapaFluxo";
+import { useEffect, useState } from "react";
 
 const PaginaInicial = () => {
+  const [etapaAtiva, setEtapaAtiva] = useState<number>(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setEtapaAtiva((prev) => (prev + 1) % dadosEtapasFluxo.length);
+    }, 1500);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="bg-[#0A0A0C]">
@@ -120,7 +132,7 @@ const PaginaInicial = () => {
           </div>
         </section>
 
-        <section className="bg-[#0A0A0C] flex flex-col items-center gap-10 px-10 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-30 min-[1490px]:py-12">
+        <section className="bg-[#0A0A0C] flex flex-col items-center gap-10 px-20 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-30 min-[1490px]:py-12">
           <div className="flex flex-col gap-2 items-center">
             <h2 className="text-lg font-bold text-white text-center min-[560px]:text-xl">
               Tudo o que você precisa em uma interface
@@ -146,6 +158,52 @@ const PaginaInicial = () => {
                 </div>
               ))}
           </div>
+        </section>
+
+        <section className="bg-[#0A0A0C] flex flex-col items-center gap-10 px-20 py-28 min-[1090px]:gap-16 min-[1490px]:px-30">
+          <div className="flex flex-col gap-2 items-center">
+            <h2 className="text-lg font-bold text-white text-center min-[560px]:text-xl">
+              Fluxo de Trabalho Nexa
+            </h2>
+            <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-[900px]">
+              Veja como o Nexa AI interpreta suas solicitações e organiza sua rotina em poucos segundos.
+            </p>
+          </div>
+
+          {/* Mobile */}
+          <div className="relative flex w-full max-w-sm flex-col items-center gap-8 min-[1090px]:hidden">
+            <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-white/10" />
+
+            {dadosEtapasFluxo.map((etapa, index) => (
+              <EtapaFluxo
+                key={etapa.titulo}
+                icone={etapa.icone}
+                titulo={etapa.titulo}
+                cor={etapa.cor}
+                mobile
+                ativa={index === etapaAtiva}
+              />
+            ))}
+          </div>
+
+          {/* Desktop */}
+          <div className="relative hidden w-full min-[1090px]:block">
+
+              <div className="workflow-line absolute left-0 right-0 top-6 h-px overflow-hidden bg-white/10" />
+
+              <div className="relative flex justify-between">
+                {dadosEtapasFluxo.map((etapa, index) => (
+                  <EtapaFluxo 
+                    key={etapa.titulo}
+                    icone={etapa.icone}
+                    titulo={etapa.titulo}
+                    cor={etapa.cor}
+                    ativa={index === etapaAtiva}
+                  />
+                ))}
+              </div>
+          </div>
+
         </section>
       </main>
     </div>

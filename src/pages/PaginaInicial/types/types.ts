@@ -5,3 +5,17 @@ export interface CardInformativoProps {
     titulo: string,
     descricao: string,
 }
+
+export interface EtapaFluxoProps {
+    icone: LucideIcon,
+    titulo: string,
+    cor: string,
+    mobile?: boolean;
+    ativa: boolean
+}
+
+export interface DadosEtapaFluxo {
+    icone: LucideIcon,
+    titulo: string,
+    cor: string,
+}

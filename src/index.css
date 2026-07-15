@@ -79,3 +79,32 @@
 
   animation: float linear infinite;
 }
+
+/* ===========================
+   Workflow
+=========================== */
+
+.workflow-line::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 90px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.377),
+        transparent
+    );
+
+    animation: workflow 8s linear infinite;
+}
+
+@keyframes workflow {
+    from {
+        transform: translateX(-100px);
+    }
+    to {
+        transform: translateX(calc(100vw + 100px));
+    }
+}
