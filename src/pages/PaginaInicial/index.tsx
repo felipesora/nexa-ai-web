@@ -8,11 +8,13 @@ import CardInformativo from "./components/CardInformativo";
 import { dadosCardsInformativos } from "./data/dataCardsInformativos";
 import { dadosEtapasFluxo } from "./data/dataEtapasFluxo";
 import EtapaFluxo from "./components/EtapaFluxo";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const PaginaInicial = () => {
   const [etapaAtiva, setEtapaAtiva] = useState<number>(0);
   const navigate = useNavigate();
+  const secaoDemonstracaoRef = useRef<HTMLElement>(null);
+  const topoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -22,8 +24,22 @@ const PaginaInicial = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const scrollParaDemonstracao = () => {
+    secaoDemonstracaoRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
+  const scrollParaTopo = () => {
+    topoRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   return (
-    <div className="bg-[#0A0A0C]">
+    <div ref={topoRef} className="bg-[#0A0A0C]">
 
       <header className="flex items-center justify-between border-b border-white/10 bg-[#121315] px-4 py-4 min-[560px]:px-6 min-[560px]:py-5 min-[975px]:px-10">
         <button className="cursor-pointer">
@@ -103,9 +119,10 @@ const PaginaInicial = () => {
                 </button>
 
                 <button
+                  onClick={scrollParaDemonstracao}
                   className=" cursor-pointer w-full rounded-[10px] border border-white/10 bg-[#121316] px-5 py-3 text-base font-medium text-white transition-all duration-300 hover:border-[#12B5FD]/40 hover:bg-[#171A1F] hover:text-[#12B5FD] hover:shadow-[0_0_20px_rgba(18,181,253,0.12)] min-[560px]:w-auto min-[975px]:px-6 min-[975px]:py-3.5 min-[975px]:text-[17px] min-[1490px]:px-7 min-[1490px]:py-4 min-[1490px]:text-lg"
                 >
-                  Ver demonstração
+                  Como funciona
                 </button>
               </div>
             </div>
@@ -120,7 +137,7 @@ const PaginaInicial = () => {
           </div>
         </section>
 
-        <section className="bg-[#0D0D0F] flex flex-col items-center gap-10 px-6 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-12 min-[1490px]:py-12">
+        <section ref={secaoDemonstracaoRef} className="bg-[#0D0D0F] flex flex-col items-center gap-10 px-6 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-12 min-[1490px]:py-12">
           <div className="flex flex-col gap-2 items-center">
             <h2 className="font-bold text-lg text-center text-white min-[560px]:text-xl">Mais que um gerenciador</h2>
             <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-full">Nexa AI não apenas lista suas tarefas, ele entende o seu fluxo de trabalho e remove o atrito da organização manual.</p>
@@ -232,6 +249,82 @@ const PaginaInicial = () => {
           </button>
         </section>
       </main>
+
+      <footer className="bg-[#131315] border-t border-white/10">
+        <div className="mx-auto flex flex-col gap-12 px-6 py-16 min-[900px]:flex-row min-[900px]:justify-between min-[900px]:gap-20 min-[1490px]:px-12">
+
+          <div className="flex max-w-[340px] flex-col gap-4">
+            <button onClick={scrollParaTopo} className="cursor-pointer">
+              <img src={Logo} alt="Logo Nexa AI" className="w-28" />
+            </button>
+
+            <p className="text-sm leading-7 text-[#A9AFBF]">
+              Elevando a produtividade humana através da inteligência artificial,
+              transformando tarefas em resultados.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+              Recursos
+            </h3>
+
+            <a
+              href="#"
+              className="text-sm text-[#A9AFBF] transition-colors hover:text-[#12B5FD]"
+            >
+              Documentação
+            </a>
+
+            <a
+              href="#"
+              className="text-sm text-[#A9AFBF] transition-colors hover:text-[#12B5FD]"
+            >
+              GitHub
+            </a>
+
+            <a
+              href="#"
+              className="text-sm text-[#A9AFBF] transition-colors hover:text-[#12B5FD]"
+            >
+              LinkedIn
+            </a>
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
+              Empresa
+            </h3>
+
+            <p
+              className="cursor-pointer text-sm text-[#A9AFBF] transition-colors hover:text-[#12B5FD]"
+            >
+              Sobre
+            </p>
+
+            <p
+              className="cursor-pointer text-sm text-[#A9AFBF] transition-colors hover:text-[#12B5FD]"
+            >
+              Contato
+            </p>
+
+            <p
+              className="cursor-pointer text-sm text-[#A9AFBF] transition-colors hover:text-[#12B5FD]"
+            >
+              Política de Privacidade
+            </p>
+          </div>
+
+        </div>
+
+        <div className="border-t border-white/10">
+          <div className="mx-auto flex flex-col items-center justify-between gap-3 px-6 py-5 text-sm text-[#8A90A2] min-[700px]:flex-row min-[1490px]:px-12">
+            <p className="text-center">© 2026 Nexa AI. Todos os direitos reservados.</p>
+
+            <p>Desenvolvido por Felipe Sora</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
