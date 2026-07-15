@@ -1,5 +1,7 @@
 import Logo from "../../assets/logos/logo-completa-nexa-ai.png";
-import Demonstracao from "../../assets/images/demonstracao-nexa.png";
+import Demonstracao from "./images/demonstracao-nexa.png";
+import Antes from "./images/antes-de-Nexa-AI.png";
+import Depois from "./images/depois-de-Nexa-AI.png";
 import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
@@ -77,6 +79,7 @@ const PaginaInicial = () => {
 
               <div className="flex flex-col gap-3 min-[640px]:flex-row">
                 <button
+                  onClick={() => navigate("/auth/cadastro")}
                   className="cursor-pointer group flex w-full items-center justify-center rounded-[10px] bg-[#12B5FD] px-5 py-3 text-base font-medium text-white transition-all duration-300 hover:bg-[#2BC2FF] hover:shadow-[0_0_10px_rgba(18,181,253,0.35)] min-[560px]:w-auto min-[975px]:px-6 min-[975px]:py-3.5 min-[975px]:text-[17px] min-[1490px]:px-7 min-[1490px]:py-4 min-[1490px]:text-lg">
                   Começar gratuitamente
                   <ChevronRight
@@ -100,6 +103,18 @@ const PaginaInicial = () => {
                 className="w-[300px] min-[560px]:w-[360px] min-[975px]:w-[420px] min-[1490px]:w-[560px]"
               />
             </div>
+          </div>
+        </section>
+
+        <section className="bg-[#0D0D0F] flex flex-col items-center gap-10 px-6 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-12 min-[1490px]:py-12">
+          <div className="flex flex-col gap-2 items-center">
+            <h2 className="font-bold text-lg text-white min-[560px]:text-xl">Mais que um gerenciador</h2>
+            <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-full">Nexa AI não apenas lista suas tarefas, ele entende o seu fluxo de trabalho e remove o atrito da organização manual.</p>
+          </div>
+
+          <div className="flex flex-col items-center gap-10 min-[1090px]:flex-row min-[1090px]:gap-14 min-[1090px]:items-start">
+            <img src={Antes} alt="Antes de Nexa AI" className="w-full max-w-[480px] min-[1490px]:max-w-[580px]" />
+            <img src={Depois} alt="Depois de Nexa AI" className="w-full max-w-[480px] min-[1490px]:max-w-[580px]" />
           </div>
         </section>
       </main>
