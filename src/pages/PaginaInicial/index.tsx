@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 
 const PaginaInicial = () => {
   const [etapaAtiva, setEtapaAtiva] = useState<number>(0);
+  const [mostrarComparacao, setMostrarComparacao] = useState(false);
   const navigate = useNavigate();
   const secaoDemonstracaoRef = useRef<HTMLElement>(null);
   const topoRef = useRef<HTMLDivElement>(null);
@@ -37,6 +38,25 @@ const PaginaInicial = () => {
       block: "start",
     });
   };
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+        ([entry]) => {
+            if (entry.isIntersecting) {
+                setMostrarComparacao(true);
+            }
+        },
+        {
+            threshold: .3,
+        }
+    );
+
+    if (secaoDemonstracaoRef.current) {
+        observer.observe(secaoDemonstracaoRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div ref={topoRef} className="bg-[#0A0A0C]">
@@ -87,27 +107,28 @@ const PaginaInicial = () => {
 
           <div className="relative z-10 flex flex-col items-center gap-8 min-[975px]:gap-12 min-[1490px]:flex-row min-[1490px]:justify-center min-[1490px]:gap-16">
             <div className="flex w-full max-w-[500px] flex-col items-center gap-5 text-center min-[975px]:max-w-[620px] min-[1490px]:max-w-[750px] min-[1490px]:items-start min-[1490px]:gap-6 min-[1490px]:text-left">
-              <aside className="w-fit rounded-full border border-[#3A4C66] bg-[#121316] px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#8DB9FF] min-[975px]:px-4 min-[975px]:text-[10px] min-[1490px]:py-1.5 min-[1490px]:text-[11px]">
+
+              <aside className="fade-up-pagina-inicial w-fit rounded-full border border-[#3A4C66] bg-[#121316] px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.2em] text-[#8DB9FF] min-[975px]:px-4 min-[975px]:text-[10px] min-[1490px]:py-1.5 min-[1490px]:text-[11px]">
                 Inteligência Artificial em Tempo Real
               </aside>
 
               <div>
-                <h1 className="text-2xl font-semibold leading-tight text-white min-[560px]:text-[2rem] min-[975px]:text-3xl min-[1490px]:text-4xl">
+                <h1 className="fade-up-pagina-inicial delay-1 text-2xl font-semibold leading-tight text-white min-[560px]:text-[2rem] min-[975px]:text-3xl min-[1490px]:text-4xl">
                   Pare de organizar suas tarefas.
                 </h1>
 
-                <h1 className="text-3xl font-bold leading-tight text-[#12B5FD] min-[560px]:text-[2.5rem] min-[975px]:text-4xl min-[1490px]:text-5xl">
+                <h1 className="fade-up-pagina-inicial delay-2 text-3xl font-bold leading-tight text-[#12B5FD] min-[560px]:text-[2.5rem] min-[975px]:text-4xl min-[1490px]:text-5xl">
                   Deixe a IA fazer isso por você.
                 </h1>
               </div>
 
-              <p className="text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:text-base min-[1490px]:leading-8">
+              <p className="fade-up-pagina-inicial delay-3 text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:text-base min-[1490px]:leading-8">
                 O Nexa AI aprende sua rotina, organiza automaticamente suas
                 tarefas e cria um planejamento inteligente para que você produza
                 mais sem perder tempo organizando tudo manualmente.
               </p>
 
-              <div className="flex flex-col gap-3 min-[640px]:flex-row">
+              <div className="fade-up-pagina-inicial delay-4 flex flex-col gap-3 min-[640px]:flex-row">
                 <button
                   onClick={() => navigate("/auth/cadastro")}
                   className="cursor-pointer group flex w-full items-center justify-center rounded-[10px] bg-[#12B5FD] px-5 py-3 text-base font-medium text-white transition-all duration-300 hover:bg-[#2BC2FF] hover:shadow-[0_0_10px_rgba(18,181,253,0.35)] min-[560px]:w-auto min-[975px]:px-6 min-[975px]:py-3.5 min-[975px]:text-[17px] min-[1490px]:px-7 min-[1490px]:py-4 min-[1490px]:text-lg">
@@ -131,7 +152,7 @@ const PaginaInicial = () => {
               <img
                 src={Demonstracao}
                 alt="Imagem de demonstração"
-                className="w-[300px] min-[560px]:w-[360px] min-[975px]:w-[420px] min-[1490px]:w-[560px]"
+                className="image-enter w-[300px] min-[560px]:w-[360px] min-[975px]:w-[420px] min-[1490px]:w-[560px]"
               />
             </div>
           </div>
@@ -139,13 +160,15 @@ const PaginaInicial = () => {
 
         <section ref={secaoDemonstracaoRef} className="bg-[#0D0D0F] flex flex-col items-center gap-10 px-6 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-12 min-[1490px]:py-12">
           <div className="flex flex-col gap-2 items-center">
-            <h2 className="font-bold text-lg text-center text-white min-[560px]:text-xl">Mais que um gerenciador</h2>
-            <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-full">Nexa AI não apenas lista suas tarefas, ele entende o seu fluxo de trabalho e remove o atrito da organização manual.</p>
+            <h2 className={`font-bold text-lg text-center text-white min-[560px]:text-xl ${mostrarComparacao ? "fade-up-pagina-inicial" : ""}`}>
+              Mais que um gerenciador
+            </h2>
+            <p className={`max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-full ${mostrarComparacao ? "fade-up-pagina-inicial" : ""}`}>Nexa AI não apenas lista suas tarefas, ele entende o seu fluxo de trabalho e remove o atrito da organização manual.</p>
           </div>
 
           <div className="flex flex-col items-center gap-10 min-[1090px]:flex-row min-[1090px]:gap-14 min-[1090px]:items-start">
-            <img src={Antes} alt="Antes de Nexa AI" className="w-full max-w-[480px] min-[1490px]:max-w-[580px]" />
-            <img src={Depois} alt="Depois de Nexa AI" className="w-full max-w-[480px] min-[1490px]:max-w-[580px]" />
+            <img src={Antes} alt="Antes de Nexa AI" className={`w-full max-w-[480px] min-[1490px]:max-w-[580px] ${mostrarComparacao ? "slide-left" : ""}`} />
+            <img src={Depois} alt="Depois de Nexa AI" className={`w-full max-w-[480px] min-[1490px]:max-w-[580px] ${mostrarComparacao ? "slide-right" : ""}`} />
           </div>
         </section>
 
