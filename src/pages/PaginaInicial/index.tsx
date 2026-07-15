@@ -205,6 +205,32 @@ const PaginaInicial = () => {
           </div>
 
         </section>
+
+        <section className="relative overflow-hidden bg-[#0A0A0C] flex flex-col items-center gap-10 px-10 py-28 min-[1490px]:px-30">
+
+          <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-[#1A2A45] opacity-40 blur-[140px]" />
+
+          <div className="absolute -bottom-48 -right-40 h-[420px] w-[420px] rounded-full bg-[#12B5FD] opacity-15 blur-[140px]" />
+
+          <div className="relative z-10 flex flex-col gap-2 items-center">
+            <h2 className="text-lg font-bold text-white text-center min-[560px]:text-xl">
+              Pronto para viver no <span className="text-[#12B5FD]">Futuro?</span>
+            </h2>
+            <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-[900px]">
+              Comece hoje a trabalhar com uma IA que entende sua rotina melhor que você.
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigate("/auth/cadastro")}
+            className="relative z-10 cursor-pointer group flex w-full items-center justify-center rounded-[10px] bg-[#12B5FD] px-5 py-3 text-[14px] font-medium text-white transition-all duration-300 hover:bg-[#2BC2FF] hover:shadow-[0_0_10px_rgba(18,181,253,0.35)] min-[440px]:text-base min-[560px]:w-auto min-[975px]:px-6 min-[975px]:py-3.5 min-[975px]:text-[17px] min-[1490px]:px-7 min-[1490px]:py-4 min-[1490px]:text-lg">
+            Criar conta gratuitamente
+            <ChevronRight
+              size={18}
+              className="ml-1 transition-transform duration-300 group-hover:translate-x-1"
+            />
+          </button>
+        </section>
       </main>
     </div>
   );
