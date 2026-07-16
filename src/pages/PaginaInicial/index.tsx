@@ -3,7 +3,7 @@ import Demonstracao from "./images/demonstracao-nexa.png";
 import Antes from "./images/antes-de-Nexa-AI.png";
 import Depois from "./images/depois-de-Nexa-AI.png";
 import { useNavigate } from "react-router-dom";
-import { ChevronRight, User } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import CardInformativo from "./components/CardInformativo";
 import { dadosCardsInformativos } from "./data/dataCardsInformativos";
 import { dadosEtapasFluxo } from "./data/dataEtapasFluxo";
