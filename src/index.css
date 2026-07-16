@@ -7,25 +7,34 @@
   }
 }
 
+/* ===========================
+   Animações
+=========================== */
+
 @keyframes float {
   0% {
     transform: translate(0px, 0px) scale(1);
+    opacity: .35;
   }
 
   25% {
-    transform: translate(50px, -35px) scale(1.12);
+    transform: translate(50px, -35px) scale(1.15);
+    opacity: .8;
   }
 
   50% {
-    transform: translate(20px, -70px) scale(1.05);
+    transform: translate(20px, -70px) scale(1);
+    opacity: 1;
   }
 
   75% {
-    transform: translate(-40px, -20px) scale(1.15);
+    transform: translate(-40px, -20px) scale(1.2);
+    opacity: .7;
   }
 
   100% {
     transform: translate(0px, 0px) scale(1);
+    opacity: .35;
   }
 }
 
@@ -51,4 +60,221 @@
     opacity: 1;
     transform: translateY(0) scale(1);
   }
+}
+
+/* ===========================
+   Fireflies
+=========================== */
+
+.firefly {
+  position: absolute;
+  border-radius: 9999px;
+  background: #0E6C6D;
+  pointer-events: none;
+
+  box-shadow:
+    0 0 8px #0E6C6D,
+    0 0 20px #0E6C6D,
+    0 0 40px rgba(14,108,109,.7);
+
+  animation: float linear infinite;
+}
+
+/* ===========================
+   Workflow
+=========================== */
+
+.workflow-line::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    width: 90px;
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.377),
+        transparent
+    );
+
+    animation: workflow 8s linear infinite;
+}
+
+@keyframes workflow {
+    from {
+        transform: translateX(-100px);
+    }
+    to {
+        transform: translateX(calc(100vw + 100px));
+    }
+}
+
+/* ===========================
+   Pagina inicial
+=========================== */
+
+.fade-up-pagina-inicial {
+    opacity: 0;
+    animation: fadeUp .7s ease forwards;
+}
+
+.delay-1 {
+    animation-delay: .15s;
+}
+
+.delay-2 {
+    animation-delay: .3s;
+}
+
+.delay-3 {
+    animation-delay: .45s;
+}
+
+.delay-4 {
+    animation-delay: .6s;
+}
+
+@keyframes imageEnter {
+    from {
+        opacity: 0;
+        transform: translateX(40px) scale(.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+.image-enter {
+    opacity: 0;
+    animation: imageEnter .9s cubic-bezier(.22,.61,.36,1) forwards;
+    animation-delay: .35s;
+}
+
+@keyframes slideLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.slide-left {
+    opacity: 0;
+    animation: slideLeft .8s cubic-bezier(.22,.61,.36,1) forwards;
+}
+
+.slide-right {
+    opacity: 0;
+    animation: slideRight .8s cubic-bezier(.22,.61,.36,1) forwards;
+}
+
+.card-enter {
+    opacity: 0;
+    animation: cardEnter .7s cubic-bezier(.22,.61,.36,1) forwards;
+}
+
+.card-delay-1 { animation-delay: .1s; }
+.card-delay-2 { animation-delay: .2s; }
+.card-delay-3 { animation-delay: .3s; }
+.card-delay-4 { animation-delay: .4s; }
+.card-delay-5 { animation-delay: .5s; }
+
+@keyframes workflowLineEnter {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.workflow-line-enter {
+    transform-origin: left;
+    animation: workflowLineEnter .9s ease forwards;
+}
+
+@keyframes workflowStepEnter {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(.9);
+    }
+
+    70% {
+        opacity: 1;
+        transform: translateY(-3px) scale(1.03);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.workflow-step-enter {
+    opacity: 0;
+    animation: workflowStepEnter .6s cubic-bezier(.22,.61,.36,1) forwards;
+}
+
+.workflow-step-delay-1 { animation-delay: .2s; }
+.workflow-step-delay-2 { animation-delay: .35s; }
+.workflow-step-delay-3 { animation-delay: .5s; }
+.workflow-step-delay-4 { animation-delay: .65s; }
+.workflow-step-delay-5 { animation-delay: .8s; }
+
+@keyframes ctaGlow {
+    from {
+        opacity: 0;
+        transform: scale(.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.cta-glow-enter {
+    animation: ctaGlow 1.2s ease forwards;
+}
+
+@keyframes ctaPulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 rgba(18,181,253,0);
+    }
+
+    50% {
+        transform: scale(1.02);
+        box-shadow:
+            0 0 25px rgba(18,181,253,.28),
+            0 0 45px rgba(18,181,253,.12);
+    }
+}
+
+.cta-button {
+    animation:
+        fadeUp .7s ease forwards,
+        ctaPulse 3.5s ease-in-out infinite;
+    animation-delay:
+        .25s,
+        1.2s;
 }
