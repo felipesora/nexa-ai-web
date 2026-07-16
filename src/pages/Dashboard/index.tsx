@@ -3,6 +3,8 @@ import BarraLateralCheia from "../../components/BarraLateral";
 import Cabecalho from "../../components/Cabecalho";
 import CardQuantidadeTarefas from "./components/CardQuantidadeTarefas";
 import { useState } from "react";
+import CardTarefasPrioritarias from "./components/CardTarefasPrioritarias";
+import { tarefas } from "../../data/tarefas";
 
 const Dashboard = () => {
     const [menuAberto, setMenuAberto] = useState<boolean>(false);
@@ -35,6 +37,11 @@ const Dashboard = () => {
                             cor="#FFB4AB"
                         />
                     </div>
+
+                    <div className="mt-5">
+                        <CardTarefasPrioritarias tarefas={tarefas} />
+                    </div>
+
                 </section>
             </div>
         </main>
