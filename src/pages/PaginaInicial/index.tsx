@@ -13,9 +13,31 @@ import { useEffect, useRef, useState } from "react";
 const PaginaInicial = () => {
   const [etapaAtiva, setEtapaAtiva] = useState<number>(0);
   const [mostrarComparacao, setMostrarComparacao] = useState(false);
+  const [mostrarCards, setMostrarCards] = useState(false);
+  const [mostrarFluxo, setMostrarFluxo] = useState(false);
+  const [mostrarCTA, setMostrarCTA] = useState(false);
   const navigate = useNavigate();
-  const secaoDemonstracaoRef = useRef<HTMLElement>(null);
   const topoRef = useRef<HTMLDivElement>(null);
+  const secaoDemonstracaoRef = useRef<HTMLDivElement>(null);
+  const secaoCardsRef = useRef<HTMLDivElement>(null);
+  const secaoFluxoRef = useRef<HTMLDivElement>(null);
+  const secaoCTARef = useRef<HTMLDivElement>(null);
+
+  const delays = [
+    "card-delay-1",
+    "card-delay-2",
+    "card-delay-3",
+    "card-delay-4",
+    "card-delay-5",
+  ];
+
+  const workflowDelays = [
+    "workflow-step-delay-1",
+    "workflow-step-delay-2",
+    "workflow-step-delay-3",
+    "workflow-step-delay-4",
+    "workflow-step-delay-5",
+  ];
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -58,6 +80,66 @@ const PaginaInicial = () => {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setMostrarCards(true);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.15,
+      }
+    );
+
+    if (secaoCardsRef.current) {
+      observer.observe(secaoCardsRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setMostrarFluxo(true);
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.2,
+      }
+    );
+
+    if (secaoFluxoRef.current) {
+      observer.observe(secaoFluxoRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+      const observer = new IntersectionObserver(
+          ([entry]) => {
+              if (entry.isIntersecting) {
+                  setMostrarCTA(true);
+                  observer.disconnect();
+              }
+          },
+          {
+              threshold: .25,
+          }
+      );
+
+      if (secaoCTARef.current) {
+          observer.observe(secaoCTARef.current);
+      }
+
+      return () => observer.disconnect();
+  }, []);
+
   return (
     <div ref={topoRef} className="bg-[#0A0A0C]">
 
@@ -84,7 +166,7 @@ const PaginaInicial = () => {
       </header>
 
       <main>
-        <section className="relative overflow-hidden bg-gradient-to-b from-[#0E1013] via-[#0E1219] to-[#0E1419] px-6 py-10 min-[560px]:py-12 min-[1490px]:px-12 min-[1490px]:py-12">
+        <section className="relative overflow-hidden bg-gradient-to-b from-[#0E1013] via-[#0E1219] to-[#0E1419] px-6 py-28 min-[560px]:py-28 min-[1490px]:px-12 min-[1490px]:py-36">
           <div
             className="firefly top-[12%] left-[8%] w-1 h-1"
             style={{ animationDuration: "12s" }}
@@ -158,8 +240,8 @@ const PaginaInicial = () => {
           </div>
         </section>
 
-        <section ref={secaoDemonstracaoRef} className="bg-[#0D0D0F] flex flex-col items-center gap-10 px-6 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-12 min-[1490px]:py-12">
-          <div className="flex flex-col gap-2 items-center">
+        <section className="bg-[#0D0D0F] flex flex-col items-center gap-10 px-6 py-28 min-[560px]:py-28 min-[1090px]:gap-16 min-[1490px]:px-12 min-[1490px]:py-36">
+          <div ref={secaoDemonstracaoRef} className="flex flex-col gap-2 items-center">
             <h2 className={`font-bold text-lg text-center text-white min-[560px]:text-xl ${mostrarComparacao ? "fade-up-pagina-inicial" : ""}`}>
               Mais que um gerenciador
             </h2>
@@ -172,23 +254,31 @@ const PaginaInicial = () => {
           </div>
         </section>
 
-        <section className="bg-[#0A0A0C] flex flex-col items-center gap-10 px-20 py-10 min-[560px]:py-12 min-[1090px]:gap-16 min-[1490px]:px-30 min-[1490px]:py-12">
-          <div className="flex flex-col gap-2 items-center">
-            <h2 className="text-lg font-bold text-white text-center min-[560px]:text-xl">
+        <section className="bg-[#0A0A0C] flex flex-col items-center gap-10 px-20 py-28 min-[560px]:py-28 min-[1090px]:gap-16 min-[1490px]:px-30 min-[1490px]:py-36">
+          <div ref={secaoCardsRef} className="flex flex-col gap-2 items-center">
+            <h2 className={`text-lg font-bold text-white text-center min-[560px]:text-xl ${mostrarCards ? "fade-up-pagina-inicial" : "opacity-0"}`}>
               Tudo o que você precisa em uma interface
             </h2>
-            <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8">
+            <p className={`max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 ${mostrarCards ? "fade-up-pagina-inicial delay-1" : "opacity-0"}`}>
               Organize sua rotina, converse com a IA e mantenha sua produtividade em um só lugar.
             </p>
           </div>
 
           <div className="grid w-full grid-cols-1 gap-6 min-[700px]:grid-cols-2 min-[1090px]:grid-cols-6">
-              {dadosCardsInformativos.map((dadosCard, index) => (
-                <div key={dadosCard.titulo} className={
-                  index < 3
-                    ? "min-[1090px]:col-span-2"
-                    : "min-[1090px]:col-span-3"
-                }>
+              {dadosCardsInformativos.map((dadosCard, index) => ( 
+                <div key={dadosCard.titulo} 
+                  className={`
+                  ${
+                    index < 3
+                      ? "min-[1090px]:col-span-2"
+                      : "min-[1090px]:col-span-3"
+                  }
+                  ${
+                    mostrarCards
+                      ? `card-enter ${delays[index]}`
+                      : "opacity-0"
+                  }
+                `}>
                     <CardInformativo 
                       key={dadosCard.titulo} 
                       icone={dadosCard.icone}
@@ -200,12 +290,12 @@ const PaginaInicial = () => {
           </div>
         </section>
 
-        <section className="bg-[#0A0A0C] flex flex-col items-center gap-10 px-20 py-28 min-[1090px]:gap-16 min-[1490px]:px-30">
-          <div className="flex flex-col gap-2 items-center">
-            <h2 className="text-lg font-bold text-white text-center min-[560px]:text-xl">
+        <section className="bg-[#0A0A0C] flex flex-col items-center gap-10 px-20 py-28 min-[560px]:py-56 min-[1090px]:gap-16 min-[1490px]:px-30">
+          <div ref={secaoFluxoRef} className="flex flex-col gap-2 items-center">
+            <h2 className={`text-lg font-bold text-white text-center min-[560px]:text-xl ${mostrarFluxo ? "fade-up-pagina-inicial" : "opacity-0"}`}>
               Fluxo de Trabalho Nexa
             </h2>
-            <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-[900px]">
+            <p className={`max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-[900px] ${mostrarFluxo ? "fade-up-pagina-inicial delay-1" : "opacity-0"}`}>
               Veja como o Nexa AI interpreta suas solicitações e organiza sua rotina em poucos segundos.
             </p>
           </div>
@@ -229,41 +319,43 @@ const PaginaInicial = () => {
           {/* Desktop */}
           <div className="relative hidden w-full min-[1090px]:block">
 
-              <div className="workflow-line absolute left-0 right-0 top-6 h-px overflow-hidden bg-white/10" />
+          <div className={`workflow-line absolute left-0 right-0 top-6 h-px overflow-hidden bg-white/10 ${mostrarFluxo ? "workflow-line-enter" : "scale-x-0"}`}/>
 
               <div className="relative flex justify-between">
                 {dadosEtapasFluxo.map((etapa, index) => (
-                  <EtapaFluxo 
-                    key={etapa.titulo}
-                    icone={etapa.icone}
-                    titulo={etapa.titulo}
-                    cor={etapa.cor}
-                    ativa={index === etapaAtiva}
-                  />
+                  <div className={`${mostrarFluxo ? `workflow-step-enter ${workflowDelays[index]}` : "opacity-0"}`}>
+                    <EtapaFluxo
+                      key={etapa.titulo}
+                      icone={etapa.icone}
+                      titulo={etapa.titulo}
+                      cor={etapa.cor}
+                      ativa={index === etapaAtiva}
+                    />
+                  </div>
                 ))}
               </div>
           </div>
 
         </section>
 
-        <section className="relative overflow-hidden bg-[#0A0A0C] flex flex-col items-center gap-10 px-10 py-28 min-[1490px]:px-30">
+        <section className="relative overflow-hidden bg-[#0A0A0C] flex flex-col items-center gap-10 px-10 py-28 min-[560px]:py-56 min-[1490px]:px-30">
 
-          <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-[#1A2A45] opacity-40 blur-[140px]" />
+          <div className={`absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-[#1A2A45] opacity-40 blur-[140px] ${mostrarCTA ? "cta-glow-enter" : "opacity-0"}`} />
 
-          <div className="absolute -bottom-48 -right-40 h-[420px] w-[420px] rounded-full bg-[#12B5FD] opacity-15 blur-[140px]" />
+          <div className={`absolute -bottom-48 -right-40 h-[420px] w-[420px] rounded-full bg-[#12B5FD] opacity-15 blur-[140px] ${mostrarCTA ? "cta-glow-enter delay-2" : "opacity-0"}`} />
 
-          <div className="relative z-10 flex flex-col gap-2 items-center">
-            <h2 className="text-lg font-bold text-white text-center min-[560px]:text-xl">
+          <div ref={secaoCTARef} className="relative z-10 flex flex-col gap-2 items-center">
+            <h2 className={`text-lg font-bold text-white text-center min-[560px]:text-xl ${mostrarCTA ? "fade-up-pagina-inicial" : "opacity-0"}`}>
               Pronto para viver no <span className="text-[#12B5FD]">Futuro?</span>
             </h2>
-            <p className="max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-[900px]">
+            <p className={`max-w-[700px] text-center text-sm leading-6 text-[#C2C6D8] min-[560px]:text-[15px] min-[975px]:text-base min-[975px]:leading-7 min-[1490px]:leading-8 min-[1490px]:max-w-[900px] ${mostrarCTA ? "fade-up-pagina-inicial delay-1" : "opacity-0"}`}>
               Comece hoje a trabalhar com uma IA que entende sua rotina melhor que você.
             </p>
           </div>
 
           <button
             onClick={() => navigate("/auth/cadastro")}
-            className="relative z-10 cursor-pointer group flex w-full items-center justify-center rounded-[10px] bg-[#12B5FD] px-5 py-3 text-[14px] font-medium text-white transition-all duration-300 hover:bg-[#2BC2FF] hover:shadow-[0_0_10px_rgba(18,181,253,0.35)] min-[440px]:text-base min-[560px]:w-auto min-[975px]:px-6 min-[975px]:py-3.5 min-[975px]:text-[17px] min-[1490px]:px-7 min-[1490px]:py-4 min-[1490px]:text-lg">
+            className={`relative z-10 ${mostrarCTA ? "cta-button" : "opacity-0"} cursor-pointer group flex w-full items-center justify-center rounded-[10px] bg-[#12B5FD] px-5 py-3 text-[14px] font-medium text-white transition-all duration-300 hover:bg-[#2BC2FF] hover:shadow-[0_0_10px_rgba(18,181,253,0.35)] min-[440px]:text-base min-[560px]:w-auto min-[975px]:px-6 min-[975px]:py-3.5 min-[975px]:text-[17px] min-[1490px]:px-7 min-[1490px]:py-4 min-[1490px]:text-lg`}>
             Criar conta gratuitamente
             <ChevronRight
               size={18}
