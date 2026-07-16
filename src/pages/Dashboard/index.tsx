@@ -5,6 +5,7 @@ import CardQuantidadeTarefas from "./components/CardQuantidadeTarefas";
 import { useState } from "react";
 import CardTarefasPrioritarias from "./components/CardTarefasPrioritarias";
 import { tarefas } from "../../data/tarefas";
+import CardInsightIA from "./components/CardInsightIA";
 
 const Dashboard = () => {
     const [menuAberto, setMenuAberto] = useState<boolean>(false);
@@ -40,6 +41,7 @@ const Dashboard = () => {
 
                     <div className="mt-5">
                         <CardTarefasPrioritarias tarefas={tarefas} />
+                        <CardInsightIA insight="Você concluiu 80% das tarefas planejadas nesta semana. Recomendo finalizar primeiro as atividades com prazo para hoje e adiar tarefas de baixa prioridade para manter o ritmo de alta performance."/>
                     </div>
 
                 </section>

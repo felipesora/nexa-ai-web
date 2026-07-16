@@ -34,7 +34,7 @@ const CardTarefasPrioritarias = ({ tarefas }: CardTarefasPrioritariasProps) => {
     };
 
     return(
-        <div className="bg-[#0F0F12] rounded-xl border border-white/8 ">
+        <div className="bg-[#0F0F12] rounded-xl border border-white/8">
 
             <div>
                 <div className="flex items-center justify-between border-b border-b-white/8 px-3 py-4">
