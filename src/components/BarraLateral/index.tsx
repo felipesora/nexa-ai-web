@@ -1,6 +1,5 @@
 import { LayoutDashboard, ListChecks, MessagesSquare } from "lucide-react";
 import LogoCompleta from "../../assets/logos/logo-completa-nexa-ai.png";
-import LogoCompacta from "../../assets/logos/logo-nexa-ai.png";
 
 interface BarraLateralProps{
     aberto:boolean;
