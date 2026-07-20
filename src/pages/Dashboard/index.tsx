@@ -42,11 +42,11 @@ const Dashboard = () => {
                     <div className="mt-5 flex flex-col gap-5 min-[1280px]:flex-row min-[1280px]:gap-6">
                         <CardTarefasPrioritarias 
                             tarefas={tarefas} 
-                            className="flex-1" 
+                            className="flex-1 min-w-0"
                         />
 
                         <CardInsightIA
-                            className="w-full min-[1540px]:max-w-md"
+                            className="w-full min-[1280px]:w-[360px] min-[1280px]:flex-shrink-0"
                             insight="Você concluiu 80% das tarefas planejadas nesta semana. Recomendo finalizar primeiro as atividades com prazo para hoje e adiar tarefas de baixa prioridade para manter o ritmo de alta performance."
                         />
                     </div>
