@@ -1,3 +1,5 @@
+import type { LucideIcon } from "lucide-react";
+
 export interface Tarefa {
     id: number;
     idUsuario: number;
@@ -13,4 +15,17 @@ export interface Tarefa {
     ativo: boolean;
     idWorkspace: number
     nomeWorkspace?: string
+}
+
+export interface Workspace {
+    id: number;
+    idUsuario: number;
+    nome: string;
+    descricao: string;
+    criadoEm: string;
+    atualizadoEm: string;
+    ativo: boolean;
+    qntTarefas: number;
+    iconeWorkspace: LucideIcon;
+    cor: string;
 }
