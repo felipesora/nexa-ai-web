@@ -3,6 +3,7 @@ import Login from "../pages/Login";
 import Cadastro from "../pages/Cadastro";
 import PaginaInicial from "../pages/PaginaInicial";
 import Dashboard from "../pages/Dashboard";
+import ChatIA from "../pages/ChatIA";
 
 export default function AppRoutes() {
     return(
@@ -12,6 +13,7 @@ export default function AppRoutes() {
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/cadastro" element={<Cadastro />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/chat-ia" element={<ChatIA />} />
             </Routes>
         </BrowserRouter>
     );
