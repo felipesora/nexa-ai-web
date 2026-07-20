@@ -9,7 +9,7 @@ interface CardWorkspaceProps {
 
 const CardWorkspace = ({ icone: Icon , workspace, cor }: CardWorkspaceProps) => {
     return(
-        <div className="w-full bg-[#0F0F12] rounded-xl border border-white/8 px-4 py-4 flex flex-col gap-2">
+        <div className="w-full bg-[#0F0F12] rounded-xl border border-white/8 px-4 py-4 flex flex-col gap-2 hover:border-[#12B5FD]/30 hover:bg-[#13151B] hover:-translate-y-1 transition-all duration-300">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <div style={{ backgroundColor: `${cor}1A` }} className="w-fit rounded-xl p-2">
