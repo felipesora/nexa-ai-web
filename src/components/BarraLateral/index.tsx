@@ -1,6 +1,6 @@
-import { LayoutDashboard, ListChecks, MessagesSquare } from "lucide-react";
+import { Folders, LayoutDashboard, MessagesSquare } from "lucide-react";
 import LogoCompleta from "../../assets/logos/logo-completa-nexa-ai.png";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface BarraLateralProps{
     aberto:boolean;
@@ -9,6 +9,14 @@ interface BarraLateralProps{
 
 const BarraLateral = ({ aberto, fechar }:BarraLateralProps) => {
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const menuClass = (path: string) =>
+    `cursor-pointer w-full rounded-[10px] flex items-center gap-3 px-4 py-3.5 transition-all duration-200 ${
+        location.pathname === path
+            ? "bg-[#12B5FD]/15 text-[#12B5FD]"
+            : "text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10"
+    }`;
 
     return (
         <>
@@ -31,23 +39,23 @@ const BarraLateral = ({ aberto, fechar }:BarraLateralProps) => {
                 <nav>
                     <ul className="space-y-2">
                         <li>
-                            <button onClick={() => navigate("/dashboard")} className="cursor-pointer w-full rounded-[10px] flex items-center gap-3 px-4 py-3.5 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition-all duration-200">
+                            <button onClick={() => navigate("/dashboard")} className={menuClass("/dashboard")}>
                                 <LayoutDashboard size={22} />
                                 Dashboard
                             </button>
                         </li>
 
                         <li>
-                            <button onClick={() => navigate("/chat-ia")} className="cursor-pointer w-full rounded-[10px] flex items-center gap-3 px-4 py-3.5 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition-all duration-200">
+                            <button onClick={() => navigate("/chat-ia")} className={menuClass("/chat-ia")}>
                                 <MessagesSquare size={22} />
                                 Chat IA
                             </button>
                         </li>
 
                         <li>
-                            <button className="cursor-pointer w-full rounded-[10px] flex items-center gap-3 px-4 py-3.5 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition-all duration-200">
-                                <ListChecks size={22} />
-                                Tarefas
+                            <button onClick={() => navigate("/workspaces")} className={menuClass("/workspaces")}>
+                                <Folders size={22} />
+                                Workspaces
                             </button>
                         </li>
                     </ul>
