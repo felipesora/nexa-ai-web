@@ -15,7 +15,8 @@ export const tarefas: Tarefa[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         idWorkspace: 1,
-        nomeWorkspace: "Nexa AI"
+        nomeWorkspace: "Nexa AI",
+        qntSubtarefas: 5
     },
     {
         id: 2,
@@ -31,7 +32,8 @@ export const tarefas: Tarefa[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         idWorkspace: 1,
-        nomeWorkspace: "Nexa AI"
+        nomeWorkspace: "Nexa AI",
+        qntSubtarefas: 1
     },
     {
         id: 3,
@@ -47,6 +49,24 @@ export const tarefas: Tarefa[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         idWorkspace: 1,
-        nomeWorkspace: "Nexa AI"
+        nomeWorkspace: "Nexa AI",
+        qntSubtarefas: 0
+    },
+    {
+        id: 4,
+        idUsuario: 1,
+        titulo: "Tarefa teste",
+        descricao: "Descrição da tarefa teste.",
+        prioridade: "URGENTE",
+        status: "CONCLUIDA",
+        dificuldade: "ALTA",
+        dataLimite: "10/10/2026",
+        dataConclusao: "10/10/2026",
+        criadoEm: "10/10/2026",
+        atualizadoEm: "10/10/2026",
+        ativo: true,
+        idWorkspace: 1,
+        nomeWorkspace: "Nexa AI",
+        qntSubtarefas: 3
     },
 ]
