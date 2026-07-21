@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import { workspaces } from "../../data/workspaces";
-import type { Workspace } from "../../types/tarefaTypes";
 import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, Clock4, EllipsisVertical, Plus, Search, Trash } from "lucide-react";
 import CardTarefa from "./components/CardTarefa";
 import { tarefas } from "../../data/tarefas";
