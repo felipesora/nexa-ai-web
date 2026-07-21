@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import { workspaces } from "../../data/workspaces";
-import { useEffect, useState } from "react";
 import type { Workspace } from "../../types/tarefaTypes";
 import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, Clock4, EllipsisVertical, Plus, Search, Trash } from "lucide-react";
 import CardTarefa from "./components/CardTarefa";
@@ -10,13 +9,9 @@ import BarraEstatisticas from "./components/BarraEstatisticas";
 
 const Workspace = () => {
     const { id } = useParams();
-    const [workspace, setWorkspace] = useState<Workspace | null>(null);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        setWorkspace(workspaces.find(w => w.id === Number(id)) ?? null);
-    }, [id]);
-
+    const workspace = workspaces.find(w => w.id === Number(id)) ?? null;
     if (!workspace) {
         return (
             <MainLayout titulo="Workspace">

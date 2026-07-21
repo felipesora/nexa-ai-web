@@ -1,4 +1,4 @@
-import { CalendarCheck2, CalendarClock, ChartNoAxesCombined, ChevronRight, Eye } from "lucide-react";
+import { CalendarCheck2, CalendarClock, ChartNoAxesCombined, ChevronRight } from "lucide-react";
 import type { Tarefa } from "../../../../types/tarefaTypes";
 
 interface CardTarefaProps {
