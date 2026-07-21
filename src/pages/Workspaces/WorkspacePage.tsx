@@ -7,7 +7,7 @@ import CardTarefa from "./components/CardTarefa";
 import { tarefas } from "../../data/tarefas";
 import BarraEstatisticas from "./components/BarraEstatisticas";
 
-const Workspace = () => {
+const WorkspacePage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -186,4 +186,4 @@ const Workspace = () => {
     );
 }
 
-export default Workspace;
+export default WorkspacePage;

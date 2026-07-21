@@ -5,7 +5,7 @@ import PaginaInicial from "../pages/PaginaInicial";
 import Dashboard from "../pages/Dashboard";
 import ChatIA from "../pages/ChatIA";
 import Workspaces from "../pages/Workspaces";
-import Workspace from "../pages/Workspaces/Workspace";
+import WorkspacePage from "../pages/Workspaces/WorkspacePage";
 
 export default function AppRoutes() {
     return(
@@ -17,7 +17,7 @@ export default function AppRoutes() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/chat-ia" element={<ChatIA />} />
                 <Route path="/workspaces" element={<Workspaces />} />
-                <Route path="/workspace/:id" element={<Workspace />} />
+                <Route path="/workspace/:id" element={<WorkspacePage />} />
             </Routes>
         </BrowserRouter>
     );
