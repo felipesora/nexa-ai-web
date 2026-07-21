@@ -1,7 +1,7 @@
 import { Plus } from "lucide-react";
 import { workspaces } from "../../data/workspaces";
 import MainLayout from "../../layouts/MainLayout";
-import CardWorkspace from "./CardWorkspace";
+import CardWorkspace from "./components/CardWorkspace";
 
 const Workspaces = () => {
     return(

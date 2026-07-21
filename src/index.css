@@ -7,6 +7,27 @@
   }
 }
 
+/* Chrome, Edge e Safari */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0A0A0C;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2A2D35;
+    border-radius: 999px;
+    border: 2px solid #0A0A0C;
+    transition: background 0.3s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #12B5FD;
+}
+
 .scroll-minimal {
     scrollbar-width: thin;
     scrollbar-color: #2F3747 transparent;

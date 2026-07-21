@@ -13,8 +13,9 @@ export interface Tarefa {
     criadoEm: string;
     atualizadoEm: string;
     ativo: boolean;
-    idWorkspace: number
-    nomeWorkspace?: string
+    idWorkspace: number;
+    nomeWorkspace?: string;
+    qntSubtarefas: number;
 }
 
 export interface Workspace {
