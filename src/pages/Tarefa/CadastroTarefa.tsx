@@ -14,7 +14,9 @@ const CadastroTarefa = () => {
 
     const [erros, setErros] = useState({
         titulo: "",
+        descricao: "",
         prioridade: "",
+        prazo: "",
     });
 
     const navigate = useNavigate();
@@ -38,7 +40,9 @@ const CadastroTarefa = () => {
 
         const novosErros = {
             titulo: "",
+            descricao: "",
             prioridade: "",
+            prazo: "",
         };
 
         let valido = true;
@@ -46,11 +50,32 @@ const CadastroTarefa = () => {
         if (!form.titulo.trim()) {
             novosErros.titulo = "O título é obrigatório.";
             valido = false;
+        } else if (form.titulo.trim().length < 3 || form.titulo.trim().length > 200) {
+            novosErros.titulo = "O título deve ter entre 3 e 200 caracteres.";
+            valido = false;
+        }
+
+        if (form.descricao &&(form.descricao.trim().length < 3 || form.descricao.trim().length > 700)
+        ) {
+            novosErros.descricao ="A descrição deve ter entre 3 e 700 caracteres.";
+            valido = false;
         }
 
         if (!form.prioridade) {
             novosErros.prioridade = "Selecione uma prioridade.";
             valido = false;
+        }
+
+        if (form.prazo) {
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+
+            const prazo = new Date(form.prazo);
+
+            if (prazo < hoje) {
+                novosErros.prazo = "A data limite deve ser hoje ou uma data futura.";
+                valido = false;
+            }
         }
 
         setErros(novosErros);
@@ -114,8 +139,16 @@ const CadastroTarefa = () => {
                         <textarea 
                             name="descricao" 
                             placeholder="Descreva a tarefa..."
+                            value={form.descricao}
+                            onChange={handleChange}
                             className="text-sm w-full rounded-md border border-white/10 bg-[#0F0F11] py-2 pl-2 pr-3 text-white placeholder:text-gray-500 focus:border-[#12B5FD] focus:outline-none transition-all duration-300"
                         />
+
+                        {erros.descricao && (
+                            <p className="text-red-400 text-xs mt-1">
+                                {erros.descricao}
+                            </p>
+                        )}
                     </div>
 
                     <div className="mt-5 flex flex-col gap-5 md:flex-row">
@@ -201,9 +234,17 @@ const CadastroTarefa = () => {
                             <input
                                 type="date"
                                 name="prazo"
+                                value={form.prazo}
+                                onChange={handleChange}
                                 placeholder="Digite o título da tarefa"
                                 className="text-sm w-full rounded-md border border-white/10 bg-[#0F0F11] py-2 pl-10 pr-3 text-white placeholder:text-gray-500 focus:border-[#12B5FD] focus:outline-none transition-all duration-300 cursor-pointer"
                             />
+
+                            {erros.prazo && (
+                                <p className="text-red-400 text-xs mt-1">
+                                    {erros.prazo}
+                                </p>
+                            )}
                         </div>
                     </div>
 
