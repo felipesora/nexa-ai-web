@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { useState, type SubmitEvent } from "react";
 
 const CadastroTarefa = () => {
+    const navigate = useNavigate();
+
     const [form, setForm] = useState({
         titulo: "",
         descricao: "",
@@ -18,8 +20,6 @@ const CadastroTarefa = () => {
         prioridade: "",
         prazo: "",
     });
-
-    const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -251,11 +251,11 @@ const CadastroTarefa = () => {
                     <div className="my-6 h-px bg-white/8" />
 
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                        <button type="button" className="w-full sm:w-auto px-5 py-3 cursor-pointer rounded-xl text-[#C5C6D0] transition-all duration-200 hover:bg-white/5 hover:text-white">
+                        <button type="button" onClick={() => navigate(-1)} className="w-full sm:w-auto px-5 py-3 cursor-pointer rounded-xl text-[#C5C6D0] transition-all duration-200 hover:bg-white/5 hover:text-white">
                             Cancelar
                         </button>
 
-                        <button type="submit" onClick={() => navigate("/cadastro-tarefa")} className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                        <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <Plus size={22}/>
                             Criar Tarefa
                         </button>
