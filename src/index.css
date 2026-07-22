@@ -51,6 +51,11 @@
     background: #12B5FD;
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    pointer-events: none;
+}
+
 /* ===========================
    Animações
 =========================== */

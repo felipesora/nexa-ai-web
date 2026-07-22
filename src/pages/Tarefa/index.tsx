@@ -6,7 +6,7 @@ import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDa
 import { subtarefas } from "../../data/subtarefas";
 import CardSubtarefa from "./components/CardSubtarefa";
 
-const TarefaPage = () => {
+const Tarefa = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -147,4 +147,4 @@ const TarefaPage = () => {
     );
 }
 
-export default TarefaPage;
+export default Tarefa;
