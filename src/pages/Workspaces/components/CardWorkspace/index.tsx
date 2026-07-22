@@ -1,6 +1,6 @@
 import { ChevronRight, EllipsisVertical, type LucideIcon } from "lucide-react";
-import type { Workspace } from "../../../../types/tarefaTypes";
 import { useNavigate } from "react-router-dom";
+import type { Workspace } from "../../../../types/workspaceTypes";
 
 interface CardWorkspaceProps {
     icone: LucideIcon;

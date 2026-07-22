@@ -1,5 +1,6 @@
 import { Calendar, Eye, Zap } from "lucide-react";
 import type { Tarefa } from "../../../../types/tarefaTypes";
+import { estilosStatusDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../../../utils/formatters";
 
 interface CardTarefasPrioritariasProps {
     tarefas: Tarefa[];
@@ -7,32 +8,6 @@ interface CardTarefasPrioritariasProps {
 }
 
 const CardTarefasPrioritarias = ({ tarefas, className = "" }: CardTarefasPrioritariasProps) => {
-
-    const formatarStatus = (status: string) => {
-        switch (status) {
-            case "EM_ANDAMENTO":
-                return "Em andamento";
-            case "PENDENTE":
-                return "Pendente";
-            default:
-                return status;
-        }
-    };
-
-    const formatarPrioridade = (prioridade: string) => {
-        switch (prioridade) {
-            case "BAIXA":
-                return "Baixa";
-            case "MEDIA":
-                return "Média";
-            case "ALTA":
-                return "Alta";
-            case "URGENTE":
-                return "Urgente";
-            default:
-                return prioridade;
-        }
-    };
 
     return(
         <div className={`bg-[#0F0F12] rounded-xl border border-white/8 ${className}`}>
@@ -68,7 +43,7 @@ const CardTarefasPrioritarias = ({ tarefas, className = "" }: CardTarefasPriorit
                                         {tarefa.nomeWorkspace}
                                     </p>
                                     <p className="bg-[#D9E2FF]/10 rounded-sm text-[#D9E2FF] font-medium text-[14px] px-3 py-0.5">
-                                        {formatarPrioridade(tarefa.prioridade)}
+                                        {formatarPrioridadeDaTarefa(tarefa.prioridade)}
                                     </p>
                                     <p className="flex items-center gap-1 text-[#9CEFFF] text-[14px]">
                                         <Calendar size={17} />
@@ -79,8 +54,8 @@ const CardTarefasPrioritarias = ({ tarefas, className = "" }: CardTarefasPriorit
                         </div>
 
                         <div className="flex justify-between items-center min-[768px]:justify-normal gap-3">
-                            <p className="bg-[#353437]/50 rounded-sm px-3 py-0.5 text-[#C5C6D0] text-[14px]">
-                                {formatarStatus(tarefa.status)}
+                            <p className={`rounded-sm px-3 py-0.5 text-[14px] ${estilosStatusDaTarefa(tarefa.status)}`}>
+                                {formatarStatusDaTarefa(tarefa.status)}
                             </p>
 
                             <button className="cursor-pointer text-[#C5C6D0] rounded-sm p-2 hover:bg-[#353437]/50 transition-all duration-150">

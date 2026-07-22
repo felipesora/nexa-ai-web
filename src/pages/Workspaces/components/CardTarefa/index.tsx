@@ -1,76 +1,20 @@
 import { CalendarCheck2, CalendarClock, ChartNoAxesCombined, ChevronRight } from "lucide-react";
 import type { Tarefa } from "../../../../types/tarefaTypes";
+import { useNavigate } from "react-router-dom";
+import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../../../utils/formatters";
 
 interface CardTarefaProps {
     tarefa: Tarefa;
 }
 
-const formatarStatus = (status: string) => {
-    switch (status) {
-        case "EM_ANDAMENTO":
-            return "Em andamento";
-        case "PENDENTE":
-            return "Pendente";
-        case "CONCLUIDA":
-            return "Concluída";
-        default:
-            return status;
-    }
-};
-
-const formatarPrioridade = (prioridade: string) => {
-    switch (prioridade) {
-        case "BAIXA":
-            return "Baixa";
-        case "MEDIA":
-            return "Média";
-        case "ALTA":
-            return "Alta";
-        case "URGENTE":
-            return "Urgente";
-        default:
-            return prioridade;
-    }
-};
-
-const formatarDificuldade = (dificuldade: string) => {
-    switch (dificuldade) {
-        case "BAIXA":
-            return "Baixa";
-        case "MEDIA":
-            return "Média";
-        case "ALTA":
-            return "Alta";
-        default:
-            return dificuldade;
-    }
-};
-
-const estilosPrioridade = (prioridade: string) => {
-    switch (prioridade) {
-        case "BAIXA":
-            return "bg-emerald-500/10 border border-emerald-500/30 text-emerald-300";
-
-        case "MEDIA":
-            return "bg-yellow-500/10 border border-yellow-500/30 text-yellow-300";
-
-        case "ALTA":
-            return "bg-red-500/10 border border-red-500/30 text-red-300";
-
-        case "URGENTE":
-            return "bg-rose-900/20 border border-rose-900/60 text-rose-300";
-
-        default:
-            return "bg-[#353437]/50 border border-white/10 text-[#C5C6D0]";
-    }
-};
-
 const CardTarefa = ({ tarefa }: CardTarefaProps) => {
+    const navigate = useNavigate();
+
     return(
-        <div className="w-full bg-[#0F0F12] rounded-xl border border-white/8 px-4 py-4 flex flex-col gap-1">
+        <div className="w-full bg-[#0F0F12] rounded-xl border border-white/8 px-4 py-4 flex flex-col gap-1 hover:border-[#12B5FD]/30 hover:bg-[#13151B] transition-all duration-300">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-2">
-                <p className={`rounded-full px-3 py-0.5 text-[13px] w-fit ${estilosPrioridade(tarefa.prioridade)}`}>
-                    {formatarPrioridade(tarefa.prioridade)}
+                <p className={`rounded-full px-3 py-0.5 text-[13px] w-fit ${estilosPrioridadeDaTarefa(tarefa.prioridade)}`}>
+                    {formatarPrioridadeDaTarefa(tarefa.prioridade)}
                 </p>
                 <h3 className="text-[#E5E1E4] font-bold text-lg">
                     {tarefa.titulo}
@@ -90,7 +34,7 @@ const CardTarefa = ({ tarefa }: CardTarefaProps) => {
                 )}
                 <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                     <ChartNoAxesCombined size={17} />
-                    Dificuldade: {formatarDificuldade(tarefa.dificuldade)}
+                    Dificuldade: {formatarDificuldadeDaTarefa(tarefa.dificuldade)}
                 </p>
                 <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                     <CalendarClock size={17} />
@@ -102,13 +46,14 @@ const CardTarefa = ({ tarefa }: CardTarefaProps) => {
                         Finalizada em: {tarefa.dataConclusao}
                     </p>
                 )}
-                <p className={`rounded-sm px-3 py-0.5 text-[13px] w-fit ${tarefa.status === "CONCLUIDA" ? "bg-emerald-500/10 text-emerald-300" : "bg-[#353437]/50 text-[#C5C6D0]"}`}>
-                    {formatarStatus(tarefa.status)}
+                <p className={`rounded-sm px-3 py-0.5 text-[13px] w-fit ${estilosStatusDaTarefa(tarefa.status)}`}>
+                    {formatarStatusDaTarefa(tarefa.status)}
                 </p>
             </div>
 
             <div className="mt-4 flex justify-end">
                 <button
+                    onClick={() => navigate(`/tarefa/${tarefa.id}`)}
                     className="group cursor-pointer w-full sm:w-auto justify-center flex items-center gap-0.5 rounded-lg bg-[#1C1B1D] px-4 py-2 text-sm font-medium text-[#E5E1E4] transition-colors hover:bg-[#252428]">
                     Abrir tarefa
                     <ChevronRight
