@@ -69,7 +69,7 @@ const CadastrarWorkspace = () => {
     };
 
     return(
-        <MainLayout titulo="Criar Novo Workspace">
+        <MainLayout titulo="Criar Novo Workspace" pageTitle="Novo Workspace">
             <div className="mb-4">
                 <button
                     onClick={() => navigate(-1)}

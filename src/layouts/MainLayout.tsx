@@ -1,14 +1,19 @@
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Cabecalho from "../components/Cabecalho";
 import BarraLateral from "../components/BarraLateral";
 
 interface MainLayoutProps {
     titulo: string;
+    pageTitle?: string;
     children: ReactNode;
 }
 
-const MainLayout = ({ titulo, children }: MainLayoutProps) => {
+const MainLayout = ({ titulo, pageTitle, children }: MainLayoutProps) => {
     const [menuAberto, setMenuAberto] = useState(false);
+
+    useEffect(() => {
+        document.title = `${pageTitle ?? titulo}`;
+    }, [titulo, pageTitle]);
 
     return (
         <main className="flex h-screen">

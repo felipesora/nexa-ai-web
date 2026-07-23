@@ -4,8 +4,11 @@ import { ChevronRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+    document.title = "Nexa AI - Login";
+
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
+    
 
     const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
