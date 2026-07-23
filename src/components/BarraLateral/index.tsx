@@ -11,12 +11,7 @@ const BarraLateral = ({ aberto, fechar }:BarraLateralProps) => {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const menuClass = (path: string) =>
-    `cursor-pointer w-full rounded-[10px] flex items-center gap-3 px-4 py-3.5 transition-all duration-200 ${
-        location.pathname === path
-            ? "bg-[#12B5FD]/15 text-[#12B5FD]"
-            : "text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10"
-    }`;
+    const menuClass = (path: string) => `cursor-pointer w-full rounded-[10px] text-[14px] sm:text-[15px] flex items-center gap-3 px-4 py-3.5 transition-all duration-200 ${location.pathname === path ? "bg-[#12B5FD]/15 text-[#12B5FD]" : "text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10"}`;
 
     return (
         <>

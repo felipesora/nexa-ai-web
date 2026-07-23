@@ -2,8 +2,11 @@ import { Plus } from "lucide-react";
 import { workspaces } from "../../data/workspaces";
 import MainLayout from "../../layouts/MainLayout";
 import CardWorkspace from "./components/CardWorkspace";
+import { useNavigate } from "react-router-dom";
 
 const Workspaces = () => {
+    const navigate = useNavigate();
+
     return(
         <MainLayout titulo="Workspaces">
             <div className="flex flex-col gap-8">
@@ -19,7 +22,7 @@ const Workspaces = () => {
                         </p>
                     </div>
 
-                    <button className="bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                    <button onClick={() => navigate("/cadastro-workspace")} className="bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                         <Plus size={22}/>
                         Novo Workspace
                     </button>
