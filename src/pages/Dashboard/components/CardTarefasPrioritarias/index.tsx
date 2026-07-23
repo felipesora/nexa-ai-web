@@ -1,6 +1,7 @@
 import { Calendar, Eye, Zap } from "lucide-react";
 import type { Tarefa } from "../../../../types/tarefaTypes";
 import { estilosStatusDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../../../utils/formatters";
+import { useNavigate } from "react-router-dom";
 
 interface CardTarefasPrioritariasProps {
     tarefas: Tarefa[];
@@ -8,6 +9,7 @@ interface CardTarefasPrioritariasProps {
 }
 
 const CardTarefasPrioritarias = ({ tarefas, className = "" }: CardTarefasPrioritariasProps) => {
+    const navigate = useNavigate();
 
     return(
         <div className={`bg-[#0F0F12] rounded-xl border border-white/8 ${className}`}>
@@ -58,7 +60,7 @@ const CardTarefasPrioritarias = ({ tarefas, className = "" }: CardTarefasPriorit
                                 {formatarStatusDaTarefa(tarefa.status)}
                             </p>
 
-                            <button className="cursor-pointer text-[#C5C6D0] rounded-sm p-2 hover:bg-[#353437]/50 transition-all duration-150">
+                            <button onClick={() => navigate(`/tarefa/${tarefa.id}`)} className="cursor-pointer text-[#C5C6D0] rounded-sm p-2 hover:bg-[#353437]/50 transition-all duration-150">
                                 <Eye size={20}/>
                             </button>
                         </div>

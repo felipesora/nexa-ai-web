@@ -6,7 +6,7 @@ import { tarefas } from "../../data/tarefas";
 import MainLayout from "../../layouts/MainLayout";
 import { useNavigate } from "react-router-dom";
 import "./fullcalendar.css";
-import { formatarPrioridadeDaTarefa } from "../../utils/formatters";
+import { estilosPrioridadeDaTarefa, formatarPrioridadeDaTarefa } from "../../utils/formatters";
 
 const Calendario = () => {
     const navigate = useNavigate();
@@ -24,25 +24,6 @@ const Calendario = () => {
             },
         };
     });
-
-    const estilosPrioridadeDaTarefaParaCalendario = (prioridade: string) => {
-        switch (prioridade) {
-            case "BAIXA":
-                return "bg-emerald-600 text-white";
-
-            case "MEDIA":
-                return "bg-amber-500 text-black";
-
-            case "ALTA":
-                return "bg-red-500 text-white";
-
-            case "URGENTE":
-                return "bg-[#7F1D1D] text-white";
-
-            default:
-                return "bg-[#353437] text-[#C5C6D0]";
-        }
-    };
 
     return(
         <MainLayout titulo="Calendário">
@@ -89,17 +70,17 @@ const Calendario = () => {
 
                         return (
                             <div
-                                className={`cursor-pointer rounded-md px-2 py-1 text-white text-xs ${
+                                className={`cursor-pointer rounded-lg border px-2 py-1 text-[#E5E1E4] text-xs ${
                                     status === "CONCLUIDA"
-                                        ? "bg-green-600"
-                                        : "bg-[#12B5FD]"
+                                        ? "border-green-700 bg-green-600"
+                                        : "border-white/10 bg-[#1A1A1F]"
                                 }`}
                             >
                                 <div className="font-medium truncate">
                                     {info.event.title}
                                 </div>
 
-                                <div className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] ${estilosPrioridadeDaTarefaParaCalendario(prioridade)}`}>
+                                <div className={`mt-1 inline-flex rounded-full px-2 py-0.5 text-[10px] ${status === "CONCLUIDA" ? "bg-white/20 text-white" : estilosPrioridadeDaTarefa(prioridade)}`}>
                                     {formatarPrioridadeDaTarefa(prioridade)}
                                 </div>
                             </div>
