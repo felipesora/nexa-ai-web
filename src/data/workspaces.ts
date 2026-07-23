@@ -1,5 +1,5 @@
-import { Book, Bot, FileUser, SquareChartGantt } from "lucide-react";
-import type { Workspace } from "../types/tarefaTypes";
+import { Book, Brain, SquareChartGantt, SquareUserRound } from "lucide-react";
+import type { Workspace } from "../types/workspaceTypes";
 
 export const workspaces: Workspace[] = [
     {
@@ -11,7 +11,7 @@ export const workspaces: Workspace[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         qntTarefas: 3,
-        iconeWorkspace: Bot,
+        iconeWorkspace: Brain,
         cor: "#12B5FD"
     },
     {
@@ -36,7 +36,7 @@ export const workspaces: Workspace[] = [
         ativo: true,
         qntTarefas: 7,
         iconeWorkspace: SquareChartGantt,
-        cor: "#D1BCFF"
+        cor: "#EC4899"
     },
     {
         id: 4,
@@ -47,7 +47,7 @@ export const workspaces: Workspace[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         qntTarefas: 19,
-        iconeWorkspace: FileUser,
+        iconeWorkspace: SquareUserRound,
         cor: "#D9E2FF"
     },
 ]

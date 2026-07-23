@@ -9,6 +9,7 @@ import WorkspacePage from "../pages/Workspaces/WorkspacePage";
 import Tarefa from "../pages/Tarefa";
 import CadastroTarefa from "../pages/Tarefa/CadastroTarefa";
 import CadastroSubtarefa from "../pages/Subtarefa/CadastroSubtarefa";
+import CadastrarWorkspace from "../pages/Workspaces/CadastrarWorkspace";
 
 export default function AppRoutes() {
     return(
@@ -22,6 +23,7 @@ export default function AppRoutes() {
                 <Route path="/workspaces" element={<Workspaces />} />
                 <Route path="/workspace/:id" element={<WorkspacePage />} />
                 <Route path="/tarefa/:id" element={<Tarefa />} />
+                <Route path="/cadastro-workspace" element={<CadastrarWorkspace />} />
                 <Route path="/cadastro-tarefa" element={<CadastroTarefa />} />
                 <Route path="/cadastro-subtarefa" element={<CadastroSubtarefa />} />
             </Routes>
