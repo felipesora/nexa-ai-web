@@ -1,10 +1,11 @@
 import { useDroppable } from "@dnd-kit/core";
 import KanbanCard from "./KanbanCard";
+import type { Tarefa } from "../../../types/tarefaTypes";
 
 interface Props {
     id: string;
     titulo: string;
-    tarefas: any[];
+    tarefas: Tarefa[];
 }
 
 const KanbanColumn = ({

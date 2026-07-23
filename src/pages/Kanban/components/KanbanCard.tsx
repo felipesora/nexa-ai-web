@@ -2,9 +2,10 @@ import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { useNavigate } from "react-router-dom";
 import { estilosPrioridadeDaTarefa, formatarPrioridadeDaTarefa } from "../../../utils/formatters";
+import type { Tarefa } from "../../../types/tarefaTypes";
 
 interface Props {
-    tarefa: any;
+    tarefa: Tarefa;
 }
 
 const KanbanCard = ({
