@@ -1,10 +1,12 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import LogoCompleta from "../../assets/logos/logo-completa-nexa-ai.png";
 import { ChevronRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Login = () => {
-    document.title = "Nexa AI - Login";
+    useEffect(() => {
+        document.title = "Nexa AI - Login";
+    }, []);
 
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
