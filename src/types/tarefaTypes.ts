@@ -4,7 +4,7 @@ export interface Tarefa {
     titulo: string;
     descricao: string;
     prioridade: string;
-    status: string;
+    status: "PENDENTE" | "EM_ANDAMENTO" | "CONCLUIDA";
     dificuldade: string;
     dataLimite: string;
     dataConclusao: string;

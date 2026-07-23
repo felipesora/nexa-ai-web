@@ -86,7 +86,7 @@ const CadastroTarefa = () => {
     };
 
     return(
-        <MainLayout titulo="Criar Nova Tarefa">
+        <MainLayout titulo="Criar Nova Tarefa" pageTitle="Nova Tarefa">
             <div className="mb-4">
                 <button
                     onClick={() => navigate(-1)}

@@ -10,6 +10,8 @@ import Tarefa from "../pages/Tarefa";
 import CadastroTarefa from "../pages/Tarefa/CadastroTarefa";
 import CadastroSubtarefa from "../pages/Subtarefa/CadastroSubtarefa";
 import CadastrarWorkspace from "../pages/Workspaces/CadastrarWorkspace";
+import Calendario from "../pages/Calendario";
+import Kanban from "../pages/Kanban";
 
 export default function AppRoutes() {
     return(
@@ -26,6 +28,8 @@ export default function AppRoutes() {
                 <Route path="/cadastro-workspace" element={<CadastrarWorkspace />} />
                 <Route path="/cadastro-tarefa" element={<CadastroTarefa />} />
                 <Route path="/cadastro-subtarefa" element={<CadastroSubtarefa />} />
+                <Route path="/calendario" element={<Calendario />} />
+                <Route path="/kanban" element={<Kanban />} />
             </Routes>
         </BrowserRouter>
     );

@@ -1,4 +1,4 @@
-import { Folders, LayoutDashboard, MessagesSquare } from "lucide-react";
+import { CalendarDays, Folders, LayoutDashboard, MessagesSquare, SquareKanban } from "lucide-react";
 import LogoCompleta from "../../assets/logos/logo-completa-nexa-ai.png";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -51,6 +51,20 @@ const BarraLateral = ({ aberto, fechar }:BarraLateralProps) => {
                             <button onClick={() => navigate("/workspaces")} className={menuClass("/workspaces")}>
                                 <Folders size={22} />
                                 Workspaces
+                            </button>
+                        </li>
+
+                        <li>
+                            <button onClick={() => navigate("/calendario")} className={menuClass("/calendario")}>
+                                <CalendarDays size={22} />
+                                Calendário
+                            </button>
+                        </li>
+                        
+                        <li>
+                            <button onClick={() => navigate("/kanban")} className={menuClass("/kanban")}>
+                                <SquareKanban size={22} />
+                                Kanban
                             </button>
                         </li>
                     </ul>

@@ -53,7 +53,7 @@ const CadastroSubtarefa = () => {
     };
 
     return(
-        <MainLayout titulo="Criar Nova Subtarefa">
+        <MainLayout titulo="Criar Nova Subtarefa" pageTitle="Nova Subtarefa">
             <div className="mb-4">
                 <button
                     onClick={() => navigate(-1)}
