@@ -1,0 +1,167 @@
+/* Fundo geral */
+.fc {
+    background: #111114;
+    color: #E5E1E4;
+    font-family: inherit;
+}
+
+/* Barra superior */
+.fc .fc-toolbar {
+    margin-bottom: 1.5rem;
+}
+
+.fc .fc-toolbar-title {
+    color: #E5E1E4;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+/* Botões */
+
+.fc .fc-button {
+    background: #1A1B20 !important;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    color: white !important;
+    transition: .2s;
+}
+
+.fc .fc-button:hover {
+    background: #12B5FD !important;
+    border-color: #12B5FD !important;
+}
+
+.fc .fc-button-active {
+    background: #12B5FD !important;
+    border-color: #12B5FD !important;
+}
+
+/* Cabeçalho dos dias */
+
+.fc-theme-standard th {
+    background: #16181D;
+    color: #8E909A;
+    border-color: rgba(255,255,255,.08);
+    padding: 10px 0;
+}
+
+/* Bordas */
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+    border-color: rgba(255,255,255,.08);
+}
+
+/* Fundo das células */
+
+.fc-daygrid-day {
+    background: #111114;
+}
+
+/* Hover */
+
+.fc-daygrid-day:hover {
+    background: #17181C;
+}
+
+/* Hoje */
+
+.fc-day-today {
+    background: rgba(18,181,253,.08) !important;
+}
+
+/* Número do dia */
+
+.fc-daygrid-day-number {
+    color: #C2C6D8;
+    padding: 8px;
+    font-size: .9rem;
+}
+
+/* Eventos */
+
+.fc-event {
+    border: none !important;
+    border-radius: 8px;
+    padding: 0 !important;
+    font-size: .78rem;
+    font-weight: 500;
+    background: transparent !important;
+}
+
+/* Hover do evento */
+
+.fc-event:hover {
+    filter: brightness(1.08);
+}
+
+/* Linha de hoje */
+
+.fc-scrollgrid {
+    border-color: rgba(255,255,255,.08) !important;
+}
+
+.fc-daygrid-more-link {
+    color: #12B5FD;
+    font-weight: 600;
+    transition: .2s;
+}
+
+.fc-daygrid-more-link:hover {
+    color: #2BC0FF;
+    text-decoration: none;
+}
+
+/* Popover */
+
+.fc-popover {
+    background: #111114 !important;
+    border: 1px solid rgba(255,255,255,.08) !important;
+    border-radius: 14px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,.45);
+}
+
+/* Cabeçalho */
+
+.fc-popover-header {
+    background: #18191F !important;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    padding: 12px 16px;
+}
+
+/* Título */
+
+.fc-popover-title {
+    color: #E5E1E4;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+/* Botão fechar */
+
+.fc-popover-close {
+    color: #8E909A;
+    font-size: 18px;
+    transition: .2s;
+}
+
+.fc-popover-close:hover {
+    color: #12B5FD;
+}
+
+/* Corpo */
+
+.fc-popover-body {
+    padding: 12px;
+
+    max-height: 340px;
+
+    flex: 1;
+    overflow-y: auto !important;
+}
+
+/* Espaçamento entre eventos */
+
+.fc-popover-body .fc-daygrid-event-harness {
+    margin-bottom: 8px;
+}
