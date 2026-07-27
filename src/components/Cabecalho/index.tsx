@@ -64,7 +64,7 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
                     {menuPerfilAberto && (
                         <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                            <button onClick={() => navigate("/meus-dados")} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:bg-white/5 transition text-[15px] cursor-pointer">
+                            <button onClick={() => navigate("/meus-dados")} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
                                 <User size={18} />
                                 Meus dados
                             </button>

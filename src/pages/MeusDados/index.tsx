@@ -1,4 +1,4 @@
-import { ArrowLeft, Eye, EyeOff, Lock, Mail, Save, Type, User } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff, Lock, Mail, Save, User } from "lucide-react";
 import MainLayout from "../../layouts/MainLayout";
 import { useNavigate } from "react-router-dom";
 import { useState, type SubmitEvent } from "react";
