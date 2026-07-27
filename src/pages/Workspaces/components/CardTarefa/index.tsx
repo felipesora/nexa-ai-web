@@ -45,7 +45,7 @@ const CardTarefa = ({ tarefa }: CardTarefaProps) => {
 
                     {menuTarefaAberto && (
                         <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => navigate(`/editar-tarefa/${tarefa.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
                                 <SquarePen size={18} />
                                 Editar
                             </button>

@@ -238,7 +238,7 @@ const EditarWorkspace = () => {
 
                         <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <SquarePen size={22}/>
-                            Editar Workspace
+                            Salvar Alterações
                         </button>
                     </div>
                 </form>
