@@ -1,5 +1,6 @@
 import { Bell, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface CabecalhoProps {
     titulo: string;
@@ -7,6 +8,7 @@ interface CabecalhoProps {
 }
 
 const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
+    const navigate = useNavigate();
     const [menuPerfilAberto, setMenuPerfilAberto] = useState<boolean>(false);
 
     const menuRef = useRef<HTMLDivElement>(null);
@@ -62,7 +64,7 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
                     {menuPerfilAberto && (
                         <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:bg-white/5 transition text-[15px] cursor-pointer">
+                            <button onClick={() => navigate("/meus-dados")} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:bg-white/5 transition text-[15px] cursor-pointer">
                                 <User size={18} />
                                 Meus dados
                             </button>

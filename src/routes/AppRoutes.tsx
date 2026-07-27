@@ -12,6 +12,7 @@ import CadastroSubtarefa from "../pages/Subtarefa/CadastroSubtarefa";
 import CadastrarWorkspace from "../pages/Workspaces/CadastrarWorkspace";
 import Calendario from "../pages/Calendario";
 import Kanban from "../pages/Kanban";
+import MeusDados from "../pages/MeusDados";
 
 export default function AppRoutes() {
     return(
@@ -20,6 +21,7 @@ export default function AppRoutes() {
                 <Route path="/" element={<PaginaInicial />} />
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/cadastro" element={<Cadastro />} />
+                <Route path="/meus-dados" element={<MeusDados />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/chat-ia" element={<ChatIA />} />
                 <Route path="/workspaces" element={<Workspaces />} />

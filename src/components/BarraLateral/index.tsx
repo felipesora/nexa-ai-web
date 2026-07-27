@@ -24,11 +24,13 @@ const BarraLateral = ({ aberto, fechar }:BarraLateralProps) => {
 
             <aside className={`fixed top-0 left-0 z-50 h-screen bg-[#0E0E10] transition-transform duration-300 ${aberto ? "translate-x-0" : "-translate-x-full"} w-[250px] lg:static lg:translate-x-0 border-r border-r-[#44464F]/10 flex flex-col py-6 px-4 gap-7`}>
                 <div className="flex justify-center">
-                    <img
-                        src={LogoCompleta}
-                        alt="Logo Nexa AI"
-                        className="w-36"
-                    />
+                    <button onClick={() => navigate("/dashboard")} className="cursor-pointer">
+                        <img
+                            src={LogoCompleta}
+                            alt="Logo Nexa AI"
+                            className="w-36"
+                        />
+                    </button>
                 </div>
 
                 <nav>
