@@ -26,7 +26,7 @@ const Tarefa = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const tarefa = tarefas.find(w => w.id === Number(id)) ?? null;
+    const tarefa = tarefas.find(t => t.id === Number(id)) ?? null;
     
     if (!tarefa) {
         return (

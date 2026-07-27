@@ -15,6 +15,7 @@ import Kanban from "../pages/Kanban";
 import MeusDados from "../pages/MeusDados";
 import EditarWorkspace from "../pages/Workspaces/EditarWorkspace";
 import EditarTarefa from "../pages/Tarefa/EditarTarefa";
+import EditarSubtarefa from "../pages/Subtarefa/EditarSubtarefa";
 
 export default function AppRoutes() {
     return(
@@ -34,6 +35,7 @@ export default function AppRoutes() {
                 <Route path="/cadastro-tarefa" element={<CadastroTarefa />} />
                 <Route path="/editar-tarefa/:id" element={<EditarTarefa />} />
                 <Route path="/cadastro-subtarefa" element={<CadastroSubtarefa />} />
+                <Route path="/editar-subtarefa/:id" element={<EditarSubtarefa />} />
                 <Route path="/calendario" element={<Calendario />} />
                 <Route path="/kanban" element={<Kanban />} />
             </Routes>

@@ -8,7 +8,7 @@ const EditarTarefa = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const tarefa = tarefas.find(w => w.id === Number(id)) ?? null;
+    const tarefa = tarefas.find(t => t.id === Number(id)) ?? null;
 
     const [form, setForm] = useState({
         titulo: tarefa?.titulo ?? "",

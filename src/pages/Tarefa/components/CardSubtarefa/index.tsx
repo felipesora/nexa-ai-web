@@ -1,12 +1,15 @@
 import { Calendar, CalendarSync, Check, EllipsisVertical, SquarePen, Trash } from "lucide-react";
 import type { Subtarefa } from "../../../../types/subtarefaTypes";
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface CardSubtarefaProps {
     subtarefa: Subtarefa;
 }
 
 const CardSubtarefa = ({ subtarefa }: CardSubtarefaProps) => {
+    const navigate = useNavigate();
+
     const [checked, setChecked] = useState<boolean>(subtarefa.concluida);
 
     const [menuSubtarefaAberto, setMenuSubtarefaAberto] = useState<boolean>(false);
@@ -56,7 +59,7 @@ const CardSubtarefa = ({ subtarefa }: CardSubtarefaProps) => {
 
                         {menuSubtarefaAberto && (
                             <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                                <button className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                                <button onClick={() => navigate(`/editar-subtarefa/${subtarefa.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
                                     <SquarePen size={18} />
                                     Editar
                                 </button>
