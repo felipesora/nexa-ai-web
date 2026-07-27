@@ -1,16 +1,37 @@
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import { workspaces } from "../../data/workspaces";
-import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, Clock4, EllipsisVertical, Plus, Search, Trash } from "lucide-react";
+import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, Clock4, EllipsisVertical, Plus, Search, SquarePen, Trash } from "lucide-react";
 import CardTarefa from "./components/CardTarefa";
 import { tarefas } from "../../data/tarefas";
 import BarraEstatisticas from "./components/BarraEstatisticas";
+import { useEffect, useRef, useState } from "react";
+import { workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
 
 const WorkspacePage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const [menuWorkspaceAberto, setMenuWorkspaceAberto] = useState<boolean>(false);
+    const menuWorkspaceRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuWorkspaceRef.current && !menuWorkspaceRef.current.contains(event.target as Node)) {
+                setMenuWorkspaceAberto(false);
+            }
+        }
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
     const workspace = workspaces.find(w => w.id === Number(id)) ?? null;
+    const iconSelecionado = workspaceIcons.find(i => i.id === workspace?.iconeWorkspace);
+    const Icon = iconSelecionado?.icon;
+    const corSelecionada = workspaceColors.find(c => c.id === workspace?.cor);
+
     if (!workspace) {
         return (
             <MainLayout titulo="Workspace">
@@ -18,8 +39,6 @@ const WorkspacePage = () => {
             </MainLayout>
         );
     }
-
-    const Icon = workspace.iconeWorkspace;
 
     return(
         <MainLayout titulo={`Workspace: ${workspace?.nome}`}>
@@ -40,10 +59,12 @@ const WorkspacePage = () => {
             <div className="w-full bg-[#0F0F12] rounded-xl border border-white/8 px-4 py-6 flex justify-between gap-4">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                     <div
-                        style={{ backgroundColor: `${workspace.cor}1A` }}
+                        style={{ backgroundColor: `${corSelecionada?.cor}1A` }}
                         className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
                     >
-                        <Icon size={32} style={{ color: workspace.cor }} />
+                        {Icon && (
+                            <Icon size={32} style={{ color: corSelecionada?.cor }} />
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -69,9 +90,29 @@ const WorkspacePage = () => {
                     </div>
                 </div>
 
-                <button className="shrink-0 self-start cursor-pointer text-[#E5E1E4] rounded-lg p-2 transition-all duration-200 hover:bg-white/5 hover:text-white">
-                    <EllipsisVertical size={20} />
-                </button>
+                <div ref={menuWorkspaceRef} className="relative">
+                    <button onClick={() => setMenuWorkspaceAberto((prev) => !prev)} className="shrink-0 self-start cursor-pointer text-[#E5E1E4] rounded-lg p-2 transition-all duration-200 hover:bg-white/5 hover:text-white">
+                        <EllipsisVertical size={20} />
+                    </button>
+
+                    {menuWorkspaceAberto && (
+                        <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
+                            <button onClick={() => navigate(`/editar-workspace/${workspace.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                                <SquarePen size={18} />
+                                Editar
+                            </button>
+
+                            <div className="h-px bg-white/10" />
+
+                            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                                <Trash size={18} />
+                                Deletar
+                            </button>
+                        </div>
+
+                        
+                    )}
+                </div>
             </div>
 
             <div className="mt-5">

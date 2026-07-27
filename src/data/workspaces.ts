@@ -1,4 +1,3 @@
-import { Book, Brain, SquareChartGantt, SquareUserRound } from "lucide-react";
 import type { Workspace } from "../types/workspaceTypes";
 
 export const workspaces: Workspace[] = [
@@ -11,8 +10,8 @@ export const workspaces: Workspace[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         qntTarefas: 3,
-        iconeWorkspace: Brain,
-        cor: "#12B5FD"
+        iconeWorkspace: "learning",
+        cor: "blue"
     },
     {
         id: 2,
@@ -23,8 +22,8 @@ export const workspaces: Workspace[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         qntTarefas: 10,
-        iconeWorkspace: Book,
-        cor: "#BEF4FF"
+        iconeWorkspace: "book",
+        cor: "cyan"
     },
     {
         id: 3,
@@ -35,8 +34,8 @@ export const workspaces: Workspace[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         qntTarefas: 7,
-        iconeWorkspace: SquareChartGantt,
-        cor: "#EC4899"
+        iconeWorkspace: "project",
+        cor: "pink"
     },
     {
         id: 4,
@@ -47,7 +46,7 @@ export const workspaces: Workspace[] = [
         atualizadoEm: "10/10/2026",
         ativo: true,
         qntTarefas: 19,
-        iconeWorkspace: SquareUserRound,
-        cor: "#D9E2FF"
+        iconeWorkspace: "personal",
+        cor: "white"
     },
 ]
