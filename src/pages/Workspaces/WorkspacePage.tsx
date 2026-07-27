@@ -6,6 +6,7 @@ import CardTarefa from "./components/CardTarefa";
 import { tarefas } from "../../data/tarefas";
 import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
+import { workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
 
 const WorkspacePage = () => {
     const { id } = useParams();
@@ -27,6 +28,10 @@ const WorkspacePage = () => {
     }, []);
 
     const workspace = workspaces.find(w => w.id === Number(id)) ?? null;
+    const iconSelecionado = workspaceIcons.find(i => i.id === workspace?.iconeWorkspace);
+    const Icon = iconSelecionado?.icon;
+    const corSelecionada = workspaceColors.find(c => c.id === workspace?.cor);
+
     if (!workspace) {
         return (
             <MainLayout titulo="Workspace">
@@ -34,8 +39,6 @@ const WorkspacePage = () => {
             </MainLayout>
         );
     }
-
-    const Icon = workspace.iconeWorkspace;
 
     return(
         <MainLayout titulo={`Workspace: ${workspace?.nome}`}>
@@ -56,10 +59,12 @@ const WorkspacePage = () => {
             <div className="w-full bg-[#0F0F12] rounded-xl border border-white/8 px-4 py-6 flex justify-between gap-4">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                     <div
-                        style={{ backgroundColor: `${workspace.cor}1A` }}
+                        style={{ backgroundColor: `${corSelecionada?.cor}1A` }}
                         className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
                     >
-                        <Icon size={32} style={{ color: workspace.cor }} />
+                        {Icon && (
+                            <Icon size={32} style={{ color: corSelecionada?.cor }} />
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -92,7 +97,7 @@ const WorkspacePage = () => {
 
                     {menuWorkspaceAberto && (
                         <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => navigate(`/editar-workspace/${workspace.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
                                 <SquarePen size={18} />
                                 Editar
                             </button>

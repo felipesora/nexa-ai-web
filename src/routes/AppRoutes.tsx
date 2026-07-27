@@ -13,6 +13,7 @@ import CadastrarWorkspace from "../pages/Workspaces/CadastrarWorkspace";
 import Calendario from "../pages/Calendario";
 import Kanban from "../pages/Kanban";
 import MeusDados from "../pages/MeusDados";
+import EditarWorkspace from "../pages/Workspaces/EditarWorkspace";
 
 export default function AppRoutes() {
     return(
@@ -28,6 +29,7 @@ export default function AppRoutes() {
                 <Route path="/workspace/:id" element={<WorkspacePage />} />
                 <Route path="/tarefa/:id" element={<Tarefa />} />
                 <Route path="/cadastro-workspace" element={<CadastrarWorkspace />} />
+                <Route path="/editar-workspace/:id" element={<EditarWorkspace />} />
                 <Route path="/cadastro-tarefa" element={<CadastroTarefa />} />
                 <Route path="/cadastro-subtarefa" element={<CadastroSubtarefa />} />
                 <Route path="/calendario" element={<Calendario />} />
