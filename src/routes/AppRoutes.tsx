@@ -18,6 +18,7 @@ import EditarTarefa from "../pages/Tarefa/EditarTarefa";
 import EditarSubtarefa from "../pages/Subtarefa/EditarSubtarefa";
 import Tags from "../pages/Tags";
 import CadastrarTag from "../pages/Tags/CadastrarTag";
+import EditarTag from "../pages/Tags/EditarTag";
 
 export default function AppRoutes() {
     return(
@@ -42,6 +43,7 @@ export default function AppRoutes() {
                 <Route path="/kanban" element={<Kanban />} />
                 <Route path="/tags" element={<Tags />} />
                 <Route path="/cadastro-tag" element={<CadastrarTag />} />
+                <Route path="/editar-tag/:id" element={<EditarTag />} />
             </Routes>
         </BrowserRouter>
     );
