@@ -16,6 +16,7 @@ import MeusDados from "../pages/MeusDados";
 import EditarWorkspace from "../pages/Workspaces/EditarWorkspace";
 import EditarTarefa from "../pages/Tarefa/EditarTarefa";
 import EditarSubtarefa from "../pages/Subtarefa/EditarSubtarefa";
+import Tags from "../pages/Tags";
 
 export default function AppRoutes() {
     return(
@@ -38,6 +39,7 @@ export default function AppRoutes() {
                 <Route path="/editar-subtarefa/:id" element={<EditarSubtarefa />} />
                 <Route path="/calendario" element={<Calendario />} />
                 <Route path="/kanban" element={<Kanban />} />
+                <Route path="/tags" element={<Tags />} />
             </Routes>
         </BrowserRouter>
     );
