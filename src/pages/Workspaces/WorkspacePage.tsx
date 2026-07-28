@@ -7,6 +7,7 @@ import { tarefas } from "../../data/tarefas";
 import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
 import { workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
+import { tags } from "../../data/tags";
 
 const WorkspacePage = () => {
     const { id } = useParams();
@@ -162,6 +163,26 @@ const WorkspacePage = () => {
                             type="text"
                             placeholder="Pesquisar tarefas..."
                             className="w-full bg-[#0F0F12] border border-white/8 rounded-xl pl-11 pr-4 py-2.5 text-[14px] text-[#E5E1E4] placeholder:text-[#8E909A] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15"
+                        />
+                    </div>
+
+                    <div className="relative w-full sm:w-44">
+                        <select
+                            name="tag"
+                            id="tag"
+                            defaultValue=""
+                            className="appearance-none w-full bg-[#0F0F12] border border-white/8 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-[#E5E1E4] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15 cursor-pointer">
+                            <option value="" disabled>
+                                Tag
+                            </option>
+                            {tags.map((tag) => (
+                                <option key={tag.id} value={tag.id}>{tag.nome}</option>
+                            ))}
+                        </select>
+
+                        <ChevronDown
+                            size={18}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8E909A] pointer-events-none"
                         />
                     </div>
 

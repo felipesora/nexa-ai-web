@@ -142,11 +142,11 @@ const EditarTag = () => {
                         </label>
 
                         {corSelecionada && (
-                            <div style={{ backgroundColor: `${corSelecionada.cor}1A`, borderColor: `${corSelecionada.cor}` }} className={`border rounded-2xl p-3 transition-colors flex items-center justify-between`}>
+                            <div style={{ backgroundColor: `${corSelecionada.cor}1A`, "--tag-color": corSelecionada.cor,} as React.CSSProperties} className="border border-transparent rounded-2xl p-3 flex items-center justify-between transition-all duration-300 hover:[border-color:var(--tag-color)]">
                                 <div className="flex items-center gap-2">
                                     <TagIcon
                                         size={20}
-                                        color={"#FFFFFF"}
+                                        color={corSelecionada.cor}
                                     />
                                     <h3 className="text-[#E5E1E4] font-semibold text-md truncate max-w-[180px]">
                                         {form.nome || "Nova Tag"}

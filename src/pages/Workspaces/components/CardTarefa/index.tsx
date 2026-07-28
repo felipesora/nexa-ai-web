@@ -3,6 +3,8 @@ import type { Tarefa } from "../../../../types/tarefaTypes";
 import { useNavigate } from "react-router-dom";
 import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../../../utils/formatters";
 import { useEffect, useRef, useState } from "react";
+import { tags } from "../../../../data/tags";
+import CardTagInfo from "../CardTagInfo";
 
 interface CardTarefaProps {
     tarefa: Tarefa;
@@ -124,6 +126,12 @@ const CardTarefa = ({ tarefa }: CardTarefaProps) => {
                 <p className={`rounded-sm px-3 py-0.5 text-[13px] w-fit ${estilosStatusDaTarefa(tarefa.status)}`}>
                     {formatarStatusDaTarefa(tarefa.status)}
                 </p>
+            </div>
+
+            <div className="mt-2 flex flex-wrap gap-2 items-center">
+                {tags.map((tag) => (
+                    <CardTagInfo key={tag.id} tag={tag} />
+                ))}
             </div>
 
             <div className="mt-4 flex justify-end">
