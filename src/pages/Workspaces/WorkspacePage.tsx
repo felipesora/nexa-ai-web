@@ -252,10 +252,10 @@ const WorkspacePage = () => {
             </div>
 
             {workspaceSelecionado && (
-                <Modal
+                <Modal 
                     tipo="DESTRUTIVO"
-                    titulo="Excluir Workspace"
-                    descricao={`Tem certeza que deseja excluir o workspace "${workspaceSelecionado.nome}"? Essa ação não poderá ser desfeita.`}
+                    titulo="Excluir workspace?"
+                    descricao={`Você está prestes a excluir o workspace "${workspaceSelecionado.nome}". Todas as tarefas, subtarefas e demais informações vinculadas a ele serão removidas permanentemente.`}
                     onCancelar={() => setWorkspaceSelecionado(null)}
                     onConfirmar={() => {
                         console.log("Excluir", workspaceSelecionado.id);
@@ -268,8 +268,8 @@ const WorkspacePage = () => {
             {tarefaSelecionada && (
                 <Modal
                     tipo="DESTRUTIVO"
-                    titulo="Excluir Tarefa"
-                    descricao={`Tem certeza que deseja excluir a tarefa "${tarefaSelecionada.titulo}"? Essa ação não poderá ser desfeita.`}
+                    titulo="Excluir tarefa?"
+                    descricao={`A tarefa "${tarefaSelecionada.titulo}" será removida permanentemente. Essa ação não poderá ser desfeita.`}
                     onCancelar={() => setTarefaSelecionada(null)}
                     onConfirmar={() => {
                         console.log("Excluir", tarefaSelecionada.id);

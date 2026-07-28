@@ -50,8 +50,8 @@ const Workspaces = () => {
             {workspaceSelecionado && (
                 <Modal 
                     tipo="DESTRUTIVO"
-                    titulo="Excluir Workspace"
-                    descricao={`Tem certeza que deseja excluir o workspace "${workspaceSelecionado.nome}"? Essa ação não poderá ser desfeita.`}
+                    titulo="Excluir workspace?"
+                    descricao={`Você está prestes a excluir o workspace "${workspaceSelecionado.nome}". Todas as tarefas, subtarefas e demais informações vinculadas a ele serão removidas permanentemente.`}
                     onCancelar={() => setWorkspaceSelecionado(null)}
                     onConfirmar={() => {
                         console.log("Excluir", workspaceSelecionado.id);

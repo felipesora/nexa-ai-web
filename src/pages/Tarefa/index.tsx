@@ -223,8 +223,8 @@ const Tarefa = () => {
             {tarefaSelecionada && (
                 <Modal
                     tipo="DESTRUTIVO"
-                    titulo="Excluir Tarefa"
-                    descricao={`Tem certeza que deseja excluir a tarefa "${tarefaSelecionada.titulo}"? Essa ação não poderá ser desfeita.`}
+                    titulo="Excluir tarefa?"
+                    descricao={`A tarefa "${tarefaSelecionada.titulo}" será removida permanentemente. Essa ação não poderá ser desfeita.`}
                     onCancelar={() => setTarefaSelecionada(null)}
                     onConfirmar={() => {
                         console.log("Excluir", tarefaSelecionada.id);
@@ -237,8 +237,8 @@ const Tarefa = () => {
             {subtarefaSelecionada && (
                 <Modal
                     tipo="DESTRUTIVO"
-                    titulo="Excluir Subtarefa"
-                    descricao={`Tem certeza que deseja excluir a subtarefa "${subtarefaSelecionada.titulo}"? Essa ação não poderá ser desfeita.`}
+                    titulo="Excluir subtarefa?"
+                    descricao={`Você está prestes a excluir a subtarefa "${subtarefaSelecionada.titulo}". Essa ação não poderá ser desfeita.`}
                     onCancelar={() => setSubtarefaSelecionada(null)}
                     onConfirmar={() => {
                         console.log("Excluir", subtarefaSelecionada.id);

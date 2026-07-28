@@ -51,8 +51,8 @@ const Tags = () => {
             {tagSelecionada && (
                 <Modal
                     tipo="DESTRUTIVO"
-                    titulo="Excluir Tag"
-                    descricao={`Tem certeza que deseja excluir a tag "${tagSelecionada.nome}"? Essa ação não poderá ser desfeita.`}
+                    titulo="Excluir tag?"
+                    descricao={`A tag "${tagSelecionada.nome}" será removida. As tarefas associadas perderão essa classificação.`}
                     onCancelar={() => setTagSelecionada(null)}
                     onConfirmar={() => {
                         console.log("Excluir", tagSelecionada.id);
