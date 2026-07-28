@@ -3,9 +3,14 @@ import MainLayout from "../../layouts/MainLayout";
 import { Plus } from "lucide-react";
 import CardTag from "./components/CardTag";
 import { tags } from "../../data/tags";
+import type { Tag } from "../../types/tagTypes";
+import { useState } from "react";
+import Modal from "../../components/Modal";
 
 const Tags = () => {
     const navigate = useNavigate();
+
+    const [tagSelecionada, setTagSelecionada] = useState<Tag | null>(null);
 
     return(
         <MainLayout titulo="Tags">
@@ -37,10 +42,25 @@ const Tags = () => {
                         <CardTag
                             key={tag.id}
                             tag={tag}
+                            onDeletar={setTagSelecionada}
                         />
                     ))}
                 </div>
             </div>
+
+            {tagSelecionada && (
+                <Modal
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir Tag"
+                    descricao={`Tem certeza que deseja excluir a tag "${tagSelecionada.nome}"? Essa ação não poderá ser desfeita.`}
+                    onCancelar={() => setTagSelecionada(null)}
+                    onConfirmar={() => {
+                        console.log("Excluir", tagSelecionada.id);
+                        
+                        setTagSelecionada(null);
+                    }}
+                />
+            )}
         </MainLayout>
     );
 }

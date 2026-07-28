@@ -6,9 +6,10 @@ import { useNavigate } from "react-router-dom";
 
 interface CardTagProps {
     tag: Tag;
+    onDeletar: (tag: Tag) => void;
 }
 
-const CardTag = ({ tag }: CardTagProps) => {
+const CardTag = ({ tag, onDeletar }: CardTagProps) => {
     const navigate = useNavigate();
     const [menuAberto, setMenuAberto] = useState<boolean>(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -54,7 +55,7 @@ const CardTag = ({ tag }: CardTagProps) => {
 
                         <div className="h-px bg-white/10" />
 
-                        <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                        <button onClick={() => onDeletar(tag)} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                             <Trash size={18} />
                             Deletar
                         </button>
