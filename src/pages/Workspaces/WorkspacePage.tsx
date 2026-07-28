@@ -8,10 +8,16 @@ import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
 import { workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
 import { tags } from "../../data/tags";
+import type { Workspace } from "../../types/workspaceTypes";
+import type { Tarefa } from "../../types/tarefaTypes";
+import Modal from "../../components/Modal";
 
 const WorkspacePage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const [workspaceSelecionado, setWorkspaceSelecionado] = useState<Workspace | null>(null);
+    const [tarefaSelecionada, setTarefaSelecionada] = useState<Tarefa | null>(null);
 
     const [menuWorkspaceAberto, setMenuWorkspaceAberto] = useState<boolean>(false);
     const menuWorkspaceRef = useRef<HTMLDivElement>(null);
@@ -105,7 +111,7 @@ const WorkspacePage = () => {
 
                             <div className="h-px bg-white/10" />
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => setWorkspaceSelecionado(workspace)} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                 <Trash size={18} />
                                 Deletar
                             </button>
@@ -239,10 +245,39 @@ const WorkspacePage = () => {
                         <CardTarefa
                             key={tarefa.id}
                             tarefa={tarefa}
+                            onDeletar={setTarefaSelecionada}
                         />
                     ))}
                 </div>
             </div>
+
+            {workspaceSelecionado && (
+                <Modal
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir Workspace"
+                    descricao={`Tem certeza que deseja excluir o workspace "${workspaceSelecionado.nome}"? Essa ação não poderá ser desfeita.`}
+                    onCancelar={() => setWorkspaceSelecionado(null)}
+                    onConfirmar={() => {
+                        console.log("Excluir", workspaceSelecionado.id);
+                        
+                        setWorkspaceSelecionado(null);
+                    }}
+                />
+            )}
+
+            {tarefaSelecionada && (
+                <Modal
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir Tarefa"
+                    descricao={`Tem certeza que deseja excluir a tarefa "${tarefaSelecionada.titulo}"? Essa ação não poderá ser desfeita.`}
+                    onCancelar={() => setTarefaSelecionada(null)}
+                    onConfirmar={() => {
+                        console.log("Excluir", tarefaSelecionada.id);
+                        
+                        setTarefaSelecionada(null);
+                    }}
+                />
+            )}
         </MainLayout>
     );
 }

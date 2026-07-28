@@ -37,7 +37,6 @@ const configuracoes = {
 };
 
 const Modal = ({ tipo, titulo, descricao, confirmacao, onCancelar, onConfirmar }: ModalProps) => {
-    console.log("Modal renderizado");
     const config = configuracoes[tipo];
     const Icone = config.Icone;
     

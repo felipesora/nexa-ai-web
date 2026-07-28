@@ -8,9 +8,10 @@ import CardTagInfo from "../CardTagInfo";
 
 interface CardTarefaProps {
     tarefa: Tarefa;
+    onDeletar: (tarefa: Tarefa) => void;
 }
 
-const CardTarefa = ({ tarefa }: CardTarefaProps) => {
+const CardTarefa = ({ tarefa, onDeletar }: CardTarefaProps) => {
     const navigate = useNavigate();
 
     const [menuTarefaAberto, setMenuTarefaAberto] = useState<boolean>(false);
@@ -87,7 +88,7 @@ const CardTarefa = ({ tarefa }: CardTarefaProps) => {
                                 </div>
                             )}
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => onDeletar(tarefa)} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                 <Trash size={18} />
                                 Deletar
                             </button>
