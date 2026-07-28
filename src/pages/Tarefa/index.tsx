@@ -6,10 +6,16 @@ import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDa
 import { subtarefas } from "../../data/subtarefas";
 import CardSubtarefa from "./components/CardSubtarefa";
 import { useEffect, useRef, useState } from "react";
+import type { Tarefa } from "../../types/tarefaTypes";
+import type { Subtarefa } from "../../types/subtarefaTypes";
+import Modal from "../../components/Modal";
 
 const Tarefa = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const [tarefaSelecionada, setTarefaSelecionada] = useState<Tarefa | null>(null);
+    const [subtarefaSelecionada, setSubtarefaSelecionada] = useState<Subtarefa | null>(null);
 
     const [menuTarefaAberto, setMenuTarefaAberto] = useState<boolean>(false);
     const menuTarefaRef = useRef<HTMLDivElement>(null);
@@ -119,7 +125,7 @@ const Tarefa = () => {
                                         </div>
                                     )}
 
-                                    <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                                    <button onClick={() => setTarefaSelecionada(tarefa)} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                         <Trash size={18} />
                                         Deletar
                                     </button>
@@ -208,10 +214,39 @@ const Tarefa = () => {
                         <CardSubtarefa
                             key={subtarefa.id}
                             subtarefa={subtarefa}
+                            onDeletar={setSubtarefaSelecionada}
                         />
                     ))}
                 </div>
             </div>
+
+            {tarefaSelecionada && (
+                <Modal
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir Tarefa"
+                    descricao={`Tem certeza que deseja excluir a tarefa "${tarefaSelecionada.titulo}"? Essa ação não poderá ser desfeita.`}
+                    onCancelar={() => setTarefaSelecionada(null)}
+                    onConfirmar={() => {
+                        console.log("Excluir", tarefaSelecionada.id);
+                        
+                        setTarefaSelecionada(null);
+                    }}
+                />
+            )}
+
+            {subtarefaSelecionada && (
+                <Modal
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir Subtarefa"
+                    descricao={`Tem certeza que deseja excluir a subtarefa "${subtarefaSelecionada.titulo}"? Essa ação não poderá ser desfeita.`}
+                    onCancelar={() => setSubtarefaSelecionada(null)}
+                    onConfirmar={() => {
+                        console.log("Excluir", subtarefaSelecionada.id);
+                        
+                        setSubtarefaSelecionada(null);
+                    }}
+                />
+            )}
         </MainLayout>
     );
 }

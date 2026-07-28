@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 interface CardSubtarefaProps {
     subtarefa: Subtarefa;
+    onDeletar: (subtarefa: Subtarefa) => void;
 }
 
-const CardSubtarefa = ({ subtarefa }: CardSubtarefaProps) => {
+const CardSubtarefa = ({ subtarefa, onDeletar }: CardSubtarefaProps) => {
     const navigate = useNavigate();
 
     const [checked, setChecked] = useState<boolean>(subtarefa.concluida);
@@ -66,7 +67,7 @@ const CardSubtarefa = ({ subtarefa }: CardSubtarefaProps) => {
 
                                 <div className="h-px bg-white/10" />
 
-                                <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                                <button onClick={() => onDeletar(subtarefa)} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                     <Trash size={18} />
                                     Deletar
                                 </button>
