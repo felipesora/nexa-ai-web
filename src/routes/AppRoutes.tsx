@@ -17,6 +17,7 @@ import EditarWorkspace from "../pages/Workspaces/EditarWorkspace";
 import EditarTarefa from "../pages/Tarefa/EditarTarefa";
 import EditarSubtarefa from "../pages/Subtarefa/EditarSubtarefa";
 import Tags from "../pages/Tags";
+import CadastrarTag from "../pages/Tags/CadastrarTag";
 
 export default function AppRoutes() {
     return(
@@ -40,6 +41,7 @@ export default function AppRoutes() {
                 <Route path="/calendario" element={<Calendario />} />
                 <Route path="/kanban" element={<Kanban />} />
                 <Route path="/tags" element={<Tags />} />
+                <Route path="/cadastro-tag" element={<CadastrarTag />} />
             </Routes>
         </BrowserRouter>
     );

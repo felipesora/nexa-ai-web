@@ -22,6 +22,16 @@ const Tags = () => {
                     </div>
                 </div>
 
+                <div className="flex justify-end">
+                    <button
+                        onClick={() => navigate("/cadastro-tag")}
+                        className="w-full md:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center justify-center gap-1"
+                    >
+                        <Plus size={22} />
+                        Nova Tag
+                    </button>
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                     {tags.map((tag) => (
                         <CardTag
