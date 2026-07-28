@@ -8,9 +8,10 @@ interface CardWorkspaceProps {
     icone: string;
     workspace: Workspace;
     cor: string
+    onDeletar: (workspace: Workspace) => void;
 }
 
-const CardWorkspace = ({ icone , workspace, cor }: CardWorkspaceProps) => {
+const CardWorkspace = ({ icone , workspace, cor, onDeletar }: CardWorkspaceProps) => {
     const navigate = useNavigate();
 
     const iconSelecionado = workspaceIcons.find(i => i.id === icone);
@@ -60,7 +61,7 @@ const CardWorkspace = ({ icone , workspace, cor }: CardWorkspaceProps) => {
 
                             <div className="h-px bg-white/10" />
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => onDeletar(workspace)} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                 <Trash size={18} />
                                 Deletar
                             </button>
