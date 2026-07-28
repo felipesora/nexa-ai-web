@@ -378,6 +378,7 @@ const MeusDados = () => {
                     tipo="DESTRUTIVO"
                     titulo="Excluir conta?"
                     descricao="Você está prestes a excluir sua conta permanentemente. Todos os seus workspaces, tarefas, subtarefas, tags e demais dados serão removidos e não poderão ser recuperados."
+                    textoConfirmacao="EXCLUIR CONTA"
                     onCancelar={() => setModalExcluirContaAberto(false)}
                     onConfirmar={() => {
                         console.log("Excluir Conta");

@@ -1,10 +1,13 @@
 import { CircleCheck, Info, TriangleAlert, X } from "lucide-react";
+import { useMemo, useState } from "react";
 
 interface ModalProps {
     tipo: "DESTRUTIVO" | "INFORMATIVO" | "CONFIRMACAO";
     titulo: string;
     descricao: string;
-    confirmacao?: boolean
+
+    textoConfirmacao?: string;
+
     onCancelar?: () => void;
     onConfirmar?: () => void;
 }
@@ -36,9 +39,20 @@ const configuracoes = {
     },
 };
 
-const Modal = ({ tipo, titulo, descricao, confirmacao, onCancelar, onConfirmar }: ModalProps) => {
+const Modal = ({ tipo, titulo, descricao, textoConfirmacao, onCancelar, onConfirmar }: ModalProps) => {
     const config = configuracoes[tipo];
     const Icone = config.Icone;
+
+    const [confirmacao, setConfirmacao] = useState("");
+
+    const podeConfirmar = useMemo(() => {
+        if (!textoConfirmacao) return true;
+
+        return (
+            confirmacao.trim().toLowerCase() ===
+            textoConfirmacao.trim().toLowerCase()
+        );
+    }, [confirmacao, textoConfirmacao]);
     
     return(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/10 backdrop-blur-sm p-4">
@@ -67,6 +81,24 @@ const Modal = ({ tipo, titulo, descricao, confirmacao, onCancelar, onConfirmar }
                     <p className="max-w-sm text-center text-sm leading-6 text-[#8E909A] break-words">
                         {descricao}
                     </p>
+
+                    {textoConfirmacao && (
+                        <div className="mt-5 px-6">
+                            <p className="text-sm text-[#C5C6D0] mb-2">
+                                Para confirmar esta ação, digite:{" "}
+                                <span className="font-semibold text-red-400 whitespace-nowrap">
+                                    {textoConfirmacao}
+                                </span>
+                            </p>
+
+                            <input
+                                value={confirmacao}
+                                onChange={(e) => setConfirmacao(e.target.value)}
+                                placeholder=""
+                                className="w-full text-[14px] rounded-xl bg-[#0F0F12] border border-white/10 px-4 py-2 text-white placeholder:text-[#6F7482] outline-none focus:border-red-400"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 <div className="mt-6 border-t border-white/8 py-5 px-4 flex justify-end gap-3">
@@ -78,6 +110,7 @@ const Modal = ({ tipo, titulo, descricao, confirmacao, onCancelar, onConfirmar }
                     </button>
 
                     <button
+                        disabled={!podeConfirmar}
                         onClick={onConfirmar}
                         className={`px-4 py-2 rounded-lg text-white transition cursor-pointer ${config.button}`}
                     >
