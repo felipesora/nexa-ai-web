@@ -19,6 +19,7 @@ import Tags from "../pages/Tags";
 import CadastrarTag from "../pages/Tags/CadastrarTag";
 import EditarTag from "../pages/Tags/EditarTag";
 import TarefaPage from "../pages/Tarefa/TarefaPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 export default function AppRoutes() {
     return(
@@ -44,6 +45,7 @@ export default function AppRoutes() {
                 <Route path="/tags" element={<Tags />} />
                 <Route path="/cadastro-tag" element={<CadastrarTag />} />
                 <Route path="/editar-tag/:id" element={<EditarTag />} />
+                <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </BrowserRouter>
     );
