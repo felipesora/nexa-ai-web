@@ -112,7 +112,7 @@ const Modal = ({ tipo, titulo, descricao, textoConfirmacao, onCancelar, onConfir
                     <button
                         disabled={!podeConfirmar}
                         onClick={onConfirmar}
-                        className={`px-4 py-2 rounded-lg text-white transition cursor-pointer ${config.button}`}
+                        className={`px-4 py-2 rounded-lg text-white transition cursor-pointer ${config.button} disabled:bg-gray-600 disabled:text-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-600 disabled:opacity-70`}
                     >
                         {config.textoBotao}
                     </button>
