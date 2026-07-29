@@ -10,7 +10,7 @@ import type { Tarefa } from "../../types/tarefaTypes";
 import type { Subtarefa } from "../../types/subtarefaTypes";
 import Modal from "../../components/Modal";
 
-const Tarefa = () => {
+const TarefaPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -251,4 +251,4 @@ const Tarefa = () => {
     );
 }
 
-export default Tarefa;
+export default TarefaPage;
