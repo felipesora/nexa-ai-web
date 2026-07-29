@@ -3,12 +3,15 @@ import type { Tarefa } from "../../../../types/tarefaTypes";
 import { useNavigate } from "react-router-dom";
 import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../../../utils/formatters";
 import { useEffect, useRef, useState } from "react";
+import { tags } from "../../../../data/tags";
+import CardTagInfo from "../CardTagInfo";
 
 interface CardTarefaProps {
     tarefa: Tarefa;
+    onDeletar: (tarefa: Tarefa) => void;
 }
 
-const CardTarefa = ({ tarefa }: CardTarefaProps) => {
+const CardTarefa = ({ tarefa, onDeletar }: CardTarefaProps) => {
     const navigate = useNavigate();
 
     const [menuTarefaAberto, setMenuTarefaAberto] = useState<boolean>(false);
@@ -85,7 +88,7 @@ const CardTarefa = ({ tarefa }: CardTarefaProps) => {
                                 </div>
                             )}
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => onDeletar(tarefa)} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                 <Trash size={18} />
                                 Deletar
                             </button>
@@ -124,6 +127,12 @@ const CardTarefa = ({ tarefa }: CardTarefaProps) => {
                 <p className={`rounded-sm px-3 py-0.5 text-[13px] w-fit ${estilosStatusDaTarefa(tarefa.status)}`}>
                     {formatarStatusDaTarefa(tarefa.status)}
                 </p>
+            </div>
+
+            <div className="mt-2 flex flex-wrap gap-2 items-center">
+                {tags.map((tag) => (
+                    <CardTagInfo key={tag.id} tag={tag} />
+                ))}
             </div>
 
             <div className="mt-4 flex justify-end">

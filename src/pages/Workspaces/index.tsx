@@ -3,9 +3,14 @@ import { workspaces } from "../../data/workspaces";
 import MainLayout from "../../layouts/MainLayout";
 import CardWorkspace from "./components/CardWorkspace";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import type { Workspace } from "../../types/workspaceTypes";
+import Modal from "../../components/Modal";
 
 const Workspaces = () => {
     const navigate = useNavigate();
+
+    const [workspaceSelecionado, setWorkspaceSelecionado] = useState<Workspace | null>(null);
 
     return(
         <MainLayout titulo="Workspaces">
@@ -35,11 +40,26 @@ const Workspaces = () => {
                             icone={workspace.iconeWorkspace}
                             workspace={workspace}
                             cor={workspace.cor}
+                            onDeletar={setWorkspaceSelecionado}
                         />
                     ))}
                 </div>
 
             </div>
+
+            {workspaceSelecionado && (
+                <Modal 
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir workspace?"
+                    descricao={`Você está prestes a excluir o workspace "${workspaceSelecionado.nome}". Todas as tarefas, subtarefas e demais informações vinculadas a ele serão removidas permanentemente.`}
+                    onCancelar={() => setWorkspaceSelecionado(null)}
+                    onConfirmar={() => {
+                        console.log("Excluir", workspaceSelecionado.id);
+                        
+                        setWorkspaceSelecionado(null);
+                    }}
+                />
+            )}
         </MainLayout>
     );
 };

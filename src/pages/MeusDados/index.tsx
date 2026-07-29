@@ -2,9 +2,12 @@ import { ArrowLeft, Eye, EyeOff, Lock, Mail, Save, User } from "lucide-react";
 import MainLayout from "../../layouts/MainLayout";
 import { useNavigate } from "react-router-dom";
 import { useState, type SubmitEvent } from "react";
+import Modal from "../../components/Modal";
 
 const MeusDados = () => {
     const navigate = useNavigate();
+
+    const [modalExcluirContaAberto, setModalExcluirContaAberto] = useState<boolean>(false);
 
     const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -360,6 +363,7 @@ const MeusDados = () => {
 
                     <div className="mt-4">
                         <button
+                            onClick={() => setModalExcluirContaAberto(true)}
                             type="button"
                             className="cursor-pointer rounded-xl text-[15px] bg-red-600 px-5 py-3 text-white font-medium transition-colors hover:bg-red-700"
                         >
@@ -368,6 +372,21 @@ const MeusDados = () => {
                     </div>
                 </div>
             </div>
+
+            {modalExcluirContaAberto  && (
+                <Modal
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir conta?"
+                    descricao="Você está prestes a excluir sua conta permanentemente. Todos os seus workspaces, tarefas, subtarefas, tags e demais dados serão removidos e não poderão ser recuperados."
+                    textoConfirmacao="EXCLUIR CONTA"
+                    onCancelar={() => setModalExcluirContaAberto(false)}
+                    onConfirmar={() => {
+                        console.log("Excluir Conta");
+                        
+                        setModalExcluirContaAberto(false);
+                    }}
+                />
+            )}
         </MainLayout>
     );
 }

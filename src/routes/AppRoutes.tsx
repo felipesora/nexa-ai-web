@@ -6,7 +6,6 @@ import Dashboard from "../pages/Dashboard";
 import ChatIA from "../pages/ChatIA";
 import Workspaces from "../pages/Workspaces";
 import WorkspacePage from "../pages/Workspaces/WorkspacePage";
-import Tarefa from "../pages/Tarefa";
 import CadastroTarefa from "../pages/Tarefa/CadastroTarefa";
 import CadastroSubtarefa from "../pages/Subtarefa/CadastroSubtarefa";
 import CadastrarWorkspace from "../pages/Workspaces/CadastrarWorkspace";
@@ -16,6 +15,10 @@ import MeusDados from "../pages/MeusDados";
 import EditarWorkspace from "../pages/Workspaces/EditarWorkspace";
 import EditarTarefa from "../pages/Tarefa/EditarTarefa";
 import EditarSubtarefa from "../pages/Subtarefa/EditarSubtarefa";
+import Tags from "../pages/Tags";
+import CadastrarTag from "../pages/Tags/CadastrarTag";
+import EditarTag from "../pages/Tags/EditarTag";
+import TarefaPage from "../pages/Tarefa/TarefaPage";
 
 export default function AppRoutes() {
     return(
@@ -29,7 +32,7 @@ export default function AppRoutes() {
                 <Route path="/chat-ia" element={<ChatIA />} />
                 <Route path="/workspaces" element={<Workspaces />} />
                 <Route path="/workspace/:id" element={<WorkspacePage />} />
-                <Route path="/tarefa/:id" element={<Tarefa />} />
+                <Route path="/tarefa/:id" element={<TarefaPage />} />
                 <Route path="/cadastro-workspace" element={<CadastrarWorkspace />} />
                 <Route path="/editar-workspace/:id" element={<EditarWorkspace />} />
                 <Route path="/cadastro-tarefa" element={<CadastroTarefa />} />
@@ -38,6 +41,9 @@ export default function AppRoutes() {
                 <Route path="/editar-subtarefa/:id" element={<EditarSubtarefa />} />
                 <Route path="/calendario" element={<Calendario />} />
                 <Route path="/kanban" element={<Kanban />} />
+                <Route path="/tags" element={<Tags />} />
+                <Route path="/cadastro-tag" element={<CadastrarTag />} />
+                <Route path="/editar-tag/:id" element={<EditarTag />} />
             </Routes>
         </BrowserRouter>
     );

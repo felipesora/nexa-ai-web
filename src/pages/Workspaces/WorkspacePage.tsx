@@ -7,10 +7,17 @@ import { tarefas } from "../../data/tarefas";
 import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
 import { workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
+import { tags } from "../../data/tags";
+import type { Workspace } from "../../types/workspaceTypes";
+import type { Tarefa } from "../../types/tarefaTypes";
+import Modal from "../../components/Modal";
 
 const WorkspacePage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const [workspaceSelecionado, setWorkspaceSelecionado] = useState<Workspace | null>(null);
+    const [tarefaSelecionada, setTarefaSelecionada] = useState<Tarefa | null>(null);
 
     const [menuWorkspaceAberto, setMenuWorkspaceAberto] = useState<boolean>(false);
     const menuWorkspaceRef = useRef<HTMLDivElement>(null);
@@ -104,7 +111,7 @@ const WorkspacePage = () => {
 
                             <div className="h-px bg-white/10" />
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => setWorkspaceSelecionado(workspace)} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                 <Trash size={18} />
                                 Deletar
                             </button>
@@ -167,6 +174,26 @@ const WorkspacePage = () => {
 
                     <div className="relative w-full sm:w-44">
                         <select
+                            name="tag"
+                            id="tag"
+                            defaultValue=""
+                            className="appearance-none w-full bg-[#0F0F12] border border-white/8 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-[#E5E1E4] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15 cursor-pointer">
+                            <option value="" disabled>
+                                Tag
+                            </option>
+                            {tags.map((tag) => (
+                                <option key={tag.id} value={tag.id}>{tag.nome}</option>
+                            ))}
+                        </select>
+
+                        <ChevronDown
+                            size={18}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8E909A] pointer-events-none"
+                        />
+                    </div>
+
+                    <div className="relative w-full sm:w-44">
+                        <select
                             name="status"
                             id="status"
                             defaultValue=""
@@ -218,10 +245,39 @@ const WorkspacePage = () => {
                         <CardTarefa
                             key={tarefa.id}
                             tarefa={tarefa}
+                            onDeletar={setTarefaSelecionada}
                         />
                     ))}
                 </div>
             </div>
+
+            {workspaceSelecionado && (
+                <Modal 
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir workspace?"
+                    descricao={`Você está prestes a excluir o workspace "${workspaceSelecionado.nome}". Todas as tarefas, subtarefas e demais informações vinculadas a ele serão removidas permanentemente.`}
+                    onCancelar={() => setWorkspaceSelecionado(null)}
+                    onConfirmar={() => {
+                        console.log("Excluir", workspaceSelecionado.id);
+                        
+                        setWorkspaceSelecionado(null);
+                    }}
+                />
+            )}
+
+            {tarefaSelecionada && (
+                <Modal
+                    tipo="DESTRUTIVO"
+                    titulo="Excluir tarefa?"
+                    descricao={`A tarefa "${tarefaSelecionada.titulo}" será removida permanentemente. Essa ação não poderá ser desfeita.`}
+                    onCancelar={() => setTarefaSelecionada(null)}
+                    onConfirmar={() => {
+                        console.log("Excluir", tarefaSelecionada.id);
+                        
+                        setTarefaSelecionada(null);
+                    }}
+                />
+            )}
         </MainLayout>
     );
 }
