@@ -44,7 +44,7 @@ const CentralIA = () => {
                         </p>
                     </div>
 
-                    <div className="grid w-full max-w-4xl grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid w-full grid-cols-1 gap-4 px-4 md:grid-cols-2 xl:grid-cols-3 xl:px-8">
                         {acoesIA.map((acao) => {
                             const Icone = acao.icone;
 
