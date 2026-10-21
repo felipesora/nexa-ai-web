@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import "./fullcalendar.css";
 import { estilosPrioridadeDaTarefa, formatarPrioridadeDaTarefa } from "../../utils/formatters";
 
-const Calendario = () => {
+const Agenda = () => {
     const navigate = useNavigate();
 
     const eventos = tarefas.map((tarefa) => {
@@ -26,10 +26,10 @@ const Calendario = () => {
     });
 
     return(
-        <MainLayout titulo="Calendário">
+        <MainLayout titulo="Agenda">
             <div>
                 <h2 className="text-2xl font-bold text-[#E5E1E4]">
-                    Calendário
+                    Agenda
                 </h2>
 
                 <p className="text-[#8E909A] mt-1 text-justify">
@@ -93,4 +93,4 @@ const Calendario = () => {
     );
 };
 
-export default Calendario;
+export default Agenda;
