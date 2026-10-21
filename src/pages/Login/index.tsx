@@ -45,7 +45,7 @@ const Login = () => {
         try {
             await fazerLogin({
                 email: email.trim(),
-                senha: senha
+                senha: senha.trim()
             });
             navigate('/dashboard');
 

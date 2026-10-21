@@ -7,3 +7,9 @@ export interface LoginResponseDTO {
     token: string,
     expiresIn: number
 }
+
+export interface CadastroRequestDTO {
+    nome: string,
+    email: string,
+    senha: string
+}
