@@ -116,6 +116,11 @@ const Cadastro = () => {
             return;
         }
 
+        if (getPasswordStrength(senha).level < 3) {
+            SetMensagemFormulario("A senha precisa ser forte: use letras, números e caracteres especiais.");
+            return;
+        }
+
         setLoading(true);
 
         try {
