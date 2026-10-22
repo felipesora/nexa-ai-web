@@ -1,14 +1,14 @@
 import { ChevronRight, EllipsisVertical, SquarePen, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { Workspace } from "../../../../types/workspaceTypes";
+import type { WorkspaceResponseDTO } from "../../../../types/workspaceTypes";
 import { useEffect, useRef, useState } from "react";
 import { buscarCorWorkspace, buscarIconeWorkspace } from "../../../../data/workspaceOptions";
 
 interface CardWorkspaceProps {
     icone?: string;
-    workspace: Workspace;
+    workspace: WorkspaceResponseDTO;
     cor?: string;
-    onDeletar: (workspace: Workspace) => void;
+    onDeletar: (workspace: WorkspaceResponseDTO) => void;
 }
 
 const CardWorkspace = ({ icone , workspace, cor, onDeletar }: CardWorkspaceProps) => {

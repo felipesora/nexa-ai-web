@@ -3,7 +3,7 @@ import MainLayout from "../../layouts/MainLayout";
 import CardWorkspace from "./components/CardWorkspace";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import type { Workspace } from "../../types/workspaceTypes";
+import type { WorkspaceResponseDTO } from "../../types/workspaceTypes";
 import Modal from "../../components/Modal";
 import { listarWorkspacesPorUsuario } from "../../services/workspaceService";
 import { getIdUsuario } from "../../services/localStorageService";
@@ -12,10 +12,10 @@ const Workspaces = () => {
     const navigate = useNavigate();
 
     const idUsuario = getIdUsuario();
-    const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+    const [workspaces, setWorkspaces] = useState<WorkspaceResponseDTO[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [erro, setErro] = useState<string>("");
-    const [workspaceSelecionado, setWorkspaceSelecionado] = useState<Workspace | null>(null);
+    const [workspaceSelecionado, setWorkspaceSelecionado] = useState<WorkspaceResponseDTO | null>(null);
 
     useEffect(() => {
         const getWorkspaces = async () => {
@@ -69,7 +69,7 @@ const Workspaces = () => {
                         {workspaces.map((workspace) => (
                             <CardWorkspace
                                 key={workspace.id_workspace}
-                                icone={workspace.icone_workspace?.nome}
+                                icone={workspace.icone_workspace?.caminho}
                                 workspace={workspace}
                                 cor={workspace.cor_workspace?.cor}
                                 onDeletar={setWorkspaceSelecionado}

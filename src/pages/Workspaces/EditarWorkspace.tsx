@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { buscarIconeWorkspace, workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
+import { buscarIconeWorkspace } from "../../data/workspaceOptions";
+import { useOpcoesWorkspace } from "../../hooks/useOpcoesWorkspace";
 import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, SquarePen, Type } from "lucide-react";
 import { workspaces } from "../../data/workspaces";
@@ -14,8 +15,8 @@ const EditarWorkspace = () => {
     const [form, setForm] = useState({
         nome: workspace?.nome ?? "",
         descricao: workspace?.descricao ?? "",
-        icone: buscarIconeWorkspace(workspace?.icone_workspace?.nome)?.id ?? "folder",
-        cor: workspace?.cor_workspace?.cor ?? "blue",
+        icone: workspace?.icone_workspace?.caminho ?? "Folder",
+        cor: workspace?.cor_workspace?.cor ?? "#12B5FD",
     });
 
     const [erros, setErros] = useState({
@@ -23,9 +24,11 @@ const EditarWorkspace = () => {
         descricao: "",
     });
 
-    const iconSelecionado = workspaceIcons.find(i => i.id === form.icone);
+    const { icones, cores, loading: loadingOpcoes, erro: erroOpcoes } = useOpcoesWorkspace();
 
-    const corSelecionada = workspaceColors.find(c => c.id === form.cor);
+    const iconSelecionado = buscarIconeWorkspace(form.icone);
+
+    const corSelecionada = form.cor ? { cor: form.cor } : null;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -143,8 +146,18 @@ const EditarWorkspace = () => {
                             Ícone do Workspace
                         </label>
 
+                        {loadingOpcoes && (
+                            <p className="text-[#8E909A] text-sm">Carregando ícones e cores...</p>
+                        )}
+
+                        {erroOpcoes && (
+                            <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm">
+                                {erroOpcoes}
+                            </p>
+                        )}
+
                         <div className="grid grid-cols-5 gap-3">
-                            {workspaceIcons.map(({ id, icon: Icon }) => (
+                            {icones.map(({ caminho: id, icon: Icon }) => (
                                 <button
                                     key={id}
                                     type="button"
@@ -173,19 +186,19 @@ const EditarWorkspace = () => {
                         </label>
 
                         <div className="flex flex-wrap gap-3">
-                            {workspaceColors.map(color => (
+                            {cores.map(color => (
                                 <button
-                                    key={color.id}
+                                    key={color.cor}
                                     type="button"
                                     onClick={() =>
                                         setForm(prev => ({
                                             ...prev,
-                                            cor: color.id,
+                                            cor: color.cor,
                                         }))
                                     }
                                     className={`w-10 h-10 rounded-full border-2 transition cursor-pointer
                                         ${
-                                            form.cor === color.id
+                                            form.cor === color.cor
                                                 ? "border-white scale-110"
                                                 : "border-transparent"
                                         }`}

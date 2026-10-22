@@ -2,7 +2,9 @@ import { ArrowLeft, Plus, Type } from "lucide-react";
 import { useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
-import { workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
+import { buscarIconeWorkspace } from "../../data/workspaceOptions";
+import { useOpcoesWorkspace } from "../../hooks/useOpcoesWorkspace";
+import { cadastrarWorkspace } from "../../services/workspaceService";
 
 const CadastrarWorkspace = () => {
     const navigate = useNavigate();
@@ -10,18 +12,23 @@ const CadastrarWorkspace = () => {
     const [form, setForm] = useState({
         nome: "",
         descricao: "",
-        icone: "folder",
-        cor: "white"
+        icone: "Folder",
+        cor: "#D9E2FF"
     });
+
+    const [salvando, setSalvando] = useState<boolean>(false);
+    const [erroEnvio, setErroEnvio] = useState<string>("");
 
     const [erros, setErros] = useState({
         nome: "",
         descricao: "",
     });
 
-    const iconSelecionado = workspaceIcons.find(i => i.id === form.icone);
+    const { icones, cores, loading: loadingOpcoes, erro: erroOpcoes } = useOpcoesWorkspace();
 
-    const corSelecionada = workspaceColors.find(c => c.id === form.cor);
+    const iconSelecionado = buscarIconeWorkspace(form.icone);
+
+    const corSelecionada = form.cor ? { cor: form.cor } : null;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -37,7 +44,7 @@ const CadastrarWorkspace = () => {
         }));
     };
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const novosErros = {
@@ -50,14 +57,14 @@ const CadastrarWorkspace = () => {
         if (!form.nome.trim()) {
             novosErros.nome = "O nome é obrigatório.";
             valido = false;
-        } else if (form.nome.trim().length < 3 || form.nome.trim().length > 200) {
-            novosErros.nome = "O nome deve ter entre 3 e 200 caracteres.";
+        } else if (form.nome.trim().length < 3 || form.nome.trim().length > 150) {
+            novosErros.nome = "O nome deve ter entre 3 e 150 caracteres.";
             valido = false;
         }
 
-        if (form.descricao &&(form.descricao.trim().length < 3 || form.descricao.trim().length > 700)
+        if (form.descricao &&(form.descricao.trim().length < 3 || form.descricao.trim().length > 500)
         ) {
-            novosErros.descricao ="A descrição deve ter entre 3 e 700 caracteres.";
+            novosErros.descricao ="A descrição deve ter entre 3 e 500 caracteres.";
             valido = false;
         }
 
@@ -65,7 +72,32 @@ const CadastrarWorkspace = () => {
 
         if (!valido) return;
 
-        console.log(form);
+        const idIcone = icones.find(i => i.caminho === form.icone)?.id_icone;
+        const idCor = cores.find(c => c.cor === form.cor)?.id_cor;
+
+        if (idIcone == null || idCor == null) {
+            setErroEnvio("Selecione um ícone e uma cor.");
+            return;
+        }
+
+        setErroEnvio("");
+        setSalvando(true);
+
+        try {
+            await cadastrarWorkspace({
+                nome: form.nome.trim(),
+                descricao: form.descricao.trim() || undefined,
+                id_icone: idIcone,
+                id_cor: idCor,
+            });
+
+            navigate("/workspaces");
+        } catch (error) {
+            console.error(error);
+            setErroEnvio(error instanceof Error ? error.message : "Erro ao cadastrar workspace.");
+        } finally {
+            setSalvando(false);
+        }
     };
 
     return(
@@ -139,8 +171,18 @@ const CadastrarWorkspace = () => {
                             Ícone do Workspace
                         </label>
 
+                        {loadingOpcoes && (
+                            <p className="text-[#8E909A] text-sm">Carregando ícones e cores...</p>
+                        )}
+
+                        {erroOpcoes && (
+                            <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm">
+                                {erroOpcoes}
+                            </p>
+                        )}
+
                         <div className="grid grid-cols-5 gap-3">
-                            {workspaceIcons.map(({ id, icon: Icon }) => (
+                            {icones.map(({ caminho: id, icon: Icon }) => (
                                 <button
                                     key={id}
                                     type="button"
@@ -169,19 +211,19 @@ const CadastrarWorkspace = () => {
                         </label>
 
                         <div className="flex flex-wrap gap-3">
-                            {workspaceColors.map(color => (
+                            {cores.map(color => (
                                 <button
-                                    key={color.id}
+                                    key={color.cor}
                                     type="button"
                                     onClick={() =>
                                         setForm(prev => ({
                                             ...prev,
-                                            cor: color.id,
+                                            cor: color.cor,
                                         }))
                                     }
                                     className={`w-10 h-10 rounded-full border-2 transition cursor-pointer
                                         ${
-                                            form.cor === color.id
+                                            form.cor === color.cor
                                                 ? "border-white scale-110"
                                                 : "border-transparent"
                                         }`}
@@ -225,6 +267,12 @@ const CadastrarWorkspace = () => {
                         )}
                     </div>
 
+                    {erroEnvio && (
+                        <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm text-center">
+                            {erroEnvio}
+                        </p>
+                    )}
+
                     <div className="my-6 h-px bg-white/8" />
 
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -232,9 +280,9 @@ const CadastrarWorkspace = () => {
                             Cancelar
                         </button>
 
-                        <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                        <button type="submit" disabled={salvando || loadingOpcoes} className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] disabled:opacity-60 disabled:cursor-not-allowed transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <Plus size={22}/>
-                            Criar Workspace
+                            {salvando ? "Criando..." : "Criar Workspace"}
                         </button>
                     </div>
                 </form>

@@ -11,7 +11,7 @@ export interface IconeWorkspace {
     ativo: boolean;
 }
 
-export interface Workspace {
+export interface WorkspaceResponseDTO {
     id_workspace: number;
     id_usuario: number;
     nome: string;
@@ -21,4 +21,11 @@ export interface Workspace {
     ativo: boolean;
     cor_workspace: CorWorkspace | null;
     icone_workspace: IconeWorkspace | null;
+}
+
+export interface WorkspaceRequestDTO {
+    nome: string;
+    descricao?: string; // opcional: o backend recusa string vazia
+    id_cor: number;
+    id_icone: number;
 }

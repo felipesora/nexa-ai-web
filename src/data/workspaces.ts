@@ -1,6 +1,6 @@
-import type { Workspace } from "../types/workspaceTypes";
+import type { WorkspaceResponseDTO } from "../types/workspaceTypes";
 
-export const workspaces: Workspace[] = [
+export const workspaces: WorkspaceResponseDTO[] = [
     {
         id_workspace: 1,
         id_usuario: 1,
@@ -9,8 +9,8 @@ export const workspaces: Workspace[] = [
         criado_em: "2026-10-10T00:00:00",
         atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
-        cor_workspace: { id_cor: 1, cor: "blue", ativo: true },
-        icone_workspace: { id_icone: 1, nome: "learning", caminho: "", ativo: true }
+        cor_workspace: { id_cor: 1, cor: "#12B5FD", ativo: true },
+        icone_workspace: { id_icone: 1, nome: "learning", caminho: "Brain", ativo: true }
     },
     {
         id_workspace: 2,
@@ -20,8 +20,8 @@ export const workspaces: Workspace[] = [
         criado_em: "2026-10-10T00:00:00",
         atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
-        cor_workspace: { id_cor: 1, cor: "cyan", ativo: true },
-        icone_workspace: { id_icone: 1, nome: "book", caminho: "", ativo: true }
+        cor_workspace: { id_cor: 1, cor: "#BEF4FF", ativo: true },
+        icone_workspace: { id_icone: 1, nome: "book", caminho: "Book", ativo: true }
     },
     {
         id_workspace: 3,
@@ -31,8 +31,8 @@ export const workspaces: Workspace[] = [
         criado_em: "2026-10-10T00:00:00",
         atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
-        cor_workspace: { id_cor: 1, cor: "pink", ativo: true },
-        icone_workspace: { id_icone: 1, nome: "project", caminho: "", ativo: true }
+        cor_workspace: { id_cor: 1, cor: "#EC4899", ativo: true },
+        icone_workspace: { id_icone: 1, nome: "project", caminho: "SquareChartGantt", ativo: true }
     },
     {
         id_workspace: 4,
@@ -42,7 +42,7 @@ export const workspaces: Workspace[] = [
         criado_em: "2026-10-10T00:00:00",
         atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
-        cor_workspace: { id_cor: 1, cor: "white", ativo: true },
-        icone_workspace: { id_icone: 1, nome: "personal", caminho: "", ativo: true }
+        cor_workspace: { id_cor: 1, cor: "#D9E2FF", ativo: true },
+        icone_workspace: { id_icone: 1, nome: "personal", caminho: "SquareUserRound", ativo: true }
     },
 ]

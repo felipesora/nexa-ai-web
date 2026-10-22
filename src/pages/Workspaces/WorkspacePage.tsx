@@ -8,7 +8,7 @@ import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
 import { buscarCorWorkspace, buscarIconeWorkspace } from "../../data/workspaceOptions";
 import { tags } from "../../data/tags";
-import type { Workspace } from "../../types/workspaceTypes";
+import type { WorkspaceResponseDTO } from "../../types/workspaceTypes";
 import type { Tarefa } from "../../types/tarefaTypes";
 import Modal from "../../components/Modal";
 
@@ -16,7 +16,7 @@ const WorkspacePage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [workspaceSelecionado, setWorkspaceSelecionado] = useState<Workspace | null>(null);
+    const [workspaceSelecionado, setWorkspaceSelecionado] = useState<WorkspaceResponseDTO | null>(null);
     const [tarefaSelecionada, setTarefaSelecionada] = useState<Tarefa | null>(null);
 
     const [menuWorkspaceAberto, setMenuWorkspaceAberto] = useState<boolean>(false);
@@ -35,7 +35,7 @@ const WorkspacePage = () => {
     }, []);
 
     const workspace = workspaces.find(w => w.id_workspace === Number(id)) ?? null;
-    const iconSelecionado = buscarIconeWorkspace(workspace?.icone_workspace?.nome);
+    const iconSelecionado = buscarIconeWorkspace(workspace?.icone_workspace?.caminho);
     const Icon = iconSelecionado?.icon;
     const corSelecionada = { cor: buscarCorWorkspace(workspace?.cor_workspace?.cor) };
 
