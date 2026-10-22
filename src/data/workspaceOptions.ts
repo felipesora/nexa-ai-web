@@ -37,3 +37,17 @@ export const workspaceColors: WorkspaceColor[] = [
     { id: "orange", nome: "Laranja", cor: "#F97316" },
     { id: "red", nome: "Vermelho", cor: "#EF4444" },
 ];
+// O backend pode mandar o id ("blue"), o nome ("Azul") ou o hex direto ("#12B5FD")
+const normalizar = (valor?: string | null) => (valor ?? "").trim().toLowerCase();
+
+export function buscarIconeWorkspace(valor?: string | null): WorkspaceIcon | undefined {
+    const v = normalizar(valor);
+    return workspaceIcons.find(i => i.id === v || i.nome.toLowerCase() === v);
+}
+
+export function buscarCorWorkspace(valor?: string | null): string | undefined {
+    const v = normalizar(valor);
+    const cor = workspaceColors.find(c => c.id === v || c.nome.toLowerCase() === v || c.cor.toLowerCase() === v);
+    if (cor) return cor.cor;
+    return v.startsWith("#") ? valor!.trim() : undefined;
+}

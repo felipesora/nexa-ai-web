@@ -1,6 +1,6 @@
 import { useState, type SubmitEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
+import { buscarIconeWorkspace, workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
 import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, SquarePen, Type } from "lucide-react";
 import { workspaces } from "../../data/workspaces";
@@ -9,13 +9,13 @@ const EditarWorkspace = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const workspace = workspaces.find(w => w.id === Number(id)) ?? null;
+    const workspace = workspaces.find(w => w.id_workspace === Number(id)) ?? null;
 
     const [form, setForm] = useState({
         nome: workspace?.nome ?? "",
         descricao: workspace?.descricao ?? "",
-        icone: workspace?.iconeWorkspace ?? "folder",
-        cor: workspace?.cor ?? "#12B5FD",
+        icone: buscarIconeWorkspace(workspace?.icone_workspace?.nome)?.id ?? "folder",
+        cor: workspace?.cor_workspace?.cor ?? "blue",
     });
 
     const [erros, setErros] = useState({

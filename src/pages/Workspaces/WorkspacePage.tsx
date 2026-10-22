@@ -6,7 +6,7 @@ import CardTarefa from "./components/CardTarefa";
 import { tarefas } from "../../data/tarefas";
 import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
-import { workspaceColors, workspaceIcons } from "../../data/workspaceOptions";
+import { buscarCorWorkspace, buscarIconeWorkspace } from "../../data/workspaceOptions";
 import { tags } from "../../data/tags";
 import type { Workspace } from "../../types/workspaceTypes";
 import type { Tarefa } from "../../types/tarefaTypes";
@@ -34,10 +34,10 @@ const WorkspacePage = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const workspace = workspaces.find(w => w.id === Number(id)) ?? null;
-    const iconSelecionado = workspaceIcons.find(i => i.id === workspace?.iconeWorkspace);
+    const workspace = workspaces.find(w => w.id_workspace === Number(id)) ?? null;
+    const iconSelecionado = buscarIconeWorkspace(workspace?.icone_workspace?.nome);
     const Icon = iconSelecionado?.icon;
-    const corSelecionada = workspaceColors.find(c => c.id === workspace?.cor);
+    const corSelecionada = { cor: buscarCorWorkspace(workspace?.cor_workspace?.cor) };
 
     if (!workspace) {
         return (
@@ -86,12 +86,12 @@ const WorkspacePage = () => {
                         <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4">
                             <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                                 <Calendar size={17} />
-                                Criado em: {workspace.criadoEm}
+                                Criado em: {new Date(workspace.criado_em).toLocaleDateString("pt-BR")}
                             </p>
 
                             <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                                 <CalendarSync size={17} />
-                                Atualizado em: {workspace.atualizadoEm}
+                                Atualizado em: {new Date(workspace.atualizado_em).toLocaleDateString("pt-BR")}
                             </p>
                         </div>
                     </div>
@@ -104,7 +104,7 @@ const WorkspacePage = () => {
 
                     {menuWorkspaceAberto && (
                         <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                            <button onClick={() => navigate(`/editar-workspace/${workspace.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => navigate(`/editar-workspace/${workspace.id_workspace}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
                                 <SquarePen size={18} />
                                 Editar
                             </button>
@@ -258,7 +258,7 @@ const WorkspacePage = () => {
                     descricao={`Você está prestes a excluir o workspace "${workspaceSelecionado.nome}". Todas as tarefas, subtarefas e demais informações vinculadas a ele serão removidas permanentemente.`}
                     onCancelar={() => setWorkspaceSelecionado(null)}
                     onConfirmar={() => {
-                        console.log("Excluir", workspaceSelecionado.id);
+                        console.log("Excluir", workspaceSelecionado.id_workspace);
                         
                         setWorkspaceSelecionado(null);
                     }}

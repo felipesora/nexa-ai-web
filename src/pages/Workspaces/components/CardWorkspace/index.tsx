@@ -2,21 +2,21 @@ import { ChevronRight, EllipsisVertical, SquarePen, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Workspace } from "../../../../types/workspaceTypes";
 import { useEffect, useRef, useState } from "react";
-import { workspaceColors, workspaceIcons } from "../../../../data/workspaceOptions";
+import { buscarCorWorkspace, buscarIconeWorkspace } from "../../../../data/workspaceOptions";
 
 interface CardWorkspaceProps {
-    icone: string;
+    icone?: string;
     workspace: Workspace;
-    cor: string
+    cor?: string;
     onDeletar: (workspace: Workspace) => void;
 }
 
 const CardWorkspace = ({ icone , workspace, cor, onDeletar }: CardWorkspaceProps) => {
     const navigate = useNavigate();
 
-    const iconSelecionado = workspaceIcons.find(i => i.id === icone);
+    const iconSelecionado = buscarIconeWorkspace(icone);
     const Icon = iconSelecionado?.icon;
-    const corSelecionada = workspaceColors.find(c => c.id === cor);
+    const corSelecionada = { cor: buscarCorWorkspace(cor) ?? "#12B5FD" };
 
     const [menuAberto, setMenuAberto] = useState<boolean>(false);
     const menuRef = useRef<HTMLDivElement>(null);
@@ -54,7 +54,7 @@ const CardWorkspace = ({ icone , workspace, cor, onDeletar }: CardWorkspaceProps
 
                     {menuAberto && (
                         <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                            <button onClick={() => navigate(`/editar-workspace/${workspace.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => navigate(`/editar-workspace/${workspace.id_workspace}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
                                 <SquarePen size={18} />
                                 Editar
                             </button>
@@ -77,10 +77,11 @@ const CardWorkspace = ({ icone , workspace, cor, onDeletar }: CardWorkspaceProps
             </p>
 
             <span className="inline-flex w-fit rounded-full bg-[#12B5FD]/10 text-[#12B5FD] px-3 py-1 text-xs font-medium">
-                {workspace.qntTarefas} tarefas
+                {/* TODO: trocar quando a API devolver a quantidade */}
+                0 tarefas
             </span>
 
-            <button onClick={() => navigate(`/workspace/${workspace.id}`)} className="group cursor-pointer bg-[#1C1B1D] text-[#E5E1E4] rounded-xl flex items-center gap-1 font-medium justify-center py-2 text-[14px] mt-5">
+            <button onClick={() => navigate(`/workspace/${workspace.id_workspace}`)} className="group cursor-pointer bg-[#1C1B1D] text-[#E5E1E4] rounded-xl flex items-center gap-1 font-medium justify-center py-2 text-[14px] mt-5">
                 Abrir Workspace
                 <ChevronRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
             </button>

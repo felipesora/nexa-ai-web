@@ -1,16 +1,39 @@
 import { Plus } from "lucide-react";
-import { workspaces } from "../../data/workspaces";
 import MainLayout from "../../layouts/MainLayout";
 import CardWorkspace from "./components/CardWorkspace";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { Workspace } from "../../types/workspaceTypes";
 import Modal from "../../components/Modal";
+import { listarWorkspacesPorUsuario } from "../../services/workspaceService";
+import { getIdUsuario } from "../../services/localStorageService";
 
 const Workspaces = () => {
     const navigate = useNavigate();
 
+    const idUsuario = getIdUsuario();
+    const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [erro, setErro] = useState<string>("");
     const [workspaceSelecionado, setWorkspaceSelecionado] = useState<Workspace | null>(null);
+
+    useEffect(() => {
+        const getWorkspaces = async () => {
+            try {
+                setLoading(true);
+                setErro("");
+                const pagina = await listarWorkspacesPorUsuario(idUsuario);
+                setWorkspaces(pagina.content);
+            } catch (error) {
+                console.error(error);
+                setErro(error instanceof Error ? error.message : "Erro ao carregar workspaces.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getWorkspaces();
+    }, [idUsuario]);
 
     return(
         <MainLayout titulo="Workspaces">
@@ -33,17 +56,27 @@ const Workspaces = () => {
                     </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                    {workspaces.map((workspace) => (
-                        <CardWorkspace
-                            key={workspace.id}
-                            icone={workspace.iconeWorkspace}
-                            workspace={workspace}
-                            cor={workspace.cor}
-                            onDeletar={setWorkspaceSelecionado}
-                        />
-                    ))}
-                </div>
+                {loading ? (
+                    <p className="text-[#8E909A]">Carregando workspaces...</p>
+                ) : erro ? (
+                    <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm">
+                        {erro}
+                    </p>
+                ) : workspaces.length === 0 ? (
+                    <p className="text-[#8E909A]">Você ainda não tem workspaces. Crie o primeiro!</p>
+                ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                        {workspaces.map((workspace) => (
+                            <CardWorkspace
+                                key={workspace.id_workspace}
+                                icone={workspace.icone_workspace?.nome}
+                                workspace={workspace}
+                                cor={workspace.cor_workspace?.cor}
+                                onDeletar={setWorkspaceSelecionado}
+                            />
+                        ))}
+                    </div>
+                )}
 
             </div>
 
@@ -54,7 +87,7 @@ const Workspaces = () => {
                     descricao={`Você está prestes a excluir o workspace "${workspaceSelecionado.nome}". Todas as tarefas, subtarefas e demais informações vinculadas a ele serão removidas permanentemente.`}
                     onCancelar={() => setWorkspaceSelecionado(null)}
                     onConfirmar={() => {
-                        console.log("Excluir", workspaceSelecionado.id);
+                        console.log("Excluir", workspaceSelecionado.id_workspace);
                         
                         setWorkspaceSelecionado(null);
                     }}

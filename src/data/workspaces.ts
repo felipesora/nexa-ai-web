@@ -2,51 +2,47 @@ import type { Workspace } from "../types/workspaceTypes";
 
 export const workspaces: Workspace[] = [
     {
-        id: 1,
-        idUsuario: 1,
+        id_workspace: 1,
+        id_usuario: 1,
         nome: "Nexa AI",
         descricao: "Workspace encarregado de guardar as tarefas do Nexa AI",
-        criadoEm: "10/10/2026",
-        atualizadoEm: "10/10/2026",
+        criado_em: "2026-10-10T00:00:00",
+        atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
-        qntTarefas: 3,
-        iconeWorkspace: "learning",
-        cor: "blue"
+        cor_workspace: { id_cor: 1, cor: "blue", ativo: true },
+        icone_workspace: { id_icone: 1, nome: "learning", caminho: "", ativo: true }
     },
     {
-        id: 2,
-        idUsuario: 1,
+        id_workspace: 2,
+        id_usuario: 1,
         nome: "Faculdade",
         descricao: "Workspace encarregado de guardar as tarefas da Faculdade",
-        criadoEm: "10/10/2026",
-        atualizadoEm: "10/10/2026",
+        criado_em: "2026-10-10T00:00:00",
+        atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
-        qntTarefas: 10,
-        iconeWorkspace: "book",
-        cor: "cyan"
+        cor_workspace: { id_cor: 1, cor: "cyan", ativo: true },
+        icone_workspace: { id_icone: 1, nome: "book", caminho: "", ativo: true }
     },
     {
-        id: 3,
-        idUsuario: 1,
+        id_workspace: 3,
+        id_usuario: 1,
         nome: "Projetos",
         descricao: "Workspace encarregado de guardar as tarefas dos Projetos",
-        criadoEm: "10/10/2026",
-        atualizadoEm: "10/10/2026",
+        criado_em: "2026-10-10T00:00:00",
+        atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
-        qntTarefas: 7,
-        iconeWorkspace: "project",
-        cor: "pink"
+        cor_workspace: { id_cor: 1, cor: "pink", ativo: true },
+        icone_workspace: { id_icone: 1, nome: "project", caminho: "", ativo: true }
     },
     {
-        id: 4,
-        idUsuario: 1,
+        id_workspace: 4,
+        id_usuario: 1,
         nome: "Pessoal",
         descricao: "Workspace encarregado de guardar as tarefas de Pessoal",
-        criadoEm: "10/10/2026",
-        atualizadoEm: "10/10/2026",
+        criado_em: "2026-10-10T00:00:00",
+        atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
-        qntTarefas: 19,
-        iconeWorkspace: "personal",
-        cor: "white"
+        cor_workspace: { id_cor: 1, cor: "white", ativo: true },
+        icone_workspace: { id_icone: 1, nome: "personal", caminho: "", ativo: true }
     },
 ]
