@@ -182,3 +182,29 @@ export async function atualizarWorkspace(idWorkspace: number | null, workspaceDT
         throw new Error(mensagem);
     }
 }
+
+export async function deletarWorkspace(idWorkspace: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idWorkspace == null) throw new Error("Id do workspace nulo.");
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/workspaces/${idWorkspace}`, {
+        method: "DELETE",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao deletar workspace.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}

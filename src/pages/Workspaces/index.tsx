@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { WorkspaceResponseDTO } from "../../types/workspaceTypes";
 import Modal from "../../components/Modal";
-import { listarWorkspacesPorUsuario } from "../../services/workspaceService";
+import { deletarWorkspace, listarWorkspacesPorUsuario } from "../../services/workspaceService";
 import { getIdUsuario } from "../../services/localStorageService";
 
 const Workspaces = () => {
@@ -15,6 +15,7 @@ const Workspaces = () => {
     const [workspaces, setWorkspaces] = useState<WorkspaceResponseDTO[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [erro, setErro] = useState<string>("");
+    const [erroExclusao, setErroExclusao] = useState<string>("");
     const [workspaceSelecionado, setWorkspaceSelecionado] = useState<WorkspaceResponseDTO | null>(null);
 
     useEffect(() => {
@@ -34,6 +35,19 @@ const Workspaces = () => {
 
         getWorkspaces();
     }, [idUsuario]);
+
+    const excluirWorkspace = async (workspace: WorkspaceResponseDTO) => {
+        setWorkspaceSelecionado(null);
+        setErroExclusao("");
+
+        try {
+            await deletarWorkspace(workspace.id_workspace);
+            setWorkspaces(prev => prev.filter(w => w.id_workspace !== workspace.id_workspace));
+        } catch (error) {
+            console.error(error);
+            setErroExclusao(error instanceof Error ? error.message : "Erro ao excluir workspace.");
+        }
+    };
 
     return(
         <MainLayout titulo="Workspaces">
@@ -55,6 +69,12 @@ const Workspaces = () => {
                         Novo Workspace
                     </button>
                 </div>
+
+                {erroExclusao && (
+                    <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm">
+                        {erroExclusao}
+                    </p>
+                )}
 
                 {loading ? (
                     <p className="text-[#8E909A]">Carregando workspaces...</p>
@@ -86,11 +106,7 @@ const Workspaces = () => {
                     titulo="Excluir workspace?"
                     descricao={`Você está prestes a excluir o workspace "${workspaceSelecionado.nome}". Todas as tarefas, subtarefas e demais informações vinculadas a ele serão removidas permanentemente.`}
                     onCancelar={() => setWorkspaceSelecionado(null)}
-                    onConfirmar={() => {
-                        console.log("Excluir", workspaceSelecionado.id_workspace);
-                        
-                        setWorkspaceSelecionado(null);
-                    }}
+                    onConfirmar={() => excluirWorkspace(workspaceSelecionado)}
                 />
             )}
         </MainLayout>

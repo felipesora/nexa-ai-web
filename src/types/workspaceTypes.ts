@@ -19,6 +19,7 @@ export interface WorkspaceResponseDTO {
     criado_em: string;
     atualizado_em: string;
     ativo: boolean;
+    quantidade_tarefas?: number;
     cor_workspace: CorWorkspace | null;
     icone_workspace: IconeWorkspace | null;
 }
