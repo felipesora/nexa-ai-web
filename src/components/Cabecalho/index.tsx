@@ -1,6 +1,7 @@
 import { Bell, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { limparAutenticacao } from "../../services/localStorageService";
 
 interface CabecalhoProps {
     titulo: string;
@@ -24,6 +25,11 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const logout = () => {
+        limparAutenticacao();
+        navigate('/', { replace: true });
+    }
 
     return (
         <header className="bg-[#0D0D0F] flex items-center justify-between px-4 min-[560px]:px-6 py-3.5 border-b border-b-[#44464F]/10">
@@ -71,7 +77,7 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
                             <div className="h-px bg-white/10" />
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => logout()} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                 <LogOut size={18} />
                                 Logout
                             </button>

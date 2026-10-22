@@ -20,6 +20,7 @@ import TarefaPage from "../pages/Tarefa/TarefaPage";
 import NotFoundPage from "../pages/NotFoundPage";
 import CentralIA from "../pages/CentralIA";
 import Agenda from "../pages/Agenda";
+import RotaPrivada from "./RotaPrivada";
 
 export default function AppRoutes() {
     return(
@@ -28,23 +29,23 @@ export default function AppRoutes() {
                 <Route path="/" element={<PaginaInicial />} />
                 <Route path="/auth/login" element={<Login />} />
                 <Route path="/auth/cadastro" element={<Cadastro />} />
-                <Route path="/meus-dados" element={<MeusDados />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/central-ia" element={<CentralIA />} />
-                <Route path="/workspaces" element={<Workspaces />} />
-                <Route path="/workspace/:id" element={<WorkspacePage />} />
-                <Route path="/tarefa/:id" element={<TarefaPage />} />
-                <Route path="/cadastro-workspace" element={<CadastrarWorkspace />} />
-                <Route path="/editar-workspace/:id" element={<EditarWorkspace />} />
-                <Route path="/cadastro-tarefa" element={<CadastroTarefa />} />
-                <Route path="/editar-tarefa/:id" element={<EditarTarefa />} />
-                <Route path="/cadastro-subtarefa" element={<CadastroSubtarefa />} />
-                <Route path="/editar-subtarefa/:id" element={<EditarSubtarefa />} />
-                <Route path="/agenda" element={<Agenda />} />
-                <Route path="/kanban" element={<Kanban />} />
-                <Route path="/tags" element={<Tags />} />
-                <Route path="/cadastro-tag" element={<CadastrarTag />} />
-                <Route path="/editar-tag/:id" element={<EditarTag />} />
+                <Route path="/meus-dados" element={<RotaPrivada><MeusDados /></RotaPrivada>} />
+                <Route path="/dashboard" element={<RotaPrivada><Dashboard /></RotaPrivada>} />
+                <Route path="/central-ia" element={<RotaPrivada><CentralIA /></RotaPrivada>} />
+                <Route path="/workspaces" element={<RotaPrivada><Workspaces /></RotaPrivada>} />
+                <Route path="/workspace/:id" element={<RotaPrivada><WorkspacePage /></RotaPrivada>} />
+                <Route path="/tarefa/:id" element={<RotaPrivada><TarefaPage /></RotaPrivada>} />
+                <Route path="/cadastro-workspace" element={<RotaPrivada><CadastrarWorkspace /></RotaPrivada>} />
+                <Route path="/editar-workspace/:id" element={<RotaPrivada><EditarWorkspace /></RotaPrivada>} />
+                <Route path="/cadastro-tarefa" element={<RotaPrivada><CadastroTarefa /></RotaPrivada>} />
+                <Route path="/editar-tarefa/:id" element={<RotaPrivada><EditarTarefa /></RotaPrivada>} />
+                <Route path="/cadastro-subtarefa" element={<RotaPrivada><CadastroSubtarefa /></RotaPrivada>} />
+                <Route path="/editar-subtarefa/:id" element={<RotaPrivada><EditarSubtarefa /></RotaPrivada>} />
+                <Route path="/agenda" element={<RotaPrivada><Agenda /></RotaPrivada>} />
+                <Route path="/kanban" element={<RotaPrivada><Kanban /></RotaPrivada>} />
+                <Route path="/tags" element={<RotaPrivada><Tags /></RotaPrivada>} />
+                <Route path="/cadastro-tag" element={<RotaPrivada><CadastrarTag /></RotaPrivada>} />
+                <Route path="/editar-tag/:id" element={<RotaPrivada><EditarTag /></RotaPrivada>} />
                 <Route path="*" element={<NotFoundPage />} />
             </Routes>
         </BrowserRouter>

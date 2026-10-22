@@ -1,6 +1,6 @@
 import { jwtDecode } from "jwt-decode";
 import type { CadastroRequestDTO, LoginRequestDTO, LoginResponseDTO } from "../types/auth";
-import { salvarIdUsuario, salvarToken } from "./localStorageService";
+import { getToken, salvarIdUsuario, salvarToken } from "./localStorageService";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -66,5 +66,21 @@ export async function fazerCadastro(cadastroRequestDTO: CadastroRequestDTO) {
         }
 
         throw new Error(mensagem);
+    }
+}
+
+export function isTokenValid() {
+    const token = getToken();
+    if (!token) return false;
+
+    try {
+        const decoded = jwtDecode<JwtPayload>(token);
+        const currentTime = Date.now() / 1000;
+
+        return decoded.exp > currentTime;
+
+    } catch (error) {
+        console.error("Erro ao decodificar token: ", error);
+        return false;
     }
 }

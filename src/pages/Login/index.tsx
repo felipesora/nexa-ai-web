@@ -2,10 +2,16 @@ import { useEffect, useState, type SubmitEvent } from "react";
 import LogoCompleta from "../../assets/logos/logo-completa-nexa-ai.png";
 import { ChevronRight, Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { fazerLogin } from "../../services/authService";
+import { fazerLogin, isTokenValid } from "../../services/authService";
 
 const Login = () => {
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isTokenValid()) {
+            navigate("/dashboard", { replace: true });
+        }
+    }, [navigate]);
 
     useEffect(() => {
         document.title = "Nexa AI - Login";
