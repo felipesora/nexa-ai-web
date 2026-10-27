@@ -39,7 +39,7 @@ export default function AppRoutes() {
                 <Route path="/editar-workspace/:id" element={<RotaPrivada><EditarWorkspace /></RotaPrivada>} />
                 <Route path="/cadastro-tarefa/:idWorkspace" element={<RotaPrivada><CadastroTarefa /></RotaPrivada>} />
                 <Route path="/editar-tarefa/:id" element={<RotaPrivada><EditarTarefa /></RotaPrivada>} />
-                <Route path="/cadastro-subtarefa" element={<RotaPrivada><CadastroSubtarefa /></RotaPrivada>} />
+                <Route path="/cadastro-subtarefa/:idTarefa" element={<RotaPrivada><CadastroSubtarefa /></RotaPrivada>} />
                 <Route path="/editar-subtarefa/:id" element={<RotaPrivada><EditarSubtarefa /></RotaPrivada>} />
                 <Route path="/agenda" element={<RotaPrivada><Agenda /></RotaPrivada>} />
                 <Route path="/kanban" element={<RotaPrivada><Kanban /></RotaPrivada>} />

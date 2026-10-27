@@ -203,7 +203,7 @@ const TarefaPage = () => {
                         Subtarefas <span className="text-[#C5C6D0]/40 text-base">(18)</span>
                     </h3>
                     
-                    <button onClick={() => navigate("/cadastro-subtarefa")} className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                    <button onClick={() => navigate(`/cadastro-subtarefa/${id}`)} className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                         <Plus size={22}/>
                         Nova Subtarefa
                     </button>
