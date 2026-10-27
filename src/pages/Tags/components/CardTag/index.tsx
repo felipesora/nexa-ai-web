@@ -1,12 +1,11 @@
 import { EllipsisVertical, SquarePen, TagIcon, Trash } from "lucide-react";
-import { tagsColors } from "../../../../data/tagOptions";
-import type { Tag } from "../../../../types/tagTypes";
+import type { TagResponseDTO } from "../../../../types/tagTypes";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface CardTagProps {
-    tag: Tag;
-    onDeletar: (tag: Tag) => void;
+    tag: TagResponseDTO;
+    onDeletar: (tag: TagResponseDTO) => void;
 }
 
 const CardTag = ({ tag, onDeletar }: CardTagProps) => {
@@ -14,8 +13,7 @@ const CardTag = ({ tag, onDeletar }: CardTagProps) => {
     const [menuAberto, setMenuAberto] = useState<boolean>(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
-    const color = tagsColors.find((c) => c.id === tag.cor);
-    const tagColor = color?.cor ?? "#12B5FD";
+    const tagColor = tag.cor_tag?.startsWith("#") ? tag.cor_tag : "#12B5FD";
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -48,7 +46,7 @@ const CardTag = ({ tag, onDeletar }: CardTagProps) => {
 
                 {menuAberto && (
                     <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                        <button onClick={() => navigate(`/editar-tag/${tag.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                        <button onClick={() => navigate(`/editar-tag/${tag.id_tag}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
                             <SquarePen size={18} />
                             Editar
                         </button>

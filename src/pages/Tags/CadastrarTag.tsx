@@ -1,23 +1,36 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
-import { tagsColors } from "../../data/tagOptions";
+import { useOpcoesTag } from "../../hooks/useOpcoesTag";
+import { cadastrarTag } from "../../services/tagService";
 import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, Plus, TagIcon, Type } from "lucide-react";
 
 const CadastrarTag = () => {
     const navigate = useNavigate();
 
-    const [form, setForm] = useState({
+    const { cores, loading: carregandoCores, erro: erroCores } = useOpcoesTag();
+
+    const [form, setForm] = useState<{ nome: string; id_cor: number | null }>({
         nome: "",
-        cor: "white"
+        id_cor: null,
     });
+
+    const [salvando, setSalvando] = useState<boolean>(false);
+    const [erroEnvio, setErroEnvio] = useState<string>("");
 
     const [erros, setErros] = useState({
         nome: "",
         cor: "",
     });
 
-    const corSelecionada = tagsColors.find(c => c.id === form.cor);
+    // Seleciona a primeira cor assim que as opções carregarem
+    useEffect(() => {
+        if (form.id_cor == null && cores.length > 0) {
+            setForm(prev => ({ ...prev, id_cor: cores[0].id_cor }));
+        }
+    }, [cores, form.id_cor]);
+
+    const corSelecionada = cores.find(c => c.id_cor === form.id_cor);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -33,7 +46,7 @@ const CadastrarTag = () => {
         }));
     };
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const novosErros = {
@@ -51,11 +64,25 @@ const CadastrarTag = () => {
             valido = false;
         }
 
+        if (form.id_cor == null) {
+            novosErros.cor = "Selecione uma cor.";
+            valido = false;
+        }
+
         setErros(novosErros);
 
-        if (!valido) return;
+        if (!valido || form.id_cor == null) return;
 
-        console.log(form);
+        try {
+            setSalvando(true);
+            setErroEnvio("");
+            await cadastrarTag({ nome: form.nome.trim(), id_cor: form.id_cor });
+            navigate("/tags");
+        } catch (error) {
+            setErroEnvio(error instanceof Error ? error.message : "Erro ao cadastrar tag.");
+        } finally {
+            setSalvando(false);
+        }
     };
     
     return(
@@ -109,20 +136,26 @@ const CadastrarTag = () => {
                             Cor da Tag
                         </label>
 
+                        {carregandoCores && (
+                            <p className="text-[#8E909A] text-sm">Carregando cores...</p>
+                        )}
+
+                        {erroCores && (
+                            <p className="text-red-400 text-xs">{erroCores}</p>
+                        )}
+
                         <div className="flex flex-wrap gap-3">
-                            {tagsColors.map(color => (
+                            {cores.map(color => (
                                 <button
-                                    key={color.id}
+                                    key={color.id_cor}
                                     type="button"
-                                    onClick={() =>
-                                        setForm(prev => ({
-                                            ...prev,
-                                            cor: color.id,
-                                        }))
-                                    }
+                                    onClick={() => {
+                                        setForm(prev => ({ ...prev, id_cor: color.id_cor }));
+                                        setErros(prev => ({ ...prev, cor: "" }));
+                                    }}
                                     className={`w-10 h-10 rounded-full border-2 transition cursor-pointer
                                         ${
-                                            form.cor === color.id
+                                            form.id_cor === color.id_cor
                                                 ? "border-white scale-110"
                                                 : "border-transparent"
                                         }`}
@@ -130,6 +163,10 @@ const CadastrarTag = () => {
                                 />
                             ))}
                         </div>
+
+                        {erros.cor && (
+                            <p className="text-red-400 text-xs mt-1">{erros.cor}</p>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-2 mt-5">
@@ -152,6 +189,10 @@ const CadastrarTag = () => {
                         )}
                     </div>
 
+                    {erroEnvio && (
+                        <p className="text-red-400 text-sm mt-5">{erroEnvio}</p>
+                    )}
+
                     <div className="my-6 h-px bg-white/8" />
 
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -159,9 +200,9 @@ const CadastrarTag = () => {
                             Cancelar
                         </button>
 
-                        <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                        <button type="submit" disabled={salvando || carregandoCores} className="disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <Plus size={22}/>
-                            Criar Tag
+                            {salvando ? "Criando..." : "Criar Tag"}
                         </button>
                     </div>
                 </form>
