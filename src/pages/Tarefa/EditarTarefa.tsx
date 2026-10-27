@@ -1,22 +1,53 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, CalendarClock, ChartNoAxesCombined, ChevronDown, Flag, SquarePen, Type } from "lucide-react";
-import { tarefas } from "../../data/tarefas";
+import type { TarefaResponseDTO, TarefaUpdateDTO } from "../../types/tarefaTypes";
+import { atualizarTarefa, buscarTarefaPorId } from "../../services/tarefaService";
 
 const EditarTarefa = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-
-    const tarefa = tarefas.find(t => t.id === Number(id)) ?? null;
+    const [tarefa, setTarefa] = useState<TarefaResponseDTO>();
+    const [loading, setLoading] = useState<boolean>(true);
+    const [erro, setErro] = useState<string>("");
 
     const [form, setForm] = useState({
-        titulo: tarefa?.titulo ?? "",
-        descricao: tarefa?.descricao ?? "",
-        prioridade: tarefa?.prioridade ?? "",
-        dificuldade: tarefa?.dificuldade ?? "",
-        prazo: tarefa?.dataLimite ?? "",
+        titulo: "",
+        descricao: "",
+        prioridade: "" as TarefaUpdateDTO["prioridade"] | "",
+        dificuldade: "" as NonNullable<TarefaUpdateDTO["dificuldade"]> | "",
+        prazo: "",
     });
+
+    useEffect(() => {
+        const getTarefa = async () => {
+            try {
+                setLoading(true);
+                setErro("");
+                const response = await buscarTarefaPorId(Number(id));
+                setTarefa(response);
+
+                setForm({
+                    titulo: response.titulo ?? "",
+                    descricao: response.descricao ?? "",
+                    prioridade: response.prioridade ?? "",
+                    dificuldade: response.dificuldade ?? "",
+                    prazo: response.data_limite ? response.data_limite.slice(0, 10) : "",
+                });
+            } catch (error) {
+                console.error(error);
+                setErro(error instanceof Error ? error.message : "Erro ao carregar dados da tarefa.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getTarefa();
+    }, [id]);
+
+    const [salvando, setSalvando] = useState<boolean>(false);
+    const [erroEnvio, setErroEnvio] = useState<string>("");
 
     const [erros, setErros] = useState({
         titulo: "",
@@ -39,7 +70,7 @@ const EditarTarefa = () => {
         }));
     };
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const novosErros = {
@@ -70,11 +101,12 @@ const EditarTarefa = () => {
             valido = false;
         }
 
-        if (form.prazo) {
+        const prazoOriginal = tarefa?.data_limite?.slice(0, 10) ?? "";
+        if (form.prazo && form.prazo !== prazoOriginal) {
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
 
-            const prazo = new Date(form.prazo);
+            const prazo = new Date(`${form.prazo}T00:00:00`);
 
             if (prazo < hoje) {
                 novosErros.prazo = "A data limite deve ser hoje ou uma data futura.";
@@ -84,9 +116,27 @@ const EditarTarefa = () => {
 
         setErros(novosErros);
 
-        if (!valido) return;
+        if (!valido || !form.prioridade) return;
 
-        console.log(form);
+        setErroEnvio("");
+        setSalvando(true);
+
+        try {
+            await atualizarTarefa(tarefa?.id_tarefa ?? Number(id), {
+                titulo: form.titulo.trim(),
+                descricao: form.descricao.trim() || undefined,
+                prioridade: form.prioridade,
+                dificuldade: form.dificuldade || undefined,
+                data_limite: form.prazo || undefined,
+            });
+
+            navigate(tarefa?.id_workspace ? `/workspace/${tarefa.id_workspace}` : "/workspaces");
+        } catch (error) {
+            console.error(error);
+            setErroEnvio(error instanceof Error ? error.message : "Erro ao atualizar tarefa.");
+        } finally {
+            setSalvando(false);
+        }
     };
 
     return(
@@ -105,6 +155,11 @@ const EditarTarefa = () => {
                 </button>
             </div>
 
+            {loading ? (
+                <p className="text-[#8E909A] text-sm">Carregando tarefa...</p>
+            ) : erro ? (
+                <p className="text-red-400 text-sm">{erro}</p>
+            ) : (
             <div className="w-full bg-[#111114] rounded-xl border border-white/8 px-4 py-6">
                 <form onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-2">
@@ -240,17 +295,20 @@ const EditarTarefa = () => {
                                 name="prazo"
                                 value={form.prazo}
                                 onChange={handleChange}
-                                placeholder="Digite o título da tarefa"
-                                className="text-sm w-full rounded-md border border-white/10 bg-[#0F0F11] py-2 pl-10 pr-3 text-white placeholder:text-gray-500 focus:border-[#12B5FD] focus:outline-none transition-all duration-300 cursor-pointer"
+                                className={`text-sm w-full rounded-md bg-[#0F0F11] py-2 pl-10 pr-3 text-white focus:outline-none transition-all duration-300 cursor-pointer ${erros.prazo ? "border border-red-500" : "border border-white/10 focus:border-[#12B5FD]"}`}
                             />
-
-                            {erros.prazo && (
-                                <p className="text-red-400 text-xs mt-1">
-                                    {erros.prazo}
-                                </p>
-                            )}
                         </div>
+
+                        {erros.prazo && (
+                            <p className="text-red-400 text-xs mt-1">
+                                {erros.prazo}
+                            </p>
+                        )}
                     </div>
+
+                    {erroEnvio && (
+                        <p className="text-red-400 text-sm mt-5">{erroEnvio}</p>
+                    )}
 
                     <div className="my-6 h-px bg-white/8" />
 
@@ -259,13 +317,14 @@ const EditarTarefa = () => {
                             Cancelar
                         </button>
 
-                        <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                        <button type="submit" disabled={salvando} className="disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <SquarePen size={22}/>
-                            Salvar Alterações
+                            {salvando ? "Salvando..." : "Salvar Alterações"}
                         </button>
                     </div>
                 </form>
             </div>
+            )}
         </MainLayout>
     );
 }

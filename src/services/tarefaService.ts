@@ -1,7 +1,36 @@
-import type { TarefaCreateDTO } from "../types/tarefaTypes";
+import type { TarefaCreateDTO, TarefaResponseDTO, TarefaUpdateDTO } from "../types/tarefaTypes";
 import { getToken } from "./localStorageService";
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+export async function buscarTarefaPorId(idTarefa: number | null): Promise<TarefaResponseDTO> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/tarefas/${idTarefa}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao buscar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
 
 export async function cadastrarTarefa(tarefaDTO: TarefaCreateDTO) {
     const token = getToken();
@@ -16,6 +45,33 @@ export async function cadastrarTarefa(tarefaDTO: TarefaCreateDTO) {
 
     if (!response.ok) {
         let mensagem = "Falha ao cadastrar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function atualizarTarefa(idTarefa: number | null, tarefaDTO: TarefaUpdateDTO) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/tarefas/${idTarefa}`, {
+        method: "PUT",
+        headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(tarefaDTO)
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao atualizar tarefa.";
 
         try {
             const erro: { message?: string } = await response.json();
