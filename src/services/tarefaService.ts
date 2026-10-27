@@ -83,3 +83,107 @@ export async function atualizarTarefa(idTarefa: number | null, tarefaDTO: Tarefa
         throw new Error(mensagem);
     }
 }
+
+export async function deletarTarefa(idTarefa: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/tarefas/${idTarefa}`, {
+        method: "DELETE",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao deletar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function concluirTarefa(idTarefa: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/tarefas/${idTarefa}/concluir`, {
+        method: "PATCH",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao concluir tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function iniciarTarefa(idTarefa: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/tarefas/${idTarefa}/iniciar`, {
+        method: "PATCH",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao iniciar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function reabrirTarefa(idTarefa: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/tarefas/${idTarefa}/reabrir`, {
+        method: "PATCH",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao reabrir tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}

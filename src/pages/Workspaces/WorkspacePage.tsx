@@ -1,23 +1,53 @@
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
-import { workspaces } from "../../data/workspaces";
 import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, Clock4, EllipsisVertical, Plus, Search, SquarePen, Trash } from "lucide-react";
-import CardTarefa from "./components/CardTarefa";
-import { tarefas } from "../../data/tarefas";
+import CardTarefa, { type AcaoStatusTarefa } from "./components/CardTarefa";
 import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
-import { buscarCorWorkspace, buscarIconeWorkspace } from "../../data/workspaceOptions";
 import { tags } from "../../data/tags";
+import { buscarCorWorkspace, buscarIconeWorkspace } from "../../data/workspaceOptions";
 import type { WorkspaceResponseDTO } from "../../types/workspaceTypes";
-import type { Tarefa } from "../../types/tarefaTypes";
 import Modal from "../../components/Modal";
+import type { TarefaResponseDTO } from "../../types/tarefaTypes";
+import { buscarWorkspacePorId, deletarWorkspace, listarTarefasPorIdWorkspace } from "../../services/workspaceService";
+import { buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, reabrirTarefa } from "../../services/tarefaService";
 
 const WorkspacePage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
+    const [workspace, setWorkspace] = useState<WorkspaceResponseDTO>();
+    const [tarefas, setTarefas] = useState<TarefaResponseDTO[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [erro, setErro] = useState<string>("");
+    const [erroExclusao, setErroExclusao] = useState<string>("");
+    const [idTarefaAlterando, setIdTarefaAlterando] = useState<number | null>(null);
+
+    useEffect(() => {
+        const getWorkspaceComTarefas = async () => {
+            try {
+                setLoading(true);
+                setErro("");
+                const responseWorkspace = await buscarWorkspacePorId(Number(id));
+                setWorkspace(responseWorkspace);
+
+                const paginaTarefas = await listarTarefasPorIdWorkspace(responseWorkspace.id_workspace, 100);
+                setTarefas(paginaTarefas.content);
+            } catch (error) {
+                console.error(error);
+                setErro(error instanceof Error ? error.message : "Erro ao carregar workspace com tarefas.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getWorkspaceComTarefas();
+    }, [id]);
+
+    const contarStatus = (status: TarefaResponseDTO["status"]) => tarefas.filter(t => t.status === status).length;
+
     const [workspaceSelecionado, setWorkspaceSelecionado] = useState<WorkspaceResponseDTO | null>(null);
-    const [tarefaSelecionada, setTarefaSelecionada] = useState<Tarefa | null>(null);
+    const [tarefaSelecionada, setTarefaSelecionada] = useState<TarefaResponseDTO | null>(null);
 
     const [menuWorkspaceAberto, setMenuWorkspaceAberto] = useState<boolean>(false);
     const menuWorkspaceRef = useRef<HTMLDivElement>(null);
@@ -34,15 +64,71 @@ const WorkspacePage = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const workspace = workspaces.find(w => w.id_workspace === Number(id)) ?? null;
     const iconSelecionado = buscarIconeWorkspace(workspace?.icone_workspace?.caminho);
     const Icon = iconSelecionado?.icon;
     const corSelecionada = { cor: buscarCorWorkspace(workspace?.cor_workspace?.cor) };
 
-    if (!workspace) {
+    const excluirWorkspace = async (workspace: WorkspaceResponseDTO) => {
+        setWorkspaceSelecionado(null);
+        setErroExclusao("");
+
+        try {
+            await deletarWorkspace(workspace.id_workspace);
+            navigate("/workspaces")
+        } catch (error) {
+            console.error(error);
+            setErroExclusao(error instanceof Error ? error.message : "Erro ao excluir workspace.");
+        }
+    };
+
+    const excluirTarefa = async (tarefa: TarefaResponseDTO) => {
+        setTarefaSelecionada(null);
+        setErroExclusao("");
+
+        try {
+            await deletarTarefa(tarefa.id_tarefa);
+            setTarefas(prev => prev.filter(t => t.id_tarefa !== tarefa.id_tarefa));
+        } catch (error) {
+            console.error(error);
+            setErroExclusao(error instanceof Error ? error.message : "Erro ao excluir tarefa.");
+        }
+    };
+
+    const acoesStatus: Record<AcaoStatusTarefa, (idTarefa: number) => Promise<void>> = {
+        INICIAR: iniciarTarefa,
+        CONCLUIR: concluirTarefa,
+        REABRIR: reabrirTarefa,
+    };
+
+    const alterarStatusTarefa = async (tarefa: TarefaResponseDTO, acao: AcaoStatusTarefa) => {
+        setIdTarefaAlterando(tarefa.id_tarefa);
+        setErroExclusao("");
+
+        try {
+            await acoesStatus[acao](tarefa.id_tarefa);
+
+            const tarefaAtualizada = await buscarTarefaPorId(tarefa.id_tarefa);
+            setTarefas(prev => prev.map(t => t.id_tarefa === tarefa.id_tarefa ? tarefaAtualizada : t));
+        } catch (error) {
+            console.error(error);
+            setErroExclusao(error instanceof Error ? error.message : "Erro ao alterar status da tarefa.");
+        } finally {
+            setIdTarefaAlterando(null);
+        }
+    };
+
+    if (loading) {
         return (
             <MainLayout titulo="Workspace">
-                Workspace não encontrado.
+                <p className="text-[#8E909A] text-sm">Carregando workspace...</p>
+            </MainLayout>
+        );
+    }
+
+    if (erro || !workspace) {
+        return (
+            <MainLayout titulo="Workspace">
+                <p className="text-red-400 text-sm">{erro || "Workspace não encontrado."}</p>
             </MainLayout>
         );
     }
@@ -128,20 +214,26 @@ const WorkspacePage = () => {
                         {
                             icone: CircleCheck,
                             titulo: "Concluídas",
-                            quantidade: 18,
+                            quantidade: contarStatus("CONCLUIDA"),
                             cor: "#12B5FD",
                         },
                         {
                             icone: Clock4,
                             titulo: "Em andamento",
-                            quantidade: 7,
+                            quantidade: contarStatus("EM_ANDAMENTO"),
                             cor: "#8E909A",
                         },
                         {
                             icone: CircleAlert,
                             titulo: "Pendentes",
-                            quantidade: 5,
+                            quantidade: contarStatus("PENDENTE"),
                             cor: "#FFB4AB",
+                        },
+                        {
+                            icone: CircleAlert,
+                            titulo: "Atrasadas",
+                            quantidade: contarStatus("ATRASADA"),
+                            cor: "#EF4444",
                         },
                     ]}
                 />
@@ -150,7 +242,7 @@ const WorkspacePage = () => {
             <div className="mt-5 flex flex-col gap-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-[#E5E1E4] font-medium text-lg">
-                        Tarefas <span className="text-[#C5C6D0]/40 text-base">(18)</span>
+                        Tarefas <span className="text-[#C5C6D0]/40 text-base">({tarefas.length})</span>
                     </h3>
                     
                     <button onClick={() => navigate(`/cadastro-tarefa/${id}`)} className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
@@ -178,9 +270,7 @@ const WorkspacePage = () => {
                             id="tag"
                             defaultValue=""
                             className="appearance-none w-full bg-[#0F0F12] border border-white/8 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-[#E5E1E4] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15 cursor-pointer">
-                            <option value="" disabled>
-                                Tag
-                            </option>
+                            <option value="">Tag: todas</option>
                             {tags.map((tag) => (
                                 <option key={tag.id} value={tag.id}>{tag.nome}</option>
                             ))}
@@ -198,12 +288,11 @@ const WorkspacePage = () => {
                             id="status"
                             defaultValue=""
                             className="appearance-none w-full bg-[#0F0F12] border border-white/8 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-[#E5E1E4] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15 cursor-pointer">
-                            <option value="" disabled>
-                                Status
-                            </option>
+                            <option value="">Status: todos</option>
                             <option value="PENDENTE">Pendente</option>
                             <option value="EM_ANDAMENTO">Em andamento</option>
-                            <option value="CONCLUIDO">Concluído</option>
+                            <option value="CONCLUIDA">Concluída</option>
+                            <option value="ATRASADA">Atrasada</option>
                         </select>
 
                         <ChevronDown
@@ -214,13 +303,11 @@ const WorkspacePage = () => {
 
                     <div className="relative w-full sm:w-36">
                         <select
-                            name="status"
-                            id="status"
+                            name="prioridade"
+                            id="prioridade"
                             defaultValue=""
                             className="appearance-none w-full bg-[#0F0F12] border border-white/8 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-[#E5E1E4] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15 cursor-pointer">
-                            <option value="" disabled>
-                                Prioridade
-                            </option>
+                            <option value="">Prioridade: todas</option>
                             <option value="BAIXA">Baixa</option>
                             <option value="MEDIA">Média</option>
                             <option value="ALTA">Alta</option>
@@ -234,20 +321,32 @@ const WorkspacePage = () => {
                     </div>
 
                     <button
+                        type="button"
+                        title="Limpar filtros"
                         className="w-full sm:w-auto flex justify-center px-4 py-2.5 rounded-xl border border-white/8 bg-[#0F0F12] text-[#C5C6D0] text-sm hover:border-white/15 hover:text-[#E5E1E4] transition-colors cursor-pointer"
                     >
                         <Trash size={20}/>
                     </button>
                 </div>
 
+                {erroExclusao && (
+                    <p className="text-red-400 text-sm">{erroExclusao}</p>
+                )}
+
                 <div className="flex flex-col gap-4">
-                    {tarefas.map((tarefa) => (
-                        <CardTarefa
-                            key={tarefa.id}
-                            tarefa={tarefa}
-                            onDeletar={setTarefaSelecionada}
-                        />
-                    ))}
+                    {tarefas.length === 0 ? (
+                        <p className="text-[#8E909A] text-sm">Este workspace ainda não tem tarefas. Crie a primeira!</p>
+                    ) : (
+                        tarefas.map((tarefa) => (
+                            <CardTarefa
+                                key={tarefa.id_tarefa}
+                                tarefa={tarefa}
+                                onDeletar={setTarefaSelecionada}
+                                onAlterarStatus={alterarStatusTarefa}
+                                alterandoStatus={idTarefaAlterando === tarefa.id_tarefa}
+                            />
+                        ))
+                    )}
                 </div>
             </div>
 
@@ -257,11 +356,7 @@ const WorkspacePage = () => {
                     titulo="Excluir workspace?"
                     descricao={`Você está prestes a excluir o workspace "${workspaceSelecionado.nome}". Todas as tarefas, subtarefas e demais informações vinculadas a ele serão removidas permanentemente.`}
                     onCancelar={() => setWorkspaceSelecionado(null)}
-                    onConfirmar={() => {
-                        console.log("Excluir", workspaceSelecionado.id_workspace);
-                        
-                        setWorkspaceSelecionado(null);
-                    }}
+                    onConfirmar={() => excluirWorkspace(workspaceSelecionado)}
                 />
             )}
 
@@ -271,11 +366,7 @@ const WorkspacePage = () => {
                     titulo="Excluir tarefa?"
                     descricao={`A tarefa "${tarefaSelecionada.titulo}" será removida permanentemente. Essa ação não poderá ser desfeita.`}
                     onCancelar={() => setTarefaSelecionada(null)}
-                    onConfirmar={() => {
-                        console.log("Excluir", tarefaSelecionada.id);
-                        
-                        setTarefaSelecionada(null);
-                    }}
+                    onConfirmar={() => excluirTarefa(tarefaSelecionada)}
                 />
             )}
         </MainLayout>

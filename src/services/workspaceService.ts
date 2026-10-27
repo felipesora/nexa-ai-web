@@ -1,4 +1,5 @@
 import type { Pagina } from "../types/paginacaoType";
+import type { TarefaResponseDTO } from "../types/tarefaTypes";
 import type { CorWorkspace, IconeWorkspace, WorkspaceRequestDTO, WorkspaceResponseDTO } from "../types/workspaceTypes";
 import { getToken } from "./localStorageService";
 
@@ -207,4 +208,38 @@ export async function deletarWorkspace(idWorkspace: number | null) {
 
         throw new Error(mensagem);
     }
+}
+
+export async function listarTarefasPorIdWorkspace(idWorkspace: number | null, pageSize = 10, pageNumber = 0): Promise<Pagina<TarefaResponseDTO>> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idWorkspace == null) throw new Error("Id do workspace nulo.");
+
+    const params = new URLSearchParams({
+        page: String(pageNumber),
+        size: String(pageSize),
+    });
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/workspaces/${idWorkspace}/tarefas?${params}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao listar tarefas.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
 }
