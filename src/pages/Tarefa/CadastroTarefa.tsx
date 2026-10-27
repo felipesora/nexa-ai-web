@@ -1,18 +1,24 @@
 import { ArrowLeft, CalendarClock, ChartNoAxesCombined, ChevronDown, Flag, Plus, Type } from "lucide-react";
 import MainLayout from "../../layouts/MainLayout"
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useState, type SubmitEvent } from "react";
+import { cadastrarTarefa } from "../../services/tarefaService";
+import type { TarefaCreateDTO } from "../../types/tarefaTypes";
 
 const CadastroTarefa = () => {
+    const { idWorkspace } = useParams();
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
         titulo: "",
         descricao: "",
-        prioridade: "",
-        dificuldade: "",
+        prioridade: "" as TarefaCreateDTO["prioridade"] | "",
+        dificuldade: "" as NonNullable<TarefaCreateDTO["dificuldade"]> | "",
         prazo: "",
     });
+
+    const [salvando, setSalvando] = useState<boolean>(false);
+    const [erroEnvio, setErroEnvio] = useState<string>("");
 
     const [erros, setErros] = useState({
         titulo: "",
@@ -35,7 +41,7 @@ const CadastroTarefa = () => {
         }));
     };
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const novosErros = {
@@ -70,7 +76,7 @@ const CadastroTarefa = () => {
             const hoje = new Date();
             hoje.setHours(0, 0, 0, 0);
 
-            const prazo = new Date(form.prazo);
+            const prazo = new Date(`${form.prazo}T00:00:00`);
 
             if (prazo < hoje) {
                 novosErros.prazo = "A data limite deve ser hoje ou uma data futura.";
@@ -80,9 +86,33 @@ const CadastroTarefa = () => {
 
         setErros(novosErros);
 
-        if (!valido) return;
+        if (!valido || !form.prioridade) return;
 
-        console.log(form);
+        if (!idWorkspace || Number.isNaN(Number(idWorkspace))) {
+            setErroEnvio("Workspace inválido. Volte e abra a tarefa a partir de um workspace.");
+            return;
+        }
+
+        setErroEnvio("");
+        setSalvando(true);
+
+        try {
+            await cadastrarTarefa({
+                titulo: form.titulo.trim(),
+                descricao: form.descricao.trim() || undefined,
+                prioridade: form.prioridade,
+                dificuldade: form.dificuldade || undefined,
+                data_limite: form.prazo || undefined,
+                id_workspace: Number(idWorkspace),
+            });
+
+            navigate(`/workspace/${idWorkspace}`);
+        } catch (error) {
+            console.error(error);
+            setErroEnvio(error instanceof Error ? error.message : "Erro ao cadastrar tarefa.");
+        } finally {
+            setSalvando(false);
+        }
     };
 
     return(
@@ -236,17 +266,21 @@ const CadastroTarefa = () => {
                                 name="prazo"
                                 value={form.prazo}
                                 onChange={handleChange}
-                                placeholder="Digite o título da tarefa"
-                                className="text-sm w-full rounded-md border border-white/10 bg-[#0F0F11] py-2 pl-10 pr-3 text-white placeholder:text-gray-500 focus:border-[#12B5FD] focus:outline-none transition-all duration-300 cursor-pointer"
+                                className={`text-sm w-full rounded-md bg-[#0F0F11] py-2 pl-10 pr-3 text-white focus:outline-none transition-all duration-300 cursor-pointer ${erros.prazo ? "border border-red-500" : "border border-white/10 focus:border-[#12B5FD]"}`}
                             />
 
-                            {erros.prazo && (
-                                <p className="text-red-400 text-xs mt-1">
-                                    {erros.prazo}
-                                </p>
-                            )}
                         </div>
+
+                        {erros.prazo && (
+                            <p className="text-red-400 text-xs mt-1">
+                                {erros.prazo}
+                            </p>
+                        )}
                     </div>
+
+                    {erroEnvio && (
+                        <p className="text-red-400 text-sm mt-5">{erroEnvio}</p>
+                    )}
 
                     <div className="my-6 h-px bg-white/8" />
 
@@ -255,9 +289,9 @@ const CadastroTarefa = () => {
                             Cancelar
                         </button>
 
-                        <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                        <button type="submit" disabled={salvando} className="disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <Plus size={22}/>
-                            Criar Tarefa
+                            {salvando ? "Criando..." : "Criar Tarefa"}
                         </button>
                     </div>
                 </form>

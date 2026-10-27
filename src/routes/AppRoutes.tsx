@@ -37,7 +37,7 @@ export default function AppRoutes() {
                 <Route path="/tarefa/:id" element={<RotaPrivada><TarefaPage /></RotaPrivada>} />
                 <Route path="/cadastro-workspace" element={<RotaPrivada><CadastrarWorkspace /></RotaPrivada>} />
                 <Route path="/editar-workspace/:id" element={<RotaPrivada><EditarWorkspace /></RotaPrivada>} />
-                <Route path="/cadastro-tarefa" element={<RotaPrivada><CadastroTarefa /></RotaPrivada>} />
+                <Route path="/cadastro-tarefa/:idWorkspace" element={<RotaPrivada><CadastroTarefa /></RotaPrivada>} />
                 <Route path="/editar-tarefa/:id" element={<RotaPrivada><EditarTarefa /></RotaPrivada>} />
                 <Route path="/cadastro-subtarefa" element={<RotaPrivada><CadastroSubtarefa /></RotaPrivada>} />
                 <Route path="/editar-subtarefa/:id" element={<RotaPrivada><EditarSubtarefa /></RotaPrivada>} />
