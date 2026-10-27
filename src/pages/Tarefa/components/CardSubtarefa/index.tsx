@@ -1,17 +1,20 @@
 import { Calendar, CalendarSync, Check, EllipsisVertical, SquarePen, Trash } from "lucide-react";
-import type { Subtarefa } from "../../../../types/subtarefaTypes";
+import type { SubtarefaResponseDTO } from "../../../../types/subtarefaTypes";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface CardSubtarefaProps {
-    subtarefa: Subtarefa;
-    onDeletar: (subtarefa: Subtarefa) => void;
+    subtarefa: SubtarefaResponseDTO;
+    onDeletar: (subtarefa: SubtarefaResponseDTO) => void;
+    onAlternarConclusao: (subtarefa: SubtarefaResponseDTO) => void;
+    alterando?: boolean;
 }
 
-const CardSubtarefa = ({ subtarefa, onDeletar }: CardSubtarefaProps) => {
+const CardSubtarefa = ({ subtarefa, onDeletar, onAlternarConclusao, alterando = false }: CardSubtarefaProps) => {
     const navigate = useNavigate();
 
-    const [checked, setChecked] = useState<boolean>(subtarefa.concluida);
+    // O estado vem da API (via página), assim o checkbox sempre reflete o que está salvo
+    const checked = subtarefa.concluida;
 
     const [menuSubtarefaAberto, setMenuSubtarefaAberto] = useState<boolean>(false);
     const menuSubtarefaRef = useRef<HTMLDivElement>(null);
@@ -32,9 +35,11 @@ const CardSubtarefa = ({ subtarefa, onDeletar }: CardSubtarefaProps) => {
         <div className="w-full bg-[#0F0F12] rounded-xl border border-white/8 px-4 py-4 flex items-center gap-3 hover:border-[#12B5FD]/30 hover:bg-[#13151B] transition-all duration-300">        
             <button
                 type="button"
-                onClick={() => setChecked(!checked)}
+                onClick={() => onAlternarConclusao(subtarefa)}
+                disabled={alterando}
+                title={checked ? "Desmarcar conclusão" : "Concluir subtarefa"}
                 className={`
-                    cursor-pointer w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200
+                    cursor-pointer disabled:cursor-wait disabled:opacity-60 w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all duration-200
                     ${
                         checked
                             ? "bg-[#12B5FD] border-[#12B5FD]"
@@ -45,7 +50,6 @@ const CardSubtarefa = ({ subtarefa, onDeletar }: CardSubtarefaProps) => {
                 {checked && <Check size={14} strokeWidth={3} className="text-white" />}
             </button>
 
-            <Check className="hidden peer-checked:block w-3.5 h-3.5 text-white" />
             
             <div className="flex-1 flex flex-col gap-1">
                 <div className="flex justify-between items-center">
@@ -60,7 +64,7 @@ const CardSubtarefa = ({ subtarefa, onDeletar }: CardSubtarefaProps) => {
 
                         {menuSubtarefaAberto && (
                             <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                                <button onClick={() => navigate(`/editar-subtarefa/${subtarefa.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                                <button onClick={() => navigate(`/editar-subtarefa/${subtarefa.id_subtarefa}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
                                     <SquarePen size={18} />
                                     Editar
                                 </button>
@@ -80,11 +84,11 @@ const CardSubtarefa = ({ subtarefa, onDeletar }: CardSubtarefaProps) => {
                 <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4">
                     <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                         <Calendar size={17} />
-                        Criado em: {subtarefa.criadoEm}
+                        Criado em: {new Date(subtarefa.criado_em).toLocaleDateString("pt-BR")}
                     </p>
                     <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                         <CalendarSync size={17} />
-                        Atualizado em: {subtarefa.atualizadoEm}
+                        Atualizado em: {new Date(subtarefa.atualizado_em).toLocaleDateString("pt-BR")}
                     </p>
                 </div>
             </div>

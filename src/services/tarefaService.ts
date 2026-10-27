@@ -1,3 +1,5 @@
+import type { Pagina } from "../types/paginacaoType";
+import type { SubtarefaResponseDTO } from "../types/subtarefaTypes";
 import type { TarefaCreateDTO, TarefaResponseDTO, TarefaUpdateDTO } from "../types/tarefaTypes";
 import { getToken } from "./localStorageService";
 
@@ -186,4 +188,38 @@ export async function reabrirTarefa(idTarefa: number | null) {
 
         throw new Error(mensagem);
     }
+}
+
+export async function listarSubtarefasPorIdTarefa(idTarefa: number | null, pageSize = 10, pageNumber = 0): Promise<Pagina<SubtarefaResponseDTO>> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id do tarefa nulo.");
+
+    const params = new URLSearchParams({
+        page: String(pageNumber),
+        size: String(pageSize),
+    });
+
+    const response = await fetch(
+        `${API_URL}/task-service/v1/tarefas/${idTarefa}/subtarefas?${params}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao listar subtarefas.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
 }
