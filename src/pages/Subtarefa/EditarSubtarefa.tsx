@@ -1,18 +1,45 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, SquarePen, Type } from "lucide-react";
-import { subtarefas } from "../../data/subtarefas";
+import type { SubtarefaResponseDTO } from "../../types/subtarefaTypes";
+import { atualizarSubtarefa, buscarSubtarefaPorId } from "../../services/subtarefaService";
 
 const EditarSubtarefa = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-
-    const subtarefa = subtarefas.find(s => s.id === Number(id)) ?? null;
+    const [subtarefa, setSubtarefa] = useState<SubtarefaResponseDTO>();
+    const [loading, setLoading] = useState<boolean>(true);
+    const [erro, setErro] = useState<string>("");
 
     const [form, setForm] = useState({
-        titulo: subtarefa?.titulo ?? "",
+        titulo: "",
     });
+
+    useEffect(() => {
+        const getSubtarefa = async () => {
+            try {
+                setLoading(true);
+                setErro("");
+                const response = await buscarSubtarefaPorId(Number(id));
+                setSubtarefa(response);
+
+                setForm({
+                    titulo: response.titulo ?? ""
+                });
+            } catch (error) {
+                console.error(error);
+                setErro(error instanceof Error ? error.message : "Erro ao carregar dados da subtarefa.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getSubtarefa();
+    }, [id]);
+
+    const [salvando, setSalvando] = useState<boolean>(false);
+    const [erroEnvio, setErroEnvio] = useState<string>("");
 
     const [erros, setErros] = useState({
         titulo: "",
@@ -32,7 +59,7 @@ const EditarSubtarefa = () => {
         }));
     };
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const novosErros = {
@@ -53,7 +80,25 @@ const EditarSubtarefa = () => {
 
         if (!valido) return;
 
-        console.log(form);
+        setErroEnvio("");
+        setSalvando(true);
+
+        try {
+            await atualizarSubtarefa(subtarefa?.id_subtarefa ?? Number(id), {
+                titulo: form.titulo.trim()
+            });
+
+            if (subtarefa?.id_tarefa) {
+                navigate(`/tarefa/${subtarefa.id_tarefa}`);
+            } else {
+                navigate(-1);
+            }
+        } catch (error) {
+            console.error(error);
+            setErroEnvio(error instanceof Error ? error.message : "Erro ao atualizar subtarefa.");
+        } finally {
+            setSalvando(false);
+        }
     };
 
     return(
@@ -72,6 +117,11 @@ const EditarSubtarefa = () => {
                 </button>
             </div>
 
+            {loading ? (
+                <p className="text-[#8E909A] text-sm">Carregando subtarefa...</p>
+            ) : erro ? (
+                <p className="text-red-400 text-sm">{erro}</p>
+            ) : (
             <div className="w-full bg-[#111114] rounded-xl border border-white/8 px-4 py-6">
                 <form onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-2">
@@ -102,6 +152,10 @@ const EditarSubtarefa = () => {
                         )}
                     </div>
 
+                    {erroEnvio && (
+                        <p className="text-red-400 text-sm mt-5">{erroEnvio}</p>
+                    )}
+
                     <div className="my-6 h-px bg-white/8" />
 
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -109,13 +163,14 @@ const EditarSubtarefa = () => {
                             Cancelar
                         </button>
 
-                        <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                        <button type="submit" disabled={salvando} className="disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <SquarePen size={22}/>
-                            Salvar Alterações
+                            {salvando ? "Salvando..." : "Salvar Alterações"}
                         </button>
                     </div>
                 </form>
             </div>
+            )}
         </MainLayout>
     );
 }

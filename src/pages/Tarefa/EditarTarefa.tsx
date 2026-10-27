@@ -130,7 +130,11 @@ const EditarTarefa = () => {
                 data_limite: form.prazo || undefined,
             });
 
-            navigate(tarefa?.id_workspace ? `/workspace/${tarefa.id_workspace}` : "/workspaces");
+            if (tarefa?.id_workspace) {
+                navigate(`/workspace/${tarefa.id_workspace}`);
+            } else {
+                navigate(-1);
+            }
         } catch (error) {
             console.error(error);
             setErroEnvio(error instanceof Error ? error.message : "Erro ao atualizar tarefa.");
