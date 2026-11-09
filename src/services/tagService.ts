@@ -16,7 +16,7 @@ export async function listarTagsPorUsuario(idUsuario: number | null, pageSize = 
     });
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tags/usuario/${idUsuario}?${params}`, {
+        `${API_URL}/v1/tags/usuario/${idUsuario}?${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -45,7 +45,7 @@ export async function buscarTagPorId(idTag: number | null): Promise<TagResponseD
     if (idTag == null) throw new Error("Id da tag nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tags/${idTag}`, {
+        `${API_URL}/v1/tags/${idTag}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -72,7 +72,7 @@ export async function cadastrarTag(tagDTO: TagRequestDTO) {
     if (!token) throw new Error("Erro ao obter o token.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tags`, {
+        `${API_URL}/v1/tags`, {
         method: "POST",
         headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(tagDTO)
@@ -99,7 +99,7 @@ export async function atualizarTag(idTag: number | null, tagDTO: TagRequestDTO) 
     if (idTag == null) throw new Error("Id da tag nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tags/${idTag}`, {
+        `${API_URL}/v1/tags/${idTag}`, {
         method: "PUT",
         headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(tagDTO)
@@ -126,7 +126,7 @@ export async function deletarTag(idTag: number | null) {
     if (idTag == null) throw new Error("Id da tag nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tags/${idTag}`, {
+        `${API_URL}/v1/tags/${idTag}`, {
         method: "DELETE",
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -155,7 +155,7 @@ export async function listarTodasCoresTag(pageSize = 20, pageNumber = 0): Promis
     });
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/cores-tag?${params}`, {
+        `${API_URL}/v1/cores-tag?${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }

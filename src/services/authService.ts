@@ -14,7 +14,7 @@ interface JwtPayload {
 
 export async function fazerLogin(loginRequestDTO: LoginRequestDTO) {
     const response = await fetch(
-        `${API_URL}/auth-service/v1/auth/login`,
+        `${API_URL}/v1/auth/login`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -46,7 +46,7 @@ export async function fazerLogin(loginRequestDTO: LoginRequestDTO) {
 
 export async function fazerCadastro(cadastroRequestDTO: CadastroRequestDTO) {
     const response = await fetch(
-        `${API_URL}/auth-service/v1/auth/register`,
+        `${API_URL}/v1/auth/register`,
         {
             method: "POST",
             headers: { "Content-Type": "application/json" },

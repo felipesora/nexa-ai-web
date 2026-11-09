@@ -17,7 +17,7 @@ export async function listarWorkspacesPorUsuario(idUsuario: number | null, pageS
     });
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/workspaces/usuario/${idUsuario}?${params}`, {
+        `${API_URL}/v1/workspaces/usuario/${idUsuario}?${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -49,7 +49,7 @@ export async function listarTodosIconesWorkspace(pageSize = 20, pageNumber = 0):
     });
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/icones-workspace?${params}`, {
+        `${API_URL}/v1/icones-workspace?${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -81,7 +81,7 @@ export async function listarTodasCoresWorkspace(pageSize = 20, pageNumber = 0): 
     });
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/cores-workspace?${params}`, {
+        `${API_URL}/v1/cores-workspace?${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -110,7 +110,7 @@ export async function buscarWorkspacePorId(idWorkspace: number | null): Promise<
     if (idWorkspace == null) throw new Error("Id do workspace nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/workspaces/${idWorkspace}`, {
+        `${API_URL}/v1/workspaces/${idWorkspace}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -137,7 +137,7 @@ export async function cadastrarWorkspace(workspaceDTO: WorkspaceRequestDTO) {
     if (!token) throw new Error("Erro ao obter o token.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/workspaces`, {
+        `${API_URL}/v1/workspaces`, {
         method: "POST",
         headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(workspaceDTO)
@@ -164,7 +164,7 @@ export async function atualizarWorkspace(idWorkspace: number | null, workspaceDT
     if (idWorkspace == null) throw new Error("Id do workspace nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/workspaces/${idWorkspace}`, {
+        `${API_URL}/v1/workspaces/${idWorkspace}`, {
         method: "PUT",
         headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(workspaceDTO)
@@ -191,7 +191,7 @@ export async function deletarWorkspace(idWorkspace: number | null) {
     if (idWorkspace == null) throw new Error("Id do workspace nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/workspaces/${idWorkspace}`, {
+        `${API_URL}/v1/workspaces/${idWorkspace}`, {
         method: "DELETE",
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -222,7 +222,7 @@ export async function listarTarefasPorIdWorkspace(idWorkspace: number | null, pa
     });
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/workspaces/${idWorkspace}/tarefas?${params}`, {
+        `${API_URL}/v1/workspaces/${idWorkspace}/tarefas?${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }

@@ -12,7 +12,7 @@ export async function buscarTarefaPorId(idTarefa: number | null): Promise<Tarefa
     if (idTarefa == null) throw new Error("Id da tarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tarefas/${idTarefa}`, {
+        `${API_URL}/v1/tarefas/${idTarefa}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -39,7 +39,7 @@ export async function cadastrarTarefa(tarefaDTO: TarefaCreateDTO) {
     if (!token) throw new Error("Erro ao obter o token.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tarefas`, {
+        `${API_URL}/v1/tarefas`, {
         method: "POST",
         headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(tarefaDTO)
@@ -66,7 +66,7 @@ export async function atualizarTarefa(idTarefa: number | null, tarefaDTO: Tarefa
     if (idTarefa == null) throw new Error("Id da tarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tarefas/${idTarefa}`, {
+        `${API_URL}/v1/tarefas/${idTarefa}`, {
         method: "PUT",
         headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(tarefaDTO)
@@ -93,7 +93,7 @@ export async function deletarTarefa(idTarefa: number | null) {
     if (idTarefa == null) throw new Error("Id da tarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tarefas/${idTarefa}`, {
+        `${API_URL}/v1/tarefas/${idTarefa}`, {
         method: "DELETE",
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -119,7 +119,7 @@ export async function concluirTarefa(idTarefa: number | null) {
     if (idTarefa == null) throw new Error("Id da tarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tarefas/${idTarefa}/concluir`, {
+        `${API_URL}/v1/tarefas/${idTarefa}/concluir`, {
         method: "PATCH",
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -145,7 +145,7 @@ export async function iniciarTarefa(idTarefa: number | null) {
     if (idTarefa == null) throw new Error("Id da tarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tarefas/${idTarefa}/iniciar`, {
+        `${API_URL}/v1/tarefas/${idTarefa}/iniciar`, {
         method: "PATCH",
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -171,7 +171,7 @@ export async function reabrirTarefa(idTarefa: number | null) {
     if (idTarefa == null) throw new Error("Id da tarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tarefas/${idTarefa}/reabrir`, {
+        `${API_URL}/v1/tarefas/${idTarefa}/reabrir`, {
         method: "PATCH",
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -202,7 +202,7 @@ export async function listarSubtarefasPorIdTarefa(idTarefa: number | null, pageS
     });
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/tarefas/${idTarefa}/subtarefas?${params}`, {
+        `${API_URL}/v1/tarefas/${idTarefa}/subtarefas?${params}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }

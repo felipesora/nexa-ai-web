@@ -10,7 +10,7 @@ export async function buscarSubtarefaPorId(idSubtarefa: number | null): Promise<
     if (idSubtarefa == null) throw new Error("Id da subtarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/subtarefas/${idSubtarefa}`, {
+        `${API_URL}/v1/subtarefas/${idSubtarefa}`, {
         headers: {
             'Authorization': `Bearer ${token}`
         }
@@ -37,7 +37,7 @@ export async function cadastrarSubtarefa(subtarefaDTO: SubtarefaCreateDTO) {
     if (!token) throw new Error("Erro ao obter o token.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/subtarefas`, {
+        `${API_URL}/v1/subtarefas`, {
         method: "POST",
         headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(subtarefaDTO)
@@ -64,7 +64,7 @@ export async function atualizarSubtarefa(idSubtarefa: number | null, subtarefaDT
     if (idSubtarefa == null) throw new Error("Id da subtarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/subtarefas/${idSubtarefa}`, {
+        `${API_URL}/v1/subtarefas/${idSubtarefa}`, {
         method: "PUT",
         headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
         body: JSON.stringify(subtarefaDTO)
@@ -91,7 +91,7 @@ export async function deletarSubtarefa(idSubtarefa: number | null) {
     if (idSubtarefa == null) throw new Error("Id da subtarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/subtarefas/${idSubtarefa}`, {
+        `${API_URL}/v1/subtarefas/${idSubtarefa}`, {
         method: "DELETE",
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -117,7 +117,7 @@ export async function concluirSubtarefa(idSubtarefa: number | null) {
     if (idSubtarefa == null) throw new Error("Id da subtarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/subtarefas/${idSubtarefa}/concluir`, {
+        `${API_URL}/v1/subtarefas/${idSubtarefa}/concluir`, {
         method: "PATCH",
         headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -143,7 +143,7 @@ export async function desmarcarConclusaoSubtarefa(idSubtarefa: number | null) {
     if (idSubtarefa == null) throw new Error("Id da subtarefa nulo.");
 
     const response = await fetch(
-        `${API_URL}/task-service/v1/subtarefas/${idSubtarefa}/desmarcar-conclusao`, {
+        `${API_URL}/v1/subtarefas/${idSubtarefa}/desmarcar-conclusao`, {
         method: "PATCH",
         headers: { 'Authorization': `Bearer ${token}` }
     });
