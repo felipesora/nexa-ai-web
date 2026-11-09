@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
-import { Plus } from "lucide-react";
+import { Plus, Tag } from "lucide-react";
+import EstadoVazio from "../../components/EstadoVazio";
 import CardTag from "./components/CardTag";
 import type { TagResponseDTO } from "../../types/tagTypes";
 import { useEffect, useState } from "react";
@@ -87,7 +88,11 @@ const Tags = () => {
                         {erro}
                     </p>
                 ) : tags.length === 0 ? (
-                    <p className="text-[#8E909A]">Você ainda não tem tags. Crie a primeira!</p>
+                    <EstadoVazio
+                        icone={Tag}
+                        titulo="Nenhuma tag por aqui ainda"
+                        descricao="Crie tags para identificar e filtrar rapidamente tarefas de um mesmo tema."
+                    />
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                     {tags.map((tag) => (

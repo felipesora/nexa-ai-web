@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
-import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, Clock4, EllipsisVertical, Plus, Search, SquarePen, Trash } from "lucide-react";
+import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, ClipboardList, Clock4, EllipsisVertical, Plus, Search, SquarePen, Trash } from "lucide-react";
+import EstadoVazio from "../../components/EstadoVazio";
 import CardTarefa, { type AcaoStatusTarefa } from "./components/CardTarefa";
 import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
@@ -335,7 +336,11 @@ const WorkspacePage = () => {
 
                 <div className="flex flex-col gap-4">
                     {tarefas.length === 0 ? (
-                        <p className="text-[#8E909A] text-sm">Este workspace ainda não tem tarefas. Crie a primeira!</p>
+                        <EstadoVazio
+                            icone={ClipboardList}
+                            titulo="Nenhuma tarefa neste workspace"
+                            descricao="Adicione a primeira tarefa para começar a organizar o que precisa ser feito."
+                        />
                     ) : (
                         tarefas.map((tarefa) => (
                             <CardTarefa

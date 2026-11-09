@@ -13,7 +13,7 @@ const EditarTag = () => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [erro, setErro] = useState<string>("");
-    const [corOriginal, setCorOriginal] = useState<string>("");
+    const [idCorOriginal, setIdCorOriginal] = useState<number | null>(null);
 
     const [form, setForm] = useState<{ nome: string; id_cor: number | null }>({
         nome: "",
@@ -35,7 +35,7 @@ const EditarTag = () => {
                 setErro("");
                 const response = await buscarTagPorId(Number(id));
                 setForm(prev => ({ ...prev, nome: response.nome ?? "" }));
-                setCorOriginal(response.cor_tag ?? "");
+                setIdCorOriginal(response.cor_tag?.id_cor ?? null);
             } catch (error) {
                 console.error(error);
                 setErro(error instanceof Error ? error.message : "Erro ao carregar dados da tag.");
@@ -47,13 +47,13 @@ const EditarTag = () => {
         getTag();
     }, [id]);
 
-    // A API devolve o hex da cor; quando as opções chegam, acha o id correspondente
+    // Quando as opções chegam, seleciona a cor atual da tag (ou a primeira, se não houver)
     useEffect(() => {
         if (form.id_cor != null || cores.length === 0 || loading) return;
 
-        const encontrada = cores.find(c => c.cor.toLowerCase() === corOriginal.trim().toLowerCase());
+        const encontrada = cores.find(c => c.id_cor === idCorOriginal);
         setForm(prev => ({ ...prev, id_cor: (encontrada ?? cores[0]).id_cor }));
-    }, [cores, corOriginal, loading, form.id_cor]);
+    }, [cores, idCorOriginal, loading, form.id_cor]);
 
     const corSelecionada = cores.find(c => c.id_cor === form.id_cor);
 

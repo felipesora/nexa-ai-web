@@ -13,7 +13,7 @@ const CardTag = ({ tag, onDeletar }: CardTagProps) => {
     const [menuAberto, setMenuAberto] = useState<boolean>(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
-    const tagColor = tag.cor_tag?.startsWith("#") ? tag.cor_tag : "#12B5FD";
+    const tagColor = tag.cor_tag?.cor ?? "#12B5FD";
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {

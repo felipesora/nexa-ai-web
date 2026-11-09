@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
-import { ArrowLeft, Calendar, CalendarCheck2, CalendarClock, CalendarSync, ChartNoAxesCombined, Check, EllipsisVertical, Play, Plus, RotateCcw, SquarePen, Trash } from "lucide-react";
+import { ArrowLeft, Calendar, CalendarCheck2, CalendarClock, CalendarSync, ChartNoAxesCombined, Check, EllipsisVertical, ListChecks, Play, Plus, RotateCcw, SquarePen, Trash } from "lucide-react";
+import EstadoVazio from "../../components/EstadoVazio";
 import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../utils/formatters";
 import CardSubtarefa from "./components/CardSubtarefa";
 import { useEffect, useRef, useState } from "react";
@@ -329,7 +330,11 @@ const TarefaPage = () => {
 
                 <div className="flex flex-col gap-4">
                     {subtarefas.length === 0 ? (
-                        <p className="text-[#8E909A] text-sm">Esta tarefa ainda não tem subtarefas. Crie a primeira!</p>
+                        <EstadoVazio
+                            icone={ListChecks}
+                            titulo="Nenhuma subtarefa ainda"
+                            descricao="Divida esta tarefa em etapas menores para acompanhar o progresso com mais facilidade."
+                        />
                     ) : (
                         subtarefas.map((subtarefa) => (
                             <CardSubtarefa
