@@ -13,6 +13,7 @@ import Paginacao from "../../components/Paginacao";
 import type { TarefaResponseDTO } from "../../types/tarefaTypes";
 import { buscarResumoWorkspace, buscarWorkspacePorId, deletarWorkspace, listarTarefasPorIdWorkspace } from "../../services/workspaceService";
 import { buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, reabrirTarefa } from "../../services/tarefaService";
+import Carregando from "../../components/Carregando";
 
 const WorkspacePage = () => {
     const { id } = useParams();
@@ -163,7 +164,7 @@ const WorkspacePage = () => {
     if (loading) {
         return (
             <MainLayout titulo="Workspace">
-                <p className="text-[#8E909A] text-sm">Carregando workspace...</p>
+                <Carregando texto="Carregando workspace..." />
             </MainLayout>
         );
     }
@@ -378,7 +379,7 @@ const WorkspacePage = () => {
 
                 <div className={`flex flex-col gap-4 transition-opacity ${carregandoTarefas ? "opacity-60" : ""}`}>
                     {carregandoTarefas && tarefas.length === 0 ? (
-                        <p className="text-[#8E909A] text-sm">Carregando tarefas...</p>
+                        <Carregando texto="Carregando tarefas..." />
                     ) : tarefas.length === 0 ? (
                         <EstadoVazio
                             icone={ClipboardList}

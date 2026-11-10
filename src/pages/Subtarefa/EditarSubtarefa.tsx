@@ -4,6 +4,7 @@ import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, SquarePen, Type } from "lucide-react";
 import type { SubtarefaResponseDTO } from "../../types/subtarefaTypes";
 import { atualizarSubtarefa, buscarSubtarefaPorId } from "../../services/subtarefaService";
+import Carregando from "../../components/Carregando";
 
 const EditarSubtarefa = () => {
     const { id } = useParams();
@@ -118,7 +119,7 @@ const EditarSubtarefa = () => {
             </div>
 
             {loading ? (
-                <p className="text-[#8E909A] text-sm">Carregando subtarefa...</p>
+                <Carregando texto="Carregando subtarefa..." />
             ) : erro ? (
                 <p className="text-red-400 text-sm">{erro}</p>
             ) : (

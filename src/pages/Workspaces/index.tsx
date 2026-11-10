@@ -8,6 +8,7 @@ import Modal from "../../components/Modal";
 import Paginacao from "../../components/Paginacao";
 import { deletarWorkspace, listarWorkspacesPorUsuario } from "../../services/workspaceService";
 import { getIdUsuario } from "../../services/localStorageService";
+import Carregando from "../../components/Carregando";
 
 const sugestoesWorkspace = [
     { icon: Briefcase, titulo: "Trabalho", descricao: "Projetos, entregas e reuniões da equipe." },
@@ -104,7 +105,7 @@ const Workspaces = () => {
                 )}
 
                 {loading && workspaces.length === 0 ? (
-                    <p className="text-[#8E909A]">Carregando workspaces...</p>
+                    <Carregando texto="Carregando workspaces..." />
                 ) : erro ? (
                     <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm">
                         {erro}

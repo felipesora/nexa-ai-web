@@ -5,6 +5,7 @@ import MainLayout from "../../layouts/MainLayout";
 import { buscarIconeWorkspace } from "../../data/workspaceOptions";
 import { useOpcoesWorkspace } from "../../hooks/useOpcoesWorkspace";
 import { cadastrarWorkspace } from "../../services/workspaceService";
+import Carregando from "../../components/Carregando";
 
 const CadastrarWorkspace = () => {
     const navigate = useNavigate();
@@ -172,7 +173,7 @@ const CadastrarWorkspace = () => {
                         </label>
 
                         {loadingOpcoes && (
-                            <p className="text-[#8E909A] text-sm">Carregando ícones e cores...</p>
+                            <Carregando texto="Carregando ícones e cores..." tamanho="sm" />
                         )}
 
                         {erroOpcoes && (

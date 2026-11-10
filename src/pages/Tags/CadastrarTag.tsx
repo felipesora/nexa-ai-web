@@ -4,6 +4,7 @@ import { useOpcoesTag } from "../../hooks/useOpcoesTag";
 import { cadastrarTag } from "../../services/tagService";
 import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, Plus, TagIcon, Type } from "lucide-react";
+import Carregando from "../../components/Carregando";
 
 const CadastrarTag = () => {
     const navigate = useNavigate();
@@ -137,7 +138,7 @@ const CadastrarTag = () => {
                         </label>
 
                         {carregandoCores && (
-                            <p className="text-[#8E909A] text-sm">Carregando cores...</p>
+                            <Carregando texto="Carregando cores..." tamanho="sm" />
                         )}
 
                         {erroCores && (

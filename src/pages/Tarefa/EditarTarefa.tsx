@@ -5,6 +5,7 @@ import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, CalendarClock, ChartNoAxesCombined, ChevronDown, Flag, SquarePen, Type } from "lucide-react";
 import type { TarefaResponseDTO, TarefaUpdateDTO } from "../../types/tarefaTypes";
 import { atualizarTarefa, buscarTarefaPorId } from "../../services/tarefaService";
+import Carregando from "../../components/Carregando";
 
 const EditarTarefa = () => {
     const { id } = useParams();
@@ -161,7 +162,7 @@ const EditarTarefa = () => {
             </div>
 
             {loading ? (
-                <p className="text-[#8E909A] text-sm">Carregando tarefa...</p>
+                <Carregando texto="Carregando tarefa..." />
             ) : erro ? (
                 <p className="text-red-400 text-sm">{erro}</p>
             ) : (

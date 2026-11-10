@@ -4,6 +4,7 @@ import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, SquarePen, TagIcon, Type } from "lucide-react";
 import { useOpcoesTag } from "../../hooks/useOpcoesTag";
 import { atualizarTag, buscarTagPorId } from "../../services/tagService";
+import Carregando from "../../components/Carregando";
 
 const EditarTag = () => {
     const { id } = useParams();
@@ -127,7 +128,7 @@ const EditarTag = () => {
             </div>
 
             {loading ? (
-                <p className="text-[#8E909A] text-sm">Carregando tag...</p>
+                <Carregando texto="Carregando tag..." />
             ) : erro ? (
                 <p className="text-red-400 text-sm">{erro}</p>
             ) : (
@@ -167,7 +168,7 @@ const EditarTag = () => {
                         </label>
 
                         {carregandoCores && (
-                            <p className="text-[#8E909A] text-sm">Carregando cores...</p>
+                            <Carregando texto="Carregando cores..." tamanho="sm" />
                         )}
 
                         {erroCores && (

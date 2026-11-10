@@ -2,6 +2,7 @@ import { Calendar, Eye, ListChecks, Zap } from "lucide-react";
 import type { TarefaPrioritariaDTO } from "../../../../types/tarefaTypes";
 import { estilosStatusDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../../../utils/formatters";
 import { useNavigate } from "react-router-dom";
+import Carregando from "../../../../components/Carregando";
 
 interface CardTarefasPrioritariasProps {
     tarefas: TarefaPrioritariaDTO[];
@@ -31,7 +32,7 @@ const CardTarefasPrioritarias = ({ tarefas, loading = false, className = "" }: C
                 </div>
 
                 {loading ? (
-                    <p className="px-3 py-6 text-[#8E909A] text-sm">Carregando tarefas...</p>
+                    <Carregando texto="Carregando tarefas..." />
                 ) : tarefas.length === 0 ? (
                     <div className="px-3 py-10 flex flex-col items-center text-center">
                         <div className="mb-4 rounded-2xl border border-[#12B5FD]/20 bg-[#12B5FD]/10 p-3">

@@ -11,6 +11,7 @@ import type { TarefaResponseDTO } from "../../types/tarefaTypes";
 import type { SubtarefaResponseDTO } from "../../types/subtarefaTypes";
 import { buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, listarSubtarefasPorIdTarefa, reabrirTarefa } from "../../services/tarefaService";
 import { buscarSubtarefaPorId, concluirSubtarefa, deletarSubtarefa, desmarcarConclusaoSubtarefa } from "../../services/subtarefaService";
+import Carregando from "../../components/Carregando";
 
 type AcaoStatusTarefa = "INICIAR" | "CONCLUIR" | "REABRIR";
 
@@ -194,7 +195,7 @@ const TarefaPage = () => {
     if (loading) {
         return (
             <MainLayout titulo="Tarefa">
-                <p className="text-[#8E909A] text-sm">Carregando tarefa...</p>
+                <Carregando texto="Carregando tarefa..." />
             </MainLayout>
         );
     }
@@ -376,7 +377,7 @@ const TarefaPage = () => {
 
                 <div className="flex flex-col gap-4">
                     {carregandoSubtarefas && subtarefas.length === 0 ? (
-                        <p className="text-[#8E909A] text-sm">Carregando subtarefas...</p>
+                        <Carregando texto="Carregando subtarefas..." />
                     ) : subtarefas.length === 0 ? (
                         <EstadoVazio
                             icone={ListChecks}

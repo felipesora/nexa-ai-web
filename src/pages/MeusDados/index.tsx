@@ -5,6 +5,7 @@ import { useEffect, useState, type SubmitEvent } from "react";
 import Modal from "../../components/Modal";
 import { alterarSenhaUsuario, atualizarUsuario, buscarUsuarioPorId, desativarUsuario } from "../../services/usuarioService";
 import { getIdUsuario, limparAutenticacao } from "../../services/localStorageService";
+import Carregando from "../../components/Carregando";
 
 const classeInput = (temErro: boolean) =>
     `text-sm w-full rounded-md bg-[#0F0F11] py-2 pl-10 pr-3 text-white placeholder:text-gray-500 focus:outline-none transition-all duration-300 ${temErro ? "border border-red-500" : "border border-white/10 focus:border-[#12B5FD]"}`;
@@ -201,7 +202,7 @@ const MeusDados = () => {
                 {sucessoDados && <Aviso tipo="sucesso" texto={sucessoDados} />}
 
                 {loading ? (
-                    <p className="text-[#8E909A] text-sm">Carregando seus dados...</p>
+                    <Carregando texto="Carregando seus dados..." />
                 ) : (
                 <form onSubmit={salvarDados}>
                     <div className="flex flex-col gap-2">

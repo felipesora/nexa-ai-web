@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import Modal from "../../components/Modal";
 import { getIdUsuario } from "../../services/localStorageService";
 import { deletarTag, listarTagsPorUsuario } from "../../services/tagService";
+import Carregando from "../../components/Carregando";
 
 const Tags = () => {
     const navigate = useNavigate();
@@ -82,7 +83,7 @@ const Tags = () => {
                 )}
 
                 {loading ? (
-                    <p className="text-[#8E909A]">Carregando tags...</p>
+                    <Carregando texto="Carregando tags..." />
                 ) : erro ? (
                     <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm">
                         {erro}

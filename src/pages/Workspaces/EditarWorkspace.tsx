@@ -6,6 +6,7 @@ import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, SquarePen, Type } from "lucide-react";
 import type { WorkspaceResponseDTO } from "../../types/workspaceTypes";
 import { atualizarWorkspace, buscarWorkspacePorId } from "../../services/workspaceService";
+import Carregando from "../../components/Carregando";
 
 const EditarWorkspace = () => {
     const { id } = useParams();
@@ -147,7 +148,7 @@ const EditarWorkspace = () => {
             </div>
 
             {loading ? (
-                <p className="text-[#8E909A]">Carregando workspace...</p>
+                <Carregando texto="Carregando workspace..." />
             ) : erro ? (
                 <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm">
                     {erro}
@@ -209,7 +210,7 @@ const EditarWorkspace = () => {
                         </label>
 
                         {loadingOpcoes && (
-                            <p className="text-[#8E909A] text-sm">Carregando ícones e cores...</p>
+                            <Carregando texto="Carregando ícones e cores..." tamanho="sm" />
                         )}
 
                         {erroOpcoes && (
