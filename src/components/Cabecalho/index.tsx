@@ -1,18 +1,51 @@
 import { Bell, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { limparAutenticacao } from "../../services/localStorageService";
+import { getIdUsuario, limparAutenticacao } from "../../services/localStorageService";
+import { buscarUsuarioPorId } from "../../services/usuarioService";
 
 interface CabecalhoProps {
     titulo: string;
     abrirMenu: () => void;
 }
 
+// O cabeçalho é montado de novo a cada página; guarda o nome para não buscar o usuário toda vez
+let usuarioEmCache: { id: number; nome: string } | null = null;
+
+const gerarIniciais = (nome: string) => {
+    const partes = nome.trim().split(/\s+/).filter(Boolean);
+    if (partes.length === 0) return "";
+
+    const primeira = partes[0][0];
+    const ultima = partes.length > 1 ? partes[partes.length - 1][0] : "";
+    return (primeira + ultima).toUpperCase();
+};
+
 const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
     const navigate = useNavigate();
     const [menuPerfilAberto, setMenuPerfilAberto] = useState<boolean>(false);
 
+    const idUsuario = getIdUsuario();
+    const [nomeUsuario, setNomeUsuario] = useState<string>(
+        usuarioEmCache && usuarioEmCache.id === idUsuario ? usuarioEmCache.nome : ""
+    );
+
     const menuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (idUsuario == null || (usuarioEmCache && usuarioEmCache.id === idUsuario)) return;
+
+        let ativo = true;
+
+        buscarUsuarioPorId(idUsuario)
+            .then((usuario) => {
+                usuarioEmCache = { id: idUsuario, nome: usuario.nome };
+                if (ativo) setNomeUsuario(usuario.nome);
+            })
+            .catch((error) => console.error(error));
+
+        return () => { ativo = false; };
+    }, [idUsuario]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -28,6 +61,7 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
     const logout = () => {
         limparAutenticacao();
+        usuarioEmCache = null;
         navigate('/', { replace: true });
     }
 
@@ -60,11 +94,11 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
                 <div ref={menuRef} className="relative">
                     <button onClick={() => setMenuPerfilAberto((prev) => !prev)} className="cursor-pointer flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-white/5">
-                        <div className="bg-[#12B5FD] rounded-full px-2.5 py-2 text-white font-semibold text-sm">
-                            FS
+                        <div className="bg-[#12B5FD] rounded-full w-9 h-9 flex items-center justify-center text-white font-semibold text-sm">
+                            {nomeUsuario ? gerarIniciais(nomeUsuario) : <User size={18} />}
                         </div>
-                        <p className="hidden min-[560px]:block text-[#E5E1E4] text-[15px]">
-                            Felipe Sora
+                        <p className="hidden min-[560px]:block text-[#E5E1E4] text-[15px] max-w-[180px] truncate">
+                            {nomeUsuario}
                         </p>
                     </button>
 
