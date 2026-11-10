@@ -1,3 +1,4 @@
+import { paraDataLimiteDaApi } from "../../utils/formatters";
 import { ArrowLeft, CalendarClock, ChartNoAxesCombined, ChevronDown, Flag, Plus, Type } from "lucide-react";
 import MainLayout from "../../layouts/MainLayout"
 import { useNavigate, useParams } from "react-router-dom";
@@ -102,7 +103,7 @@ const CadastroTarefa = () => {
                 descricao: form.descricao.trim() || undefined,
                 prioridade: form.prioridade,
                 dificuldade: form.dificuldade || undefined,
-                data_limite: form.prazo || undefined,
+                data_limite: paraDataLimiteDaApi(form.prazo),
                 id_workspace: Number(idWorkspace),
             });
 

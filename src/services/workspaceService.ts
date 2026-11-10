@@ -1,6 +1,6 @@
 import type { Pagina } from "../types/paginacaoType";
 import type { TarefaResponseDTO } from "../types/tarefaTypes";
-import type { CorWorkspace, IconeWorkspace, WorkspaceRequestDTO, WorkspaceResponseDTO } from "../types/workspaceTypes";
+import type { CorWorkspace, IconeWorkspace, ResumoWorkspaceDTO, WorkspaceRequestDTO, WorkspaceResponseDTO } from "../types/workspaceTypes";
 import { getToken } from "./localStorageService";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -230,6 +230,34 @@ export async function listarTarefasPorIdWorkspace(idWorkspace: number | null, pa
 
     if (!response.ok) {
         let mensagem = "Falha ao listar tarefas.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
+export async function buscarResumoWorkspace(idWorkspace: number | null): Promise<ResumoWorkspaceDTO> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idWorkspace == null) throw new Error("Id do workspace nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/workspaces/${idWorkspace}/resumo`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao carregar o resumo do workspace.";
 
         try {
             const erro: { message?: string } = await response.json();

@@ -73,3 +73,13 @@ export const estilosPrioridadeDaTarefa = (prioridade: string) => {
             return "bg-[#353437]/50 border border-white/10 text-[#C5C6D0]";
     }
 };
+// O input type="date" devolve só "AAAA-MM-DD", mas a API espera data e hora (LocalDateTime).
+// Usa o fim do dia para o prazo valer o dia inteiro.
+export const paraDataLimiteDaApi = (data: string) => data ? `${data}T23:59:59` : undefined;
+
+// "2027-02-10T23:59:59" -> "10/02/2027"
+export const formatarDataCurta = (data?: string | null, textoVazio = "Sem prazo") => {
+    if (!data) return textoVazio;
+    const date = new Date(data);
+    return Number.isNaN(date.getTime()) ? data : date.toLocaleDateString("pt-BR");
+};

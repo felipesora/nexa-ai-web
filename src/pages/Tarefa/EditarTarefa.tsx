@@ -1,3 +1,4 @@
+import { paraDataLimiteDaApi } from "../../utils/formatters";
 import { useEffect, useState, type SubmitEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
@@ -127,7 +128,7 @@ const EditarTarefa = () => {
                 descricao: form.descricao.trim() || undefined,
                 prioridade: form.prioridade,
                 dificuldade: form.dificuldade || undefined,
-                data_limite: form.prazo || undefined,
+                data_limite: paraDataLimiteDaApi(form.prazo),
             });
 
             if (tarefa?.id_workspace) {

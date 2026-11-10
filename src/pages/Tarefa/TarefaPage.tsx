@@ -6,6 +6,7 @@ import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDa
 import CardSubtarefa from "./components/CardSubtarefa";
 import { useEffect, useRef, useState } from "react";
 import Modal from "../../components/Modal";
+import Paginacao from "../../components/Paginacao";
 import type { TarefaResponseDTO } from "../../types/tarefaTypes";
 import type { SubtarefaResponseDTO } from "../../types/subtarefaTypes";
 import { buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, listarSubtarefasPorIdTarefa, reabrirTarefa } from "../../services/tarefaService";
@@ -38,26 +39,68 @@ const TarefaPage = () => {
     const [alterandoStatus, setAlterandoStatus] = useState<boolean>(false);
     const [idSubtarefaAlterando, setIdSubtarefaAlterando] = useState<number | null>(null);
 
+    const [carregandoSubtarefas, setCarregandoSubtarefas] = useState<boolean>(false);
+    const [pagina, setPagina] = useState<number>(0);
+    const [tamanho, setTamanho] = useState<number>(10);
+    const [totalPaginas, setTotalPaginas] = useState<number>(0);
+    const [totalItens, setTotalItens] = useState<number>(0);
+    const [recarregar, setRecarregar] = useState<number>(0);
+
     useEffect(() => {
-        const getTarefaComSubtarefas = async () => {
+        const getTarefa = async () => {
             try {
                 setLoading(true);
                 setErro("");
-                const responseTarefa = await buscarTarefaPorId(Number(id));
-                setTarefa(responseTarefa);
-
-                const paginaSubtarefas = await listarSubtarefasPorIdTarefa(responseTarefa.id_tarefa, 100);
-                setSubtarefas(paginaSubtarefas.content);
+                setTarefa(await buscarTarefaPorId(Number(id)));
             } catch (error) {
                 console.error(error);
-                setErro(error instanceof Error ? error.message : "Erro ao carregar tarefa com subtarefas.");
+                setErro(error instanceof Error ? error.message : "Erro ao carregar tarefa.");
             } finally {
                 setLoading(false);
             }
         };
 
-        getTarefaComSubtarefas();
+        getTarefa();
     }, [id]);
+
+    useEffect(() => {
+        const getSubtarefas = async () => {
+            try {
+                setCarregandoSubtarefas(true);
+                const resposta = await listarSubtarefasPorIdTarefa(Number(id), tamanho, pagina);
+
+                // Se a página ficou vazia (ex.: excluiu o último item dela), volta uma página
+                if (resposta.content.length === 0 && pagina > 0) {
+                    setPagina(pagina - 1);
+                    return;
+                }
+
+                setSubtarefas(resposta.content);
+                setTotalPaginas(resposta.totalPages);
+                setTotalItens(resposta.totalElements);
+            } catch (error) {
+                console.error(error);
+                setErroAcao(error instanceof Error ? error.message : "Erro ao carregar subtarefas.");
+            } finally {
+                setCarregandoSubtarefas(false);
+            }
+        };
+
+        getSubtarefas();
+    }, [id, pagina, tamanho, recarregar]);
+
+    const mudarTamanho = (novoTamanho: number) => {
+        setTamanho(novoTamanho);
+    };
+
+    // Atualiza as contagens de subtarefas da tarefa (usadas no progresso) sem recarregar a tela
+    const atualizarContagens = async () => {
+        try {
+            setTarefa(await buscarTarefaPorId(Number(id)));
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const [tarefaSelecionada, setTarefaSelecionada] = useState<TarefaResponseDTO | null>(null);
     const [subtarefaSelecionada, setSubtarefaSelecionada] = useState<SubtarefaResponseDTO | null>(null);
@@ -125,6 +168,7 @@ const TarefaPage = () => {
             // Os métodos não retornam a subtarefa, então busca de novo para pegar o estado salvo
             const subtarefaAtualizada = await buscarSubtarefaPorId(subtarefa.id_subtarefa);
             setSubtarefas(prev => prev.map(s => s.id_subtarefa === subtarefa.id_subtarefa ? subtarefaAtualizada : s));
+            await atualizarContagens();
         } catch (error) {
             console.error(error);
             setErroAcao(error instanceof Error ? error.message : "Erro ao alterar conclusão da subtarefa.");
@@ -139,7 +183,8 @@ const TarefaPage = () => {
 
         try {
             await deletarSubtarefa(subtarefa.id_subtarefa);
-            setSubtarefas(prev => prev.filter(s => s.id_subtarefa !== subtarefa.id_subtarefa));
+            setRecarregar(prev => prev + 1);
+            await atualizarContagens();
         } catch (error) {
             console.error(error);
             setErroAcao(error instanceof Error ? error.message : "Erro ao excluir subtarefa.");
@@ -162,8 +207,9 @@ const TarefaPage = () => {
         );
     }
 
-    const totalSubtarefas = subtarefas.length;
-    const subtarefasConcluidas = subtarefas.filter(s => s.concluida).length;
+    // Totais da tarefa inteira (vindos do backend), não só da página exibida
+    const totalSubtarefas = tarefa.quantidade_subtarefas ?? totalItens;
+    const subtarefasConcluidas = tarefa.quantidade_subtarefas_concluidas ?? 0;
     const progresso = totalSubtarefas === 0 ? 0 : (subtarefasConcluidas / totalSubtarefas) * 100;
 
     const classeBotaoMenu = "disabled:opacity-60 disabled:cursor-not-allowed w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer";
@@ -329,7 +375,9 @@ const TarefaPage = () => {
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    {subtarefas.length === 0 ? (
+                    {carregandoSubtarefas && subtarefas.length === 0 ? (
+                        <p className="text-[#8E909A] text-sm">Carregando subtarefas...</p>
+                    ) : subtarefas.length === 0 ? (
                         <EstadoVazio
                             icone={ListChecks}
                             titulo="Nenhuma subtarefa ainda"
@@ -346,6 +394,16 @@ const TarefaPage = () => {
                             />
                         ))
                     )}
+
+                    <Paginacao
+                        pagina={pagina}
+                        totalPaginas={totalPaginas}
+                        totalItens={totalItens}
+                        tamanho={tamanho}
+                        onMudarPagina={setPagina}
+                        onMudarTamanho={mudarTamanho}
+                        desabilitado={carregandoSubtarefas}
+                    />
                 </div>
             </div>
 

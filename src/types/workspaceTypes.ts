@@ -30,3 +30,11 @@ export interface WorkspaceRequestDTO {
     id_cor: number;
     id_icone: number;
 }
+
+export interface ResumoWorkspaceDTO {
+    total: number;
+    concluidas: number;
+    em_andamento: number;
+    pendentes: number;
+    atrasadas: number;
+}

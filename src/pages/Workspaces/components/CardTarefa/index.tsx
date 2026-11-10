@@ -1,6 +1,6 @@
 import { CalendarCheck2, CalendarClock, ChartNoAxesCombined, Check, ChevronRight, EllipsisVertical, Play, RotateCcw, SquarePen, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../../../utils/formatters";
+import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarDataCurta, formatarStatusDaTarefa } from "../../../../utils/formatters";
 import { useEffect, useRef, useState } from "react";
 import { tags } from "../../../../data/tags";
 import CardTagInfo from "../CardTagInfo";
@@ -123,12 +123,12 @@ const CardTarefa = ({ tarefa, onDeletar, onAlterarStatus, alterandoStatus = fals
                 </p>
                 <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                     <CalendarClock size={17} />
-                    Prazo: {tarefa.data_limite}
+                    Prazo: {formatarDataCurta(tarefa.data_limite)}
                 </p>
                 {tarefa.status === "CONCLUIDA" && (
                     <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                         <CalendarCheck2 size={17} />
-                        Finalizada em: {tarefa.data_conclusao}
+                        Finalizada em: {formatarDataCurta(tarefa.data_conclusao, "-")}
                     </p>
                 )}
                 <p className={`rounded-sm px-3 py-0.5 text-[13px] w-fit ${estilosStatusDaTarefa(tarefa.status)}`}>

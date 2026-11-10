@@ -7,10 +7,11 @@ import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
 import { tags } from "../../data/tags";
 import { buscarCorWorkspace, buscarIconeWorkspace } from "../../data/workspaceOptions";
-import type { WorkspaceResponseDTO } from "../../types/workspaceTypes";
+import type { ResumoWorkspaceDTO, WorkspaceResponseDTO } from "../../types/workspaceTypes";
 import Modal from "../../components/Modal";
+import Paginacao from "../../components/Paginacao";
 import type { TarefaResponseDTO } from "../../types/tarefaTypes";
-import { buscarWorkspacePorId, deletarWorkspace, listarTarefasPorIdWorkspace } from "../../services/workspaceService";
+import { buscarResumoWorkspace, buscarWorkspacePorId, deletarWorkspace, listarTarefasPorIdWorkspace } from "../../services/workspaceService";
 import { buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, reabrirTarefa } from "../../services/tarefaService";
 
 const WorkspacePage = () => {
@@ -24,28 +25,65 @@ const WorkspacePage = () => {
     const [erroExclusao, setErroExclusao] = useState<string>("");
     const [idTarefaAlterando, setIdTarefaAlterando] = useState<number | null>(null);
 
+    const [resumo, setResumo] = useState<ResumoWorkspaceDTO | null>(null);
+    const [carregandoTarefas, setCarregandoTarefas] = useState<boolean>(false);
+    const [pagina, setPagina] = useState<number>(0);
+    const [tamanho, setTamanho] = useState<number>(10);
+    const [totalPaginas, setTotalPaginas] = useState<number>(0);
+    const [totalItens, setTotalItens] = useState<number>(0);
+    const [recarregar, setRecarregar] = useState<number>(0);
+
     useEffect(() => {
-        const getWorkspaceComTarefas = async () => {
+        const getWorkspace = async () => {
             try {
                 setLoading(true);
                 setErro("");
-                const responseWorkspace = await buscarWorkspacePorId(Number(id));
-                setWorkspace(responseWorkspace);
-
-                const paginaTarefas = await listarTarefasPorIdWorkspace(responseWorkspace.id_workspace, 100);
-                setTarefas(paginaTarefas.content);
+                setWorkspace(await buscarWorkspacePorId(Number(id)));
             } catch (error) {
                 console.error(error);
-                setErro(error instanceof Error ? error.message : "Erro ao carregar workspace com tarefas.");
+                setErro(error instanceof Error ? error.message : "Erro ao carregar workspace.");
             } finally {
                 setLoading(false);
             }
         };
 
-        getWorkspaceComTarefas();
+        getWorkspace();
     }, [id]);
 
-    const contarStatus = (status: TarefaResponseDTO["status"]) => tarefas.filter(t => t.status === status).length;
+    // Tarefas da página atual + contagens do workspace inteiro (vindas do backend)
+    useEffect(() => {
+        const getTarefas = async () => {
+            try {
+                setCarregandoTarefas(true);
+                const [resposta, responseResumo] = await Promise.all([
+                    listarTarefasPorIdWorkspace(Number(id), tamanho, pagina),
+                    buscarResumoWorkspace(Number(id)),
+                ]);
+
+                // Se a página ficou vazia (ex.: excluiu o último item dela), volta uma página
+                if (resposta.content.length === 0 && pagina > 0) {
+                    setPagina(pagina - 1);
+                    return;
+                }
+
+                setTarefas(resposta.content);
+                setTotalPaginas(resposta.totalPages);
+                setTotalItens(resposta.totalElements);
+                setResumo(responseResumo);
+            } catch (error) {
+                console.error(error);
+                setErroExclusao(error instanceof Error ? error.message : "Erro ao carregar tarefas.");
+            } finally {
+                setCarregandoTarefas(false);
+            }
+        };
+
+        getTarefas();
+    }, [id, pagina, tamanho, recarregar]);
+
+    const mudarTamanho = (novoTamanho: number) => {
+        setTamanho(novoTamanho);
+    };
 
     const [workspaceSelecionado, setWorkspaceSelecionado] = useState<WorkspaceResponseDTO | null>(null);
     const [tarefaSelecionada, setTarefaSelecionada] = useState<TarefaResponseDTO | null>(null);
@@ -88,7 +126,7 @@ const WorkspacePage = () => {
 
         try {
             await deletarTarefa(tarefa.id_tarefa);
-            setTarefas(prev => prev.filter(t => t.id_tarefa !== tarefa.id_tarefa));
+            setRecarregar(prev => prev + 1);
         } catch (error) {
             console.error(error);
             setErroExclusao(error instanceof Error ? error.message : "Erro ao excluir tarefa.");
@@ -108,8 +146,12 @@ const WorkspacePage = () => {
         try {
             await acoesStatus[acao](tarefa.id_tarefa);
 
-            const tarefaAtualizada = await buscarTarefaPorId(tarefa.id_tarefa);
+            const [tarefaAtualizada, responseResumo] = await Promise.all([
+                buscarTarefaPorId(tarefa.id_tarefa),
+                buscarResumoWorkspace(Number(id)),
+            ]);
             setTarefas(prev => prev.map(t => t.id_tarefa === tarefa.id_tarefa ? tarefaAtualizada : t));
+            setResumo(responseResumo);
         } catch (error) {
             console.error(error);
             setErroExclusao(error instanceof Error ? error.message : "Erro ao alterar status da tarefa.");
@@ -215,25 +257,25 @@ const WorkspacePage = () => {
                         {
                             icone: CircleCheck,
                             titulo: "Concluídas",
-                            quantidade: contarStatus("CONCLUIDA"),
+                            quantidade: resumo?.concluidas ?? 0,
                             cor: "#12B5FD",
                         },
                         {
                             icone: Clock4,
                             titulo: "Em andamento",
-                            quantidade: contarStatus("EM_ANDAMENTO"),
+                            quantidade: resumo?.em_andamento ?? 0,
                             cor: "#8E909A",
                         },
                         {
                             icone: CircleAlert,
                             titulo: "Pendentes",
-                            quantidade: contarStatus("PENDENTE"),
+                            quantidade: resumo?.pendentes ?? 0,
                             cor: "#FFB4AB",
                         },
                         {
                             icone: CircleAlert,
                             titulo: "Atrasadas",
-                            quantidade: contarStatus("ATRASADA"),
+                            quantidade: resumo?.atrasadas ?? 0,
                             cor: "#EF4444",
                         },
                     ]}
@@ -243,7 +285,7 @@ const WorkspacePage = () => {
             <div className="mt-5 flex flex-col gap-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-[#E5E1E4] font-medium text-lg">
-                        Tarefas <span className="text-[#C5C6D0]/40 text-base">({tarefas.length})</span>
+                        Tarefas <span className="text-[#C5C6D0]/40 text-base">({totalItens})</span>
                     </h3>
                     
                     <button onClick={() => navigate(`/cadastro-tarefa/${id}`)} className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
@@ -334,8 +376,10 @@ const WorkspacePage = () => {
                     <p className="text-red-400 text-sm">{erroExclusao}</p>
                 )}
 
-                <div className="flex flex-col gap-4">
-                    {tarefas.length === 0 ? (
+                <div className={`flex flex-col gap-4 transition-opacity ${carregandoTarefas ? "opacity-60" : ""}`}>
+                    {carregandoTarefas && tarefas.length === 0 ? (
+                        <p className="text-[#8E909A] text-sm">Carregando tarefas...</p>
+                    ) : tarefas.length === 0 ? (
                         <EstadoVazio
                             icone={ClipboardList}
                             titulo="Nenhuma tarefa neste workspace"
@@ -352,6 +396,16 @@ const WorkspacePage = () => {
                             />
                         ))
                     )}
+
+                    <Paginacao
+                        pagina={pagina}
+                        totalPaginas={totalPaginas}
+                        totalItens={totalItens}
+                        tamanho={tamanho}
+                        onMudarPagina={setPagina}
+                        onMudarTamanho={mudarTamanho}
+                        desabilitado={carregandoTarefas}
+                    />
                 </div>
             </div>
 

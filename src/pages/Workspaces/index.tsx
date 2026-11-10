@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import type { WorkspaceResponseDTO } from "../../types/workspaceTypes";
 import Modal from "../../components/Modal";
+import Paginacao from "../../components/Paginacao";
 import { deletarWorkspace, listarWorkspacesPorUsuario } from "../../services/workspaceService";
 import { getIdUsuario } from "../../services/localStorageService";
 
@@ -24,13 +25,28 @@ const Workspaces = () => {
     const [erroExclusao, setErroExclusao] = useState<string>("");
     const [workspaceSelecionado, setWorkspaceSelecionado] = useState<WorkspaceResponseDTO | null>(null);
 
+    const [pagina, setPagina] = useState<number>(0);
+    const [tamanho, setTamanho] = useState<number>(10);
+    const [totalPaginas, setTotalPaginas] = useState<number>(0);
+    const [totalItens, setTotalItens] = useState<number>(0);
+    const [recarregar, setRecarregar] = useState<number>(0);
+
     useEffect(() => {
         const getWorkspaces = async () => {
             try {
                 setLoading(true);
                 setErro("");
-                const pagina = await listarWorkspacesPorUsuario(idUsuario);
-                setWorkspaces(pagina.content);
+                const resposta = await listarWorkspacesPorUsuario(idUsuario, tamanho, pagina);
+
+                // Se a página ficou vazia (ex.: excluiu o último item dela), volta uma página
+                if (resposta.content.length === 0 && pagina > 0) {
+                    setPagina(pagina - 1);
+                    return;
+                }
+
+                setWorkspaces(resposta.content);
+                setTotalPaginas(resposta.totalPages);
+                setTotalItens(resposta.totalElements);
             } catch (error) {
                 console.error(error);
                 setErro(error instanceof Error ? error.message : "Erro ao carregar workspaces.");
@@ -40,7 +56,12 @@ const Workspaces = () => {
         };
 
         getWorkspaces();
-    }, [idUsuario]);
+    }, [idUsuario, pagina, tamanho, recarregar]);
+
+    const mudarTamanho = (novoTamanho: number) => {
+        setTamanho(novoTamanho);
+        setPagina(0);
+    };
 
     const excluirWorkspace = async (workspace: WorkspaceResponseDTO) => {
         setWorkspaceSelecionado(null);
@@ -48,7 +69,7 @@ const Workspaces = () => {
 
         try {
             await deletarWorkspace(workspace.id_workspace);
-            setWorkspaces(prev => prev.filter(w => w.id_workspace !== workspace.id_workspace));
+            setRecarregar(prev => prev + 1);
         } catch (error) {
             console.error(error);
             setErroExclusao(error instanceof Error ? error.message : "Erro ao excluir workspace.");
@@ -82,7 +103,7 @@ const Workspaces = () => {
                     </p>
                 )}
 
-                {loading ? (
+                {loading && workspaces.length === 0 ? (
                     <p className="text-[#8E909A]">Carregando workspaces...</p>
                 ) : erro ? (
                     <p role="alert" className="rounded-md border border-red-500/30 bg-red-500/10 text-red-400 px-3 py-2 text-sm">
@@ -130,16 +151,28 @@ const Workspaces = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
-                        {workspaces.map((workspace) => (
-                            <CardWorkspace
-                                key={workspace.id_workspace}
-                                icone={workspace.icone_workspace?.caminho}
-                                workspace={workspace}
-                                cor={workspace.cor_workspace?.cor}
-                                onDeletar={setWorkspaceSelecionado}
-                            />
-                        ))}
+                    <div className={`flex flex-col gap-6 transition-opacity ${loading ? "opacity-60" : ""}`}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                            {workspaces.map((workspace) => (
+                                <CardWorkspace
+                                    key={workspace.id_workspace}
+                                    icone={workspace.icone_workspace?.caminho}
+                                    workspace={workspace}
+                                    cor={workspace.cor_workspace?.cor}
+                                    onDeletar={setWorkspaceSelecionado}
+                                />
+                            ))}
+                        </div>
+
+                        <Paginacao
+                            pagina={pagina}
+                            totalPaginas={totalPaginas}
+                            totalItens={totalItens}
+                            tamanho={tamanho}
+                            onMudarPagina={setPagina}
+                            onMudarTamanho={mudarTamanho}
+                            desabilitado={loading}
+                        />
                     </div>
                 )}
 
