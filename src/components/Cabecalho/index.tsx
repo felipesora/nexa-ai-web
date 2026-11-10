@@ -2,7 +2,7 @@ import { Bell, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getIdUsuario, limparAutenticacao } from "../../services/localStorageService";
-import { buscarUsuarioPorId } from "../../services/usuarioService";
+import { buscarUsuarioPorId, EVENTO_USUARIO_ATUALIZADO } from "../../services/usuarioService";
 
 interface CabecalhoProps {
     titulo: string;
@@ -45,6 +45,18 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
             .catch((error) => console.error(error));
 
         return () => { ativo = false; };
+    }, [idUsuario]);
+
+    // Quando o usuário altera o nome em "Meus dados", atualiza o cabeçalho na hora
+    useEffect(() => {
+        const aoAtualizarUsuario = (event: Event) => {
+            const nome = (event as CustomEvent<string>).detail;
+            if (idUsuario != null) usuarioEmCache = { id: idUsuario, nome };
+            setNomeUsuario(nome);
+        };
+
+        window.addEventListener(EVENTO_USUARIO_ATUALIZADO, aoAtualizarUsuario);
+        return () => window.removeEventListener(EVENTO_USUARIO_ATUALIZADO, aoAtualizarUsuario);
     }, [idUsuario]);
 
     useEffect(() => {

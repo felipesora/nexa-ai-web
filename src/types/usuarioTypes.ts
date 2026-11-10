@@ -11,3 +11,13 @@ export interface UsuarioResponseDTO {
     ativo: boolean;
     perfil: PerfilResponseDTO | null;
 }
+
+export interface UsuarioRequestDTO {
+    nome: string;
+    email: string;
+}
+
+export interface AlterarSenhaRequestDTO {
+    senha_atual: string;
+    nova_senha: string;
+}
