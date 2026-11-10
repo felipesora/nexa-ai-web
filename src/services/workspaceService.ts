@@ -1,5 +1,5 @@
 import type { Pagina } from "../types/paginacaoType";
-import type { TarefaResponseDTO } from "../types/tarefaTypes";
+import type { FiltroTarefas, TarefaResponseDTO } from "../types/tarefaTypes";
 import type { CorWorkspace, IconeWorkspace, ResumoWorkspaceDTO, WorkspaceRequestDTO, WorkspaceResponseDTO } from "../types/workspaceTypes";
 import { getToken } from "./localStorageService";
 
@@ -210,7 +210,7 @@ export async function deletarWorkspace(idWorkspace: number | null) {
     }
 }
 
-export async function listarTarefasPorIdWorkspace(idWorkspace: number | null, pageSize = 10, pageNumber = 0): Promise<Pagina<TarefaResponseDTO>> {
+export async function listarTarefasPorIdWorkspace(idWorkspace: number | null, pageSize = 10, pageNumber = 0, filtros: FiltroTarefas = {}): Promise<Pagina<TarefaResponseDTO>> {
     const token = getToken();
     if (!token) throw new Error("Erro ao obter o token.");
 
@@ -220,6 +220,12 @@ export async function listarTarefasPorIdWorkspace(idWorkspace: number | null, pa
         page: String(pageNumber),
         size: String(pageSize),
     });
+
+    // Só envia os filtros preenchidos
+    if (filtros.titulo?.trim()) params.set("titulo", filtros.titulo.trim());
+    if (filtros.status) params.set("status", filtros.status);
+    if (filtros.prioridade) params.set("prioridade", filtros.prioridade);
+    if (filtros.idTag != null) params.set("idTag", String(filtros.idTag));
 
     const response = await fetch(
         `${API_URL}/v1/workspaces/${idWorkspace}/tarefas?${params}`, {

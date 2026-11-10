@@ -1,16 +1,18 @@
 import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
-import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, ClipboardList, Clock4, EllipsisVertical, Plus, Search, SquarePen, Trash } from "lucide-react";
+import { ArrowLeft, Calendar, CalendarSync, ChevronDown, CircleAlert, CircleCheck, ClipboardList, Clock4, EllipsisVertical, Plus, Search, SearchX, SquarePen, Trash } from "lucide-react";
 import EstadoVazio from "../../components/EstadoVazio";
 import CardTarefa, { type AcaoStatusTarefa } from "./components/CardTarefa";
 import BarraEstatisticas from "./components/BarraEstatisticas";
 import { useEffect, useRef, useState } from "react";
-import { tags } from "../../data/tags";
 import { buscarCorWorkspace, buscarIconeWorkspace } from "../../data/workspaceOptions";
 import type { ResumoWorkspaceDTO, WorkspaceResponseDTO } from "../../types/workspaceTypes";
 import Modal from "../../components/Modal";
 import Paginacao from "../../components/Paginacao";
-import type { TarefaResponseDTO } from "../../types/tarefaTypes";
+import type { FiltroTarefas, TarefaResponseDTO } from "../../types/tarefaTypes";
+import type { TagResponseDTO } from "../../types/tagTypes";
+import { listarTagsPorUsuario } from "../../services/tagService";
+import { getIdUsuario } from "../../services/localStorageService";
 import { buscarResumoWorkspace, buscarWorkspacePorId, deletarWorkspace, listarTarefasPorIdWorkspace } from "../../services/workspaceService";
 import { buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, reabrirTarefa } from "../../services/tarefaService";
 import Carregando from "../../components/Carregando";
@@ -33,6 +35,39 @@ const WorkspacePage = () => {
     const [totalPaginas, setTotalPaginas] = useState<number>(0);
     const [totalItens, setTotalItens] = useState<number>(0);
     const [recarregar, setRecarregar] = useState<number>(0);
+
+    const [tagsUsuario, setTagsUsuario] = useState<TagResponseDTO[]>([]);
+    const [pesquisa, setPesquisa] = useState<string>("");
+    const [filtros, setFiltros] = useState<FiltroTarefas>({ titulo: "", status: "", prioridade: "", idTag: null });
+
+    const temFiltroAtivo = !!(filtros.titulo || filtros.status || filtros.prioridade || filtros.idTag != null);
+
+    // Espera o usuário parar de digitar antes de buscar
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setFiltros(prev => prev.titulo === pesquisa.trim() ? prev : { ...prev, titulo: pesquisa.trim() });
+            setPagina(0);
+        }, 400);
+
+        return () => clearTimeout(timer);
+    }, [pesquisa]);
+
+    useEffect(() => {
+        listarTagsPorUsuario(getIdUsuario(), 100)
+            .then(resposta => setTagsUsuario(resposta.content))
+            .catch(error => console.error(error));
+    }, []);
+
+    const mudarFiltro = (campo: "status" | "prioridade" | "idTag", valor: string) => {
+        setFiltros(prev => ({ ...prev, [campo]: campo === "idTag" ? (valor ? Number(valor) : null) : valor }));
+        setPagina(0);
+    };
+
+    const limparFiltros = () => {
+        setPesquisa("");
+        setFiltros({ titulo: "", status: "", prioridade: "", idTag: null });
+        setPagina(0);
+    };
 
     useEffect(() => {
         const getWorkspace = async () => {
@@ -57,7 +92,7 @@ const WorkspacePage = () => {
             try {
                 setCarregandoTarefas(true);
                 const [resposta, responseResumo] = await Promise.all([
-                    listarTarefasPorIdWorkspace(Number(id), tamanho, pagina),
+                    listarTarefasPorIdWorkspace(Number(id), tamanho, pagina, filtros),
                     buscarResumoWorkspace(Number(id)),
                 ]);
 
@@ -80,7 +115,7 @@ const WorkspacePage = () => {
         };
 
         getTarefas();
-    }, [id, pagina, tamanho, recarregar]);
+    }, [id, pagina, tamanho, recarregar, filtros]);
 
     const mudarTamanho = (novoTamanho: number) => {
         setTamanho(novoTamanho);
@@ -304,6 +339,8 @@ const WorkspacePage = () => {
                         <input
                             type="text"
                             placeholder="Pesquisar tarefas..."
+                            value={pesquisa}
+                            onChange={(e) => setPesquisa(e.target.value)}
                             className="w-full bg-[#0F0F12] border border-white/8 rounded-xl pl-11 pr-4 py-2.5 text-[14px] text-[#E5E1E4] placeholder:text-[#8E909A] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15"
                         />
                     </div>
@@ -312,11 +349,12 @@ const WorkspacePage = () => {
                         <select
                             name="tag"
                             id="tag"
-                            defaultValue=""
+                            value={filtros.idTag ?? ""}
+                            onChange={(e) => mudarFiltro("idTag", e.target.value)}
                             className="appearance-none w-full bg-[#0F0F12] border border-white/8 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-[#E5E1E4] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15 cursor-pointer">
                             <option value="">Tag: todas</option>
-                            {tags.map((tag) => (
-                                <option key={tag.id} value={tag.id}>{tag.nome}</option>
+                            {tagsUsuario.map((tag) => (
+                                <option key={tag.id_tag} value={tag.id_tag}>{tag.nome}</option>
                             ))}
                         </select>
 
@@ -330,7 +368,8 @@ const WorkspacePage = () => {
                         <select
                             name="status"
                             id="status"
-                            defaultValue=""
+                            value={filtros.status ?? ""}
+                            onChange={(e) => mudarFiltro("status", e.target.value)}
                             className="appearance-none w-full bg-[#0F0F12] border border-white/8 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-[#E5E1E4] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15 cursor-pointer">
                             <option value="">Status: todos</option>
                             <option value="PENDENTE">Pendente</option>
@@ -349,7 +388,8 @@ const WorkspacePage = () => {
                         <select
                             name="prioridade"
                             id="prioridade"
-                            defaultValue=""
+                            value={filtros.prioridade ?? ""}
+                            onChange={(e) => mudarFiltro("prioridade", e.target.value)}
                             className="appearance-none w-full bg-[#0F0F12] border border-white/8 rounded-xl px-4 py-2.5 pr-10 text-[14px] text-[#E5E1E4] outline-none transition-all duration-200 focus:border-[#12B5FD]/60 focus:ring-2 focus:ring-[#12B5FD]/15 cursor-pointer">
                             <option value="">Prioridade: todas</option>
                             <option value="BAIXA">Baixa</option>
@@ -367,7 +407,9 @@ const WorkspacePage = () => {
                     <button
                         type="button"
                         title="Limpar filtros"
-                        className="w-full sm:w-auto flex justify-center px-4 py-2.5 rounded-xl border border-white/8 bg-[#0F0F12] text-[#C5C6D0] text-sm hover:border-white/15 hover:text-[#E5E1E4] transition-colors cursor-pointer"
+                        onClick={limparFiltros}
+                        disabled={!temFiltroAtivo && !pesquisa}
+                        className="w-full sm:w-auto flex justify-center px-4 py-2.5 rounded-xl border border-white/8 bg-[#0F0F12] text-[#C5C6D0] text-sm hover:border-white/15 hover:text-[#E5E1E4] transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                     >
                         <Trash size={20}/>
                     </button>
@@ -380,6 +422,21 @@ const WorkspacePage = () => {
                 <div className={`flex flex-col gap-4 transition-opacity ${carregandoTarefas ? "opacity-60" : ""}`}>
                     {carregandoTarefas && tarefas.length === 0 ? (
                         <Carregando texto="Carregando tarefas..." />
+                    ) : tarefas.length === 0 && temFiltroAtivo ? (
+                        <div className="flex flex-col gap-3">
+                            <EstadoVazio
+                                icone={SearchX}
+                                titulo="Nenhuma tarefa encontrada"
+                                descricao="Nenhuma tarefa corresponde aos filtros selecionados. Tente ajustar ou limpar os filtros."
+                            />
+                            <button
+                                type="button"
+                                onClick={limparFiltros}
+                                className="self-center cursor-pointer text-[#12B5FD] text-sm font-medium hover:text-[#5CCEFF] hover:underline underline-offset-4"
+                            >
+                                Limpar filtros
+                            </button>
+                        </div>
                     ) : tarefas.length === 0 ? (
                         <EstadoVazio
                             icone={ClipboardList}

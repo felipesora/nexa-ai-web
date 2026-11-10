@@ -16,6 +16,13 @@ export interface TarefaResponseDTO {
     quantidade_subtarefas_concluidas: number;
 }
 
+export interface FiltroTarefas {
+    titulo?: string;
+    status?: TarefaResponseDTO["status"] | "";
+    prioridade?: TarefaResponseDTO["prioridade"] | "";
+    idTag?: number | null;
+}
+
 export interface TarefaCreateDTO {
     titulo: string;
     descricao?: string;
