@@ -1,6 +1,6 @@
 import type { Pagina } from "../types/paginacaoType";
 import type { SubtarefaResponseDTO } from "../types/subtarefaTypes";
-import type { TarefaCreateDTO, TarefaResponseDTO, TarefaUpdateDTO } from "../types/tarefaTypes";
+import type { ResumoTarefasDTO, TarefaCreateDTO, TarefaResponseDTO, TarefaUpdateDTO } from "../types/tarefaTypes";
 import { getToken } from "./localStorageService";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -210,6 +210,68 @@ export async function listarSubtarefasPorIdTarefa(idTarefa: number | null, pageS
 
     if (!response.ok) {
         let mensagem = "Falha ao listar subtarefas.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
+export async function listarTarefasPorUsuario(idUsuario: number | null, pageSize = 10, pageNumber = 0): Promise<Pagina<TarefaResponseDTO>> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idUsuario == null) throw new Error("Id do usuário nulo.");
+
+    const params = new URLSearchParams({
+        page: String(pageNumber),
+        size: String(pageSize),
+    });
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/usuario/${idUsuario}?${params}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao listar tarefas.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
+
+export async function buscarResumoTarefas(idUsuario: number | null): Promise<ResumoTarefasDTO> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idUsuario == null) throw new Error("Id do usuário nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/usuario/${idUsuario}/resumo`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao carregar o resumo das tarefas.";
 
         try {
             const erro: { message?: string } = await response.json();

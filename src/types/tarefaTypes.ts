@@ -31,3 +31,21 @@ export interface TarefaUpdateDTO {
     dificuldade?: "BAIXA" | "MEDIA" | "ALTA";
     data_limite?: string;
 }
+
+export interface TarefaPrioritariaDTO {
+    id_tarefa: number;
+    titulo: string;
+    prioridade: TarefaResponseDTO["prioridade"];
+    status: TarefaResponseDTO["status"];
+    data_limite: string | null;
+    id_workspace: number;
+    nome_workspace: string;
+}
+
+export interface ResumoTarefasDTO {
+    concluidas: number;
+    em_andamento: number;
+    pendentes: number;
+    atrasadas: number;
+    tarefas_prioritarias: TarefaPrioritariaDTO[];
+}
