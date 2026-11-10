@@ -113,14 +113,9 @@ const CardTarefa = ({ tarefa, onDeletar, onAlterarStatus, alterandoStatus = fals
             </p>
 
             <div className="mt-2 flex flex-wrap gap-2 items-center">
-                {/* {tarefa.qntSubtarefas > 0 && (
-                    <span className="inline-flex w-fit rounded-full bg-[#12B5FD]/10 text-[#12B5FD] px-3 py-1 text-xs font-medium">
-                        {tarefa.qntSubtarefas}{" "}
-                        {tarefa.qntSubtarefas === 1 ? "subtarefa" : "subtarefas"}
-                    </span>
-                )} */}
                 <span className="inline-flex w-fit rounded-full bg-[#12B5FD]/10 text-[#12B5FD] px-3 py-1 text-xs font-medium">
-                    0 subtarefas (mockado)
+                    {tarefa.quantidade_subtarefas ?? 0}{" "}
+                    {tarefa.quantidade_subtarefas === 1 ? "subtarefa" : "subtarefas"}
                 </span>
                 <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                     <ChartNoAxesCombined size={17} />

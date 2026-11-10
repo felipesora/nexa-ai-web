@@ -12,6 +12,7 @@ export interface TarefaResponseDTO {
     atualizado_em: string;
     ativo: boolean;
     id_workspace: number;
+    quantidade_subtarefas: number;
 }
 
 export interface TarefaCreateDTO {

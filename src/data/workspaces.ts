@@ -10,7 +10,8 @@ export const workspaces: WorkspaceResponseDTO[] = [
         atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
         cor_workspace: { id_cor: 1, cor: "#12B5FD", ativo: true },
-        icone_workspace: { id_icone: 1, nome: "learning", caminho: "Brain", ativo: true }
+        icone_workspace: { id_icone: 1, nome: "learning", caminho: "Brain", ativo: true },
+        quantidade_tarefas: 0
     },
     {
         id_workspace: 2,
@@ -21,7 +22,8 @@ export const workspaces: WorkspaceResponseDTO[] = [
         atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
         cor_workspace: { id_cor: 1, cor: "#BEF4FF", ativo: true },
-        icone_workspace: { id_icone: 1, nome: "book", caminho: "Book", ativo: true }
+        icone_workspace: { id_icone: 1, nome: "book", caminho: "Book", ativo: true },
+        quantidade_tarefas: 0
     },
     {
         id_workspace: 3,
@@ -32,7 +34,8 @@ export const workspaces: WorkspaceResponseDTO[] = [
         atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
         cor_workspace: { id_cor: 1, cor: "#EC4899", ativo: true },
-        icone_workspace: { id_icone: 1, nome: "project", caminho: "SquareChartGantt", ativo: true }
+        icone_workspace: { id_icone: 1, nome: "project", caminho: "SquareChartGantt", ativo: true },
+        quantidade_tarefas: 0
     },
     {
         id_workspace: 4,
@@ -43,6 +46,7 @@ export const workspaces: WorkspaceResponseDTO[] = [
         atualizado_em: "2026-10-10T00:00:00",
         ativo: true,
         cor_workspace: { id_cor: 1, cor: "#D9E2FF", ativo: true },
-        icone_workspace: { id_icone: 1, nome: "personal", caminho: "SquareUserRound", ativo: true }
+        icone_workspace: { id_icone: 1, nome: "personal", caminho: "SquareUserRound", ativo: true },
+        quantidade_tarefas: 0
     },
 ]

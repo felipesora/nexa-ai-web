@@ -77,7 +77,8 @@ const CardWorkspace = ({ icone , workspace, cor, onDeletar }: CardWorkspaceProps
             </p>
 
             <span className="inline-flex w-fit rounded-full bg-[#12B5FD]/10 text-[#12B5FD] px-3 py-1 text-xs font-medium">
-                {workspace.quantidade_tarefas ?? 0} tarefas
+                {workspace.quantidade_tarefas ?? 0}{" "}
+                {workspace.quantidade_tarefas === 1 ? "tarefa" : "tarefas"}
             </span>
 
             <button onClick={() => navigate(`/workspace/${workspace.id_workspace}`)} className="group cursor-pointer bg-[#1C1B1D] text-[#E5E1E4] rounded-xl flex items-center gap-1 font-medium justify-center py-2 text-[14px] mt-5">
