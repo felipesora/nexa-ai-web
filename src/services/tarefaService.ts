@@ -257,6 +257,38 @@ export async function listarTarefasPorUsuario(idUsuario: number | null, pageSize
     return response.json();
 }
 
+// inicio e fim no formato yyyy-MM-dd; fim é exclusivo
+export async function listarTarefasAgenda(idUsuario: number | null, inicio: string, fim: string): Promise<TarefaResponseDTO[]> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idUsuario == null) throw new Error("Id do usuário nulo.");
+
+    const params = new URLSearchParams({ inicio, fim });
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/usuario/${idUsuario}/agenda?${params}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao listar tarefas da agenda.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
+
 export async function buscarResumoTarefas(idUsuario: number | null): Promise<ResumoTarefasDTO> {
     const token = getToken();
     if (!token) throw new Error("Erro ao obter o token.");
