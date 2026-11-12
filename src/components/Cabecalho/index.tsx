@@ -1,17 +1,63 @@
 import { Bell, LogOut, Menu, User } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getIdUsuario, limparAutenticacao } from "../../services/localStorageService";
+import { buscarUsuarioPorId, EVENTO_USUARIO_ATUALIZADO } from "../../services/usuarioService";
 
 interface CabecalhoProps {
     titulo: string;
     abrirMenu: () => void;
 }
 
+// O cabeçalho é montado de novo a cada página; guarda o nome para não buscar o usuário toda vez
+let usuarioEmCache: { id: number; nome: string } | null = null;
+
+const gerarIniciais = (nome: string) => {
+    const partes = nome.trim().split(/\s+/).filter(Boolean);
+    if (partes.length === 0) return "";
+
+    const primeira = partes[0][0];
+    const ultima = partes.length > 1 ? partes[partes.length - 1][0] : "";
+    return (primeira + ultima).toUpperCase();
+};
+
 const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
     const navigate = useNavigate();
     const [menuPerfilAberto, setMenuPerfilAberto] = useState<boolean>(false);
 
+    const idUsuario = getIdUsuario();
+    const [nomeUsuario, setNomeUsuario] = useState<string>(
+        usuarioEmCache && usuarioEmCache.id === idUsuario ? usuarioEmCache.nome : ""
+    );
+
     const menuRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        if (idUsuario == null || (usuarioEmCache && usuarioEmCache.id === idUsuario)) return;
+
+        let ativo = true;
+
+        buscarUsuarioPorId(idUsuario)
+            .then((usuario) => {
+                usuarioEmCache = { id: idUsuario, nome: usuario.nome };
+                if (ativo) setNomeUsuario(usuario.nome);
+            })
+            .catch((error) => console.error(error));
+
+        return () => { ativo = false; };
+    }, [idUsuario]);
+
+    // Quando o usuário altera o nome em "Meus dados", atualiza o cabeçalho na hora
+    useEffect(() => {
+        const aoAtualizarUsuario = (event: Event) => {
+            const nome = (event as CustomEvent<string>).detail;
+            if (idUsuario != null) usuarioEmCache = { id: idUsuario, nome };
+            setNomeUsuario(nome);
+        };
+
+        window.addEventListener(EVENTO_USUARIO_ATUALIZADO, aoAtualizarUsuario);
+        return () => window.removeEventListener(EVENTO_USUARIO_ATUALIZADO, aoAtualizarUsuario);
+    }, [idUsuario]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -24,6 +70,12 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
+
+    const logout = () => {
+        limparAutenticacao();
+        usuarioEmCache = null;
+        navigate('/', { replace: true });
+    }
 
     return (
         <header className="bg-[#0D0D0F] flex items-center justify-between px-4 min-[560px]:px-6 py-3.5 border-b border-b-[#44464F]/10">
@@ -54,11 +106,11 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
                 <div ref={menuRef} className="relative">
                     <button onClick={() => setMenuPerfilAberto((prev) => !prev)} className="cursor-pointer flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-white/5">
-                        <div className="bg-[#12B5FD] rounded-full px-2.5 py-2 text-white font-semibold text-sm">
-                            FS
+                        <div className="bg-[#12B5FD] rounded-full w-9 h-9 flex items-center justify-center text-white font-semibold text-sm">
+                            {nomeUsuario ? gerarIniciais(nomeUsuario) : <User size={18} />}
                         </div>
-                        <p className="hidden min-[560px]:block text-[#E5E1E4] text-[15px]">
-                            Felipe Sora
+                        <p className="hidden min-[560px]:block text-[#E5E1E4] text-[15px] max-w-[180px] truncate">
+                            {nomeUsuario}
                         </p>
                     </button>
 
@@ -71,7 +123,7 @@ const Cabecalho = ({ titulo, abrirMenu }: CabecalhoProps) => {
 
                             <div className="h-px bg-white/10" />
 
-                            <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
+                            <button onClick={() => logout()} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/10 transition text-[15px] cursor-pointer">
                                 <LogOut size={18} />
                                 Logout
                             </button>

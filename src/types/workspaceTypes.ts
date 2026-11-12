@@ -1,12 +1,40 @@
-export interface Workspace {
-    id: number;
-    idUsuario: number;
+export interface CorWorkspace {
+    id_cor: number;
+    cor: string;
+    ativo: boolean;
+}
+
+export interface IconeWorkspace {
+    id_icone: number;
+    nome: string;
+    caminho: string;
+    ativo: boolean;
+}
+
+export interface WorkspaceResponseDTO {
+    id_workspace: number;
+    id_usuario: number;
     nome: string;
     descricao: string;
-    criadoEm: string;
-    atualizadoEm: string;
+    criado_em: string;
+    atualizado_em: string;
     ativo: boolean;
-    qntTarefas: number;
-    iconeWorkspace: string;
-    cor: string;
+    cor_workspace: CorWorkspace | null;
+    icone_workspace: IconeWorkspace | null;
+    quantidade_tarefas: number;
+}
+
+export interface WorkspaceRequestDTO {
+    nome: string;
+    descricao?: string; // opcional: o backend recusa string vazia
+    id_cor: number;
+    id_icone: number;
+}
+
+export interface ResumoWorkspaceDTO {
+    total: number;
+    concluidas: number;
+    em_andamento: number;
+    pendentes: number;
+    atrasadas: number;
 }

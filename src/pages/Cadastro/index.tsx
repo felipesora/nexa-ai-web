@@ -2,15 +2,26 @@ import { ChevronRight, Eye, EyeOff, Lock, Mail, User } from "lucide-react";
 import LogoCompleta from "../../assets/logos/logo-completa-nexa-ai.png";
 import { useEffect, useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { fazerCadastro, isTokenValid } from "../../services/authService";
 
 const Cadastro = () => {
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isTokenValid()) {
+            navigate("/dashboard", { replace: true });
+        }
+    }, [navigate]);
+
     useEffect(() => {
         document.title = "Nexa AI - Cadastro";
     }, []);
 
     const [password, setPassword] = useState<string>("");
     const [showPassword, setShowPassword] = useState<boolean>(false);
-    const navigate = useNavigate();
+    const [mesangemFormulario, SetMensagemFormulario] = useState<string>("");
+    const [loading, setLoading] = useState<boolean>(false);
+    const [sucesso, setSucesso] = useState<boolean>(false);
 
     const getPasswordStrength = (password: string) => {
         if (!password) {
@@ -66,9 +77,79 @@ const Cadastro = () => {
 
     const strength = getPasswordStrength(password);
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log("Formulário enviado");
+        SetMensagemFormulario("");
+
+        const form = new FormData(e.currentTarget);
+        const nome = form.get("nome");
+        const email = form.get("email");
+        const senha = form.get("senha");
+
+        if (typeof nome !== "string" || !nome.trim()) {
+            SetMensagemFormulario("Informe seu nome completo.");
+            return;
+        }
+
+        if (nome.trim().length < 3 || nome.trim().length > 150) {
+            SetMensagemFormulario("O nome deve ter entre 3 e 150 caracteres.");
+            return;
+        }
+
+        if (typeof email !== "string" || !email.trim()) {
+            SetMensagemFormulario("Informe seu e-mail.");
+            return;
+        }
+
+        if (email.trim().length > 150) {
+            SetMensagemFormulario("O e-mail deve ter no máximo 150 caracteres.");
+            return;
+        }
+
+        const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+        if (!emailValido) {
+            SetMensagemFormulario("Informe um e-mail válido.");
+            return;
+        }
+
+        if (typeof senha !== "string" || !senha.trim()) {
+            SetMensagemFormulario("Informe sua senha.");
+            return;
+        }
+
+        if (senha.length < 6 || senha.length > 100) {
+            SetMensagemFormulario("A senha deve ter entre 6 e 100 caracteres.");
+            return;
+        }
+
+        if (getPasswordStrength(senha).level < 3) {
+            SetMensagemFormulario("A senha precisa ser forte: use letras, números e caracteres especiais.");
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+            await fazerCadastro({
+                nome: nome.trim(),
+                email: email.trim(),
+                senha: senha
+            });
+
+            setSucesso(true);
+            SetMensagemFormulario("Cadastro realizado com sucesso! Redirecionando para o login...");
+            setTimeout(() => {
+                navigate('/auth/login');
+            }, 2000);
+
+        } catch (error) {
+            console.log(error);
+            SetMensagemFormulario(error instanceof Error ? error.message : "Erro no cadastro.");
+
+        } finally {
+            setLoading(false);
+
+        }
     };
     
     return(
@@ -111,10 +192,13 @@ const Cadastro = () => {
                             />
 
                             <input 
-                                name="nome" 
-                                type="nome"
+                                id="nome"
+                                name="nome"
+                                type="text"
+                                autoComplete="name"
                                 className="text-sm w-full rounded-md border border-white/10 bg-transparent py-2 pl-10 pr-3 text-white placeholder:text-gray-500 focus:border-[#12B5FD] focus:outline-none transition-all duration-300"
                                 placeholder="Seu nome completo"
+                                required
                             />
                         </div>
                     </div>
@@ -129,10 +213,13 @@ const Cadastro = () => {
                             />
 
                             <input 
-                                name="email" 
+                                id="email"
+                                name="email"
                                 type="email"
+                                autoComplete="email"
                                 className="text-sm w-full rounded-md border border-white/10 bg-transparent py-2 pl-10 pr-3 text-white placeholder:text-gray-500 focus:border-[#12B5FD] focus:outline-none transition-all duration-300"
                                 placeholder="seu@email.com"
+                                required
                             />
                         </div>
                     </div>
@@ -147,12 +234,15 @@ const Cadastro = () => {
                             />
 
                             <input 
-                                name="senha" 
+                                id="senha"
+                                name="senha"
                                 type={showPassword ? "text" : "password"}
+                                autoComplete="new-password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 className="text-sm w-full rounded-md border border-white/10 bg-transparent py-2 pl-10 pr-3 text-white placeholder:text-gray-500 focus:border-[#12B5FD] focus:outline-none transition-all duration-300"
                                 placeholder="Digite sua senha"
+                                required
                             />
 
                             <button 
@@ -205,11 +295,25 @@ const Cadastro = () => {
                         </div>
                     </div>
 
+                    {mesangemFormulario && (
+                        <p
+                            role={sucesso ? "status" : "alert"}
+                            className={`rounded-md border px-3 py-2 text-sm text-center ${
+                                sucesso
+                                    ? "border-green-500/30 bg-green-500/10 text-green-400"
+                                    : "border-red-500/30 bg-red-500/10 text-red-400"
+                            }`}
+                        >
+                            {mesangemFormulario}
+                        </p>
+                    )}
+
                     <div>
                         <button
-                            type="submit" 
-                            className="group w-full rounded-md bg-[#12B5FD] py-2 cursor-pointer flex gap justify-center items-center font-medium text-[#0A0A0C] transition-all duration-300 hover:bg-[#2BC2FF] hover:-translate-y-0.5 hover:shadow-[0_0_10px_rgba(18,181,253,0.35)]">
-                            Começar agora
+                            type="submit"
+                            disabled={loading || sucesso}
+                            className="group w-full rounded-md bg-[#12B5FD] py-2 cursor-pointer flex gap justify-center items-center font-medium text-[#0A0A0C] transition-all duration-300 hover:bg-[#2BC2FF] hover:-translate-y-0.5 hover:shadow-[0_0_10px_rgba(18,181,253,0.35)] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0">
+                            {loading ? "Criando conta..." : "Começar agora"}
 
                             <ChevronRight size={18} className="transition-transform duration-300 group-hover:translate-x-1" />
                         </button>
