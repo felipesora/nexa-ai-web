@@ -17,6 +17,7 @@ export interface TarefaResponseDTO {
     quantidade_subtarefas: number;
     quantidade_subtarefas_concluidas: number;
     tags: TagResponseDTO[];
+    atrasada: boolean;
 }
 
 export interface FiltroTarefas {

@@ -11,6 +11,7 @@ import type { TarefaResponseDTO } from "../../types/tarefaTypes";
 import type { SubtarefaResponseDTO } from "../../types/subtarefaTypes";
 import { adicionarTagNaTarefa, buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, listarSubtarefasPorIdTarefa, reabrirTarefa, removerTagDaTarefa } from "../../services/tarefaService";
 import SeletorTags from "../../components/SeletorTags";
+import SeloAtrasada from "../../components/SeloAtrasada";
 import type { TagResponseDTO } from "../../types/tagTypes";
 import { buscarSubtarefaPorId, concluirSubtarefa, deletarSubtarefa, desmarcarConclusaoSubtarefa } from "../../services/subtarefaService";
 import Carregando from "../../components/Carregando";
@@ -390,6 +391,7 @@ const TarefaPage = () => {
                         <p className={`rounded-sm px-3 py-0.5 text-[13px] w-fit ${estilosStatusDaTarefa(tarefa.status)}`}>
                             {alterandoStatus ? "Atualizando..." : formatarStatusDaTarefa(tarefa.status)}
                         </p>
+                        {tarefa.atrasada && <SeloAtrasada />}
                     </div>
 
                     <div className="my-6 h-px bg-white/8" />

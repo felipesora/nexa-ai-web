@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { estilosPrioridadeDaTarefa, formatarDataCurta, formatarPrioridadeDaTarefa } from "../../../utils/formatters";
 import type { TarefaResponseDTO } from "../../../types/tarefaTypes";
 import TagChip from "../../../components/TagChip";
+import SeloAtrasada from "../../../components/SeloAtrasada";
 
 interface Props {
     tarefa: TarefaResponseDTO;
@@ -51,11 +52,7 @@ const KanbanCard = ({
                     {tarefa.titulo}
                 </h4>
 
-                {tarefa.status === "ATRASADA" && (
-                    <span className="shrink-0 rounded-full bg-red-500/15 px-2 py-0.5 text-[11px] text-red-400">
-                        Atrasada
-                    </span>
-                )}
+                {tarefa.atrasada && <SeloAtrasada />}
             </div>
 
             {tarefa.descricao && (

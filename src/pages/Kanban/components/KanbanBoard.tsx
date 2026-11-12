@@ -20,7 +20,8 @@ const colunas: { id: ColunaId; titulo: string }[] = [
     { id: "CONCLUIDA", titulo: "Concluídas" },
 ];
 
-// Tarefas atrasadas ainda não foram iniciadas, então ficam na coluna de pendentes
+// O atraso agora vem em tarefa.atrasada e a tarefa fica na coluna do status real.
+// Registros antigos gravados como ATRASADA (antes do atraso ser calculado) caem em pendentes.
 const colunaDoStatus = (status: StatusTarefa): ColunaId =>
     status === "ATRASADA" ? "PENDENTE" : status;
 
@@ -70,9 +71,9 @@ const KanbanBoard = () => {
         };
     }, [idUsuario]);
 
-    function alterarStatusLocal(id: number, status: StatusTarefa) {
+    function substituirTarefaLocal(nova: TarefaResponseDTO) {
         setTarefas((lista) =>
-            lista.map((t) => (t.id_tarefa === id ? { ...t, status } : t))
+            lista.map((t) => (t.id_tarefa === nova.id_tarefa ? nova : t))
         );
     }
 
@@ -102,9 +103,13 @@ const KanbanBoard = () => {
             return;
         }
 
-        const statusAnterior = tarefa.status;
         setErro(null);
-        alterarStatusLocal(id, destino); // atualização otimista
+        // Atualização otimista; tarefa concluída deixa de contar como atrasada
+        substituirTarefaLocal({
+            ...tarefa,
+            status: destino,
+            atrasada: destino === "CONCLUIDA" ? false : tarefa.atrasada,
+        });
         marcarSalvando(id, true);
 
         try {
@@ -114,7 +119,7 @@ const KanbanBoard = () => {
                 await concluirTarefa(id);
             }
         } catch (e) {
-            alterarStatusLocal(id, statusAnterior); // desfaz se a API recusar
+            substituirTarefaLocal(tarefa); // desfaz se a API recusar
             setErro(e instanceof Error ? e.message : "Falha ao atualizar a tarefa.");
         } finally {
             marcarSalvando(id, false);

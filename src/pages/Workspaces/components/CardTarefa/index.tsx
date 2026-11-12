@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarDataCurta, formatarStatusDaTarefa } from "../../../../utils/formatters";
 import { useEffect, useRef, useState } from "react";
 import TagChip from "../../../../components/TagChip";
+import SeloAtrasada from "../../../../components/SeloAtrasada";
 import type { TarefaResponseDTO } from "../../../../types/tarefaTypes";
 
 export type AcaoStatusTarefa = "INICIAR" | "CONCLUIR" | "REABRIR";
@@ -133,6 +134,7 @@ const CardTarefa = ({ tarefa, onDeletar, onAlterarStatus, alterandoStatus = fals
                 <p className={`rounded-sm px-3 py-0.5 text-[13px] w-fit ${estilosStatusDaTarefa(tarefa.status)}`}>
                     {formatarStatusDaTarefa(tarefa.status)}
                 </p>
+                {tarefa.atrasada && <SeloAtrasada />}
             </div>
 
             {tarefa.tags.length > 0 && (
