@@ -301,7 +301,8 @@ const EditarTarefa = () => {
                                 name="prazo"
                                 value={form.prazo}
                                 onChange={handleChange}
-                                className={`text-sm w-full rounded-md bg-[#0F0F11] py-2 pl-10 pr-3 text-white focus:outline-none transition-all duration-300 cursor-pointer ${erros.prazo ? "border border-red-500" : "border border-white/10 focus:border-[#12B5FD]"}`}
+                                onClick={(e) => e.currentTarget.showPicker?.()}
+                                className={`[color-scheme:dark] text-sm w-full rounded-md bg-[#0F0F11] py-2 pl-10 pr-3 text-white focus:outline-none transition-all duration-300 cursor-pointer ${erros.prazo ? "border border-red-500" : "border border-white/10 focus:border-[#12B5FD]"}`}
                             />
                         </div>
 

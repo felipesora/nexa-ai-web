@@ -190,6 +190,40 @@ export async function reabrirTarefa(idTarefa: number | null) {
     }
 }
 
+async function alterarVinculoTag(idTarefa: number | null, idTag: number, method: "POST" | "DELETE", mensagemPadrao: string) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}/tags/${idTag}`, {
+        method,
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = mensagemPadrao;
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export function adicionarTagNaTarefa(idTarefa: number | null, idTag: number) {
+    return alterarVinculoTag(idTarefa, idTag, "POST", "Falha ao adicionar a tag.");
+}
+
+export function removerTagDaTarefa(idTarefa: number | null, idTag: number) {
+    return alterarVinculoTag(idTarefa, idTag, "DELETE", "Falha ao remover a tag.");
+}
+
 export async function listarSubtarefasPorIdTarefa(idTarefa: number | null, pageSize = 10, pageNumber = 0): Promise<Pagina<SubtarefaResponseDTO>> {
     const token = getToken();
     if (!token) throw new Error("Erro ao obter o token.");

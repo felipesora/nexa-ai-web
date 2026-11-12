@@ -9,7 +9,9 @@ import Modal from "../../components/Modal";
 import Paginacao from "../../components/Paginacao";
 import type { TarefaResponseDTO } from "../../types/tarefaTypes";
 import type { SubtarefaResponseDTO } from "../../types/subtarefaTypes";
-import { buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, listarSubtarefasPorIdTarefa, reabrirTarefa } from "../../services/tarefaService";
+import { adicionarTagNaTarefa, buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, listarSubtarefasPorIdTarefa, reabrirTarefa, removerTagDaTarefa } from "../../services/tarefaService";
+import SeletorTags from "../../components/SeletorTags";
+import type { TagResponseDTO } from "../../types/tagTypes";
 import { buscarSubtarefaPorId, concluirSubtarefa, deletarSubtarefa, desmarcarConclusaoSubtarefa } from "../../services/subtarefaService";
 import Carregando from "../../components/Carregando";
 
@@ -139,6 +141,44 @@ const TarefaPage = () => {
             setErroAcao(error instanceof Error ? error.message : "Erro ao alterar status da tarefa.");
         } finally {
             setAlterandoStatus(false);
+        }
+    };
+
+    const [tagsAlterando, setTagsAlterando] = useState<Set<number>>(new Set());
+
+    const marcarTagAlterando = (idTag: number, valor: boolean) => {
+        setTagsAlterando((atual) => {
+            const novo = new Set(atual);
+            if (valor) novo.add(idTag);
+            else novo.delete(idTag);
+            return novo;
+        });
+    };
+
+    // Atualização otimista: a tag aparece/some na hora e volta ao estado anterior se a API recusar
+    const alterarTag = async (tag: TagResponseDTO, adicionar: boolean) => {
+        if (!tarefa || tagsAlterando.has(tag.id_tag)) return;
+
+        const tagsAnteriores = tarefa.tags;
+        setErroAcao("");
+        setTarefa((t) => t && {
+            ...t,
+            tags: adicionar ? [...t.tags, tag] : t.tags.filter((x) => x.id_tag !== tag.id_tag),
+        });
+        marcarTagAlterando(tag.id_tag, true);
+
+        try {
+            if (adicionar) {
+                await adicionarTagNaTarefa(tarefa.id_tarefa, tag.id_tag);
+            } else {
+                await removerTagDaTarefa(tarefa.id_tarefa, tag.id_tag);
+            }
+        } catch (error) {
+            console.error(error);
+            setTarefa((t) => t && { ...t, tags: tagsAnteriores });
+            setErroAcao(error instanceof Error ? error.message : "Erro ao alterar as tags da tarefa.");
+        } finally {
+            marcarTagAlterando(tag.id_tag, false);
         }
     };
 
@@ -301,6 +341,15 @@ const TarefaPage = () => {
                     <p className="text-[#C5C6D0] text-sm">
                         {tarefa.descricao}
                     </p>
+
+                    <div className="mt-4">
+                        <SeletorTags
+                            selecionadas={tarefa.tags}
+                            onAdicionar={(tag) => alterarTag(tag, true)}
+                            onRemover={(tag) => alterarTag(tag, false)}
+                            alterando={tagsAlterando}
+                        />
+                    </div>
 
                     <div className="mt-4">
                         <div className="flex items-center justify-between mb-2">

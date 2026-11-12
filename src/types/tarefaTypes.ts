@@ -1,3 +1,5 @@
+import type { TagResponseDTO } from "./tagTypes";
+
 export interface TarefaResponseDTO {
     id_tarefa: number;
     id_usuario: number;
@@ -14,6 +16,7 @@ export interface TarefaResponseDTO {
     id_workspace: number;
     quantidade_subtarefas: number;
     quantidade_subtarefas_concluidas: number;
+    tags: TagResponseDTO[];
 }
 
 export interface FiltroTarefas {
@@ -30,6 +33,7 @@ export interface TarefaCreateDTO {
     dificuldade?: "BAIXA" | "MEDIA" | "ALTA";
     data_limite?: string;
     id_workspace: number;
+    id_tags?: number[];
 }
 
 export interface TarefaUpdateDTO {

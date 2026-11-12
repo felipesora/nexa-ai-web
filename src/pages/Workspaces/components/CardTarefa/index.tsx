@@ -2,8 +2,7 @@ import { CalendarCheck2, CalendarClock, ChartNoAxesCombined, Check, ChevronRight
 import { useNavigate } from "react-router-dom";
 import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarDataCurta, formatarStatusDaTarefa } from "../../../../utils/formatters";
 import { useEffect, useRef, useState } from "react";
-import { tags } from "../../../../data/tags";
-import CardTagInfo from "../CardTagInfo";
+import TagChip from "../../../../components/TagChip";
 import type { TarefaResponseDTO } from "../../../../types/tarefaTypes";
 
 export type AcaoStatusTarefa = "INICIAR" | "CONCLUIR" | "REABRIR";
@@ -136,11 +135,13 @@ const CardTarefa = ({ tarefa, onDeletar, onAlterarStatus, alterandoStatus = fals
                 </p>
             </div>
 
-            <div className="mt-2 flex flex-wrap gap-2 items-center">
-                {tags.map((tag) => (
-                    <CardTagInfo key={tag.id} tag={tag} />
-                ))}
-            </div>
+            {tarefa.tags.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2 items-center">
+                    {tarefa.tags.map((tag) => (
+                        <TagChip key={tag.id_tag} tag={tag} />
+                    ))}
+                </div>
+            )}
 
             <div className="mt-4 flex justify-end">
                 <button

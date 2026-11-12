@@ -3,6 +3,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { useNavigate } from "react-router-dom";
 import { estilosPrioridadeDaTarefa, formatarDataCurta, formatarPrioridadeDaTarefa } from "../../../utils/formatters";
 import type { TarefaResponseDTO } from "../../../types/tarefaTypes";
+import TagChip from "../../../components/TagChip";
 
 interface Props {
     tarefa: TarefaResponseDTO;
@@ -61,6 +62,14 @@ const KanbanCard = ({
                 <p className="text-sm text-[#8E909A] mt-2 line-clamp-2">
                     {tarefa.descricao}
                 </p>
+            )}
+
+            {tarefa.tags.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                    {tarefa.tags.map((tag) => (
+                        <TagChip key={tag.id_tag} tag={tag} />
+                    ))}
+                </div>
             )}
 
             <div className="flex justify-between mt-4 text-xs">

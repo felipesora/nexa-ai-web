@@ -4,6 +4,19 @@ import { getToken } from "./localStorageService";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
+// Percorre todas as páginas; usado nos seletores de tag, que precisam da lista completa
+export async function listarTodasTagsDoUsuario(idUsuario: number | null): Promise<TagResponseDTO[]> {
+    const tags: TagResponseDTO[] = [];
+    let pagina = 0;
+
+    while (true) {
+        const resultado = await listarTagsPorUsuario(idUsuario, 100, pagina);
+        tags.push(...resultado.content);
+        if (resultado.last || resultado.empty) return tags;
+        pagina++;
+    }
+}
+
 export async function listarTagsPorUsuario(idUsuario: number | null, pageSize = 10, pageNumber = 0): Promise<Pagina<TagResponseDTO>> {
     const token = getToken();
     if (!token) throw new Error("Erro ao obter o token.");
