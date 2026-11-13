@@ -1,25 +1,117 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { tarefas } from "../../data/tarefas";
 import MainLayout from "../../layouts/MainLayout";
-import { ArrowLeft, Calendar, CalendarCheck2, CalendarClock, CalendarSync, ChartNoAxesCombined, Check, EllipsisVertical, Play, Plus, RotateCcw, SquarePen, Trash } from "lucide-react";
+import { ArrowLeft, Calendar, CalendarCheck2, CalendarClock, CalendarSync, ChartNoAxesCombined, Check, EllipsisVertical, ListChecks, Play, Plus, RotateCcw, SquarePen, Trash } from "lucide-react";
+import EstadoVazio from "../../components/EstadoVazio";
 import { estilosPrioridadeDaTarefa, estilosStatusDaTarefa, formatarDificuldadeDaTarefa, formatarPrioridadeDaTarefa, formatarStatusDaTarefa } from "../../utils/formatters";
-import { subtarefas } from "../../data/subtarefas";
 import CardSubtarefa from "./components/CardSubtarefa";
 import { useEffect, useRef, useState } from "react";
-import type { Tarefa } from "../../types/tarefaTypes";
-import type { Subtarefa } from "../../types/subtarefaTypes";
 import Modal from "../../components/Modal";
+import Paginacao from "../../components/Paginacao";
+import type { TarefaResponseDTO } from "../../types/tarefaTypes";
+import type { SubtarefaResponseDTO } from "../../types/subtarefaTypes";
+import { adicionarTagNaTarefa, buscarTarefaPorId, concluirTarefa, deletarTarefa, iniciarTarefa, listarSubtarefasPorIdTarefa, reabrirTarefa, removerTagDaTarefa } from "../../services/tarefaService";
+import SeletorTags from "../../components/SeletorTags";
+import SeloAtrasada from "../../components/SeloAtrasada";
+import type { TagResponseDTO } from "../../types/tagTypes";
+import { buscarSubtarefaPorId, concluirSubtarefa, deletarSubtarefa, desmarcarConclusaoSubtarefa } from "../../services/subtarefaService";
+import Carregando from "../../components/Carregando";
+
+type AcaoStatusTarefa = "INICIAR" | "CONCLUIR" | "REABRIR";
+
+const acoesStatus: Record<AcaoStatusTarefa, (idTarefa: number) => Promise<void>> = {
+    INICIAR: iniciarTarefa,
+    CONCLUIR: concluirTarefa,
+    REABRIR: reabrirTarefa,
+};
+
+function formatarData(data?: string | null) {
+    if (!data) return "—";
+    const valor = data.length === 10 ? `${data}T00:00:00` : data;
+    const date = new Date(valor);
+    return Number.isNaN(date.getTime()) ? data : date.toLocaleDateString("pt-BR");
+}
 
 const TarefaPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [tarefaSelecionada, setTarefaSelecionada] = useState<Tarefa | null>(null);
-    const [subtarefaSelecionada, setSubtarefaSelecionada] = useState<Subtarefa | null>(null);
+    const [tarefa, setTarefa] = useState<TarefaResponseDTO>();
+    const [subtarefas, setSubtarefas] = useState<SubtarefaResponseDTO[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [erro, setErro] = useState<string>("");
+    const [erroAcao, setErroAcao] = useState<string>("");
+    const [alterandoStatus, setAlterandoStatus] = useState<boolean>(false);
+    const [idSubtarefaAlterando, setIdSubtarefaAlterando] = useState<number | null>(null);
+
+    const [carregandoSubtarefas, setCarregandoSubtarefas] = useState<boolean>(false);
+    const [pagina, setPagina] = useState<number>(0);
+    const [tamanho, setTamanho] = useState<number>(10);
+    const [totalPaginas, setTotalPaginas] = useState<number>(0);
+    const [totalItens, setTotalItens] = useState<number>(0);
+    const [recarregar, setRecarregar] = useState<number>(0);
+
+    useEffect(() => {
+        const getTarefa = async () => {
+            try {
+                setLoading(true);
+                setErro("");
+                setTarefa(await buscarTarefaPorId(Number(id)));
+            } catch (error) {
+                console.error(error);
+                setErro(error instanceof Error ? error.message : "Erro ao carregar tarefa.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getTarefa();
+    }, [id]);
+
+    useEffect(() => {
+        const getSubtarefas = async () => {
+            try {
+                setCarregandoSubtarefas(true);
+                const resposta = await listarSubtarefasPorIdTarefa(Number(id), tamanho, pagina);
+
+                // Se a página ficou vazia (ex.: excluiu o último item dela), volta uma página
+                if (resposta.content.length === 0 && pagina > 0) {
+                    setPagina(pagina - 1);
+                    return;
+                }
+
+                setSubtarefas(resposta.content);
+                setTotalPaginas(resposta.totalPages);
+                setTotalItens(resposta.totalElements);
+            } catch (error) {
+                console.error(error);
+                setErroAcao(error instanceof Error ? error.message : "Erro ao carregar subtarefas.");
+            } finally {
+                setCarregandoSubtarefas(false);
+            }
+        };
+
+        getSubtarefas();
+    }, [id, pagina, tamanho, recarregar]);
+
+    const mudarTamanho = (novoTamanho: number) => {
+        setTamanho(novoTamanho);
+    };
+
+    // Atualiza as contagens de subtarefas da tarefa (usadas no progresso) sem recarregar a tela
+    const atualizarContagens = async () => {
+        try {
+            setTarefa(await buscarTarefaPorId(Number(id)));
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    const [tarefaSelecionada, setTarefaSelecionada] = useState<TarefaResponseDTO | null>(null);
+    const [subtarefaSelecionada, setSubtarefaSelecionada] = useState<SubtarefaResponseDTO | null>(null);
 
     const [menuTarefaAberto, setMenuTarefaAberto] = useState<boolean>(false);
     const menuTarefaRef = useRef<HTMLDivElement>(null);
-    
+
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (menuTarefaRef.current && !menuTarefaRef.current.contains(event.target as Node)) {
@@ -32,27 +124,140 @@ const TarefaPage = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const tarefa = tarefas.find(t => t.id === Number(id)) ?? null;
-    
-    if (!tarefa) {
+    const alterarStatusTarefa = async (acao: AcaoStatusTarefa) => {
+        if (!tarefa) return;
+
+        setMenuTarefaAberto(false);
+        setAlterandoStatus(true);
+        setErroAcao("");
+
+        try {
+            await acoesStatus[acao](tarefa.id_tarefa);
+
+            // Os métodos não retornam a tarefa, então busca de novo para pegar status e datas atualizados
+            const tarefaAtualizada = await buscarTarefaPorId(tarefa.id_tarefa);
+            setTarefa(tarefaAtualizada);
+        } catch (error) {
+            console.error(error);
+            setErroAcao(error instanceof Error ? error.message : "Erro ao alterar status da tarefa.");
+        } finally {
+            setAlterandoStatus(false);
+        }
+    };
+
+    const [tagsAlterando, setTagsAlterando] = useState<Set<number>>(new Set());
+
+    const marcarTagAlterando = (idTag: number, valor: boolean) => {
+        setTagsAlterando((atual) => {
+            const novo = new Set(atual);
+            if (valor) novo.add(idTag);
+            else novo.delete(idTag);
+            return novo;
+        });
+    };
+
+    // Atualização otimista: a tag aparece/some na hora e volta ao estado anterior se a API recusar
+    const alterarTag = async (tag: TagResponseDTO, adicionar: boolean) => {
+        if (!tarefa || tagsAlterando.has(tag.id_tag)) return;
+
+        const tagsAnteriores = tarefa.tags;
+        setErroAcao("");
+        setTarefa((t) => t && {
+            ...t,
+            tags: adicionar ? [...t.tags, tag] : t.tags.filter((x) => x.id_tag !== tag.id_tag),
+        });
+        marcarTagAlterando(tag.id_tag, true);
+
+        try {
+            if (adicionar) {
+                await adicionarTagNaTarefa(tarefa.id_tarefa, tag.id_tag);
+            } else {
+                await removerTagDaTarefa(tarefa.id_tarefa, tag.id_tag);
+            }
+        } catch (error) {
+            console.error(error);
+            setTarefa((t) => t && { ...t, tags: tagsAnteriores });
+            setErroAcao(error instanceof Error ? error.message : "Erro ao alterar as tags da tarefa.");
+        } finally {
+            marcarTagAlterando(tag.id_tag, false);
+        }
+    };
+
+    const excluirTarefa = async (tarefaExcluir: TarefaResponseDTO) => {
+        setTarefaSelecionada(null);
+        setErroAcao("");
+
+        try {
+            await deletarTarefa(tarefaExcluir.id_tarefa);
+            navigate(`/workspace/${tarefaExcluir.id_workspace}`);
+        } catch (error) {
+            console.error(error);
+            setErroAcao(error instanceof Error ? error.message : "Erro ao excluir tarefa.");
+        }
+    };
+
+    const alternarConclusaoSubtarefa = async (subtarefa: SubtarefaResponseDTO) => {
+        setIdSubtarefaAlterando(subtarefa.id_subtarefa);
+        setErroAcao("");
+
+        try {
+            if (subtarefa.concluida) {
+                await desmarcarConclusaoSubtarefa(subtarefa.id_subtarefa);
+            } else {
+                await concluirSubtarefa(subtarefa.id_subtarefa);
+            }
+
+            // Os métodos não retornam a subtarefa, então busca de novo para pegar o estado salvo
+            const subtarefaAtualizada = await buscarSubtarefaPorId(subtarefa.id_subtarefa);
+            setSubtarefas(prev => prev.map(s => s.id_subtarefa === subtarefa.id_subtarefa ? subtarefaAtualizada : s));
+            await atualizarContagens();
+        } catch (error) {
+            console.error(error);
+            setErroAcao(error instanceof Error ? error.message : "Erro ao alterar conclusão da subtarefa.");
+        } finally {
+            setIdSubtarefaAlterando(null);
+        }
+    };
+
+    const excluirSubtarefa = async (subtarefa: SubtarefaResponseDTO) => {
+        setSubtarefaSelecionada(null);
+        setErroAcao("");
+
+        try {
+            await deletarSubtarefa(subtarefa.id_subtarefa);
+            setRecarregar(prev => prev + 1);
+            await atualizarContagens();
+        } catch (error) {
+            console.error(error);
+            setErroAcao(error instanceof Error ? error.message : "Erro ao excluir subtarefa.");
+        }
+    };
+
+    if (loading) {
         return (
-            <MainLayout titulo="Workspace">
-                Tarefa não encontrada.
+            <MainLayout titulo="Tarefa">
+                <Carregando texto="Carregando tarefa..." />
             </MainLayout>
         );
     }
 
-    const subtarefasDaTarefa = subtarefas.filter(s => s.idTarefa === tarefa.id);
+    if (erro || !tarefa) {
+        return (
+            <MainLayout titulo="Tarefa">
+                <p className="text-red-400 text-sm">{erro || "Tarefa não encontrada."}</p>
+            </MainLayout>
+        );
+    }
 
-    const totalSubtarefas = subtarefasDaTarefa.length;
-
-    const subtarefasConcluidas = subtarefasDaTarefa.filter(s => s.concluida).length;
-
+    // Totais da tarefa inteira (vindos do backend), não só da página exibida
+    const totalSubtarefas = tarefa.quantidade_subtarefas ?? totalItens;
+    const subtarefasConcluidas = tarefa.quantidade_subtarefas_concluidas ?? 0;
     const progresso = totalSubtarefas === 0 ? 0 : (subtarefasConcluidas / totalSubtarefas) * 100;
 
+    const classeBotaoMenu = "disabled:opacity-60 disabled:cursor-not-allowed w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer";
 
     return(
-        <MainLayout titulo={`Tarefa: ${tarefa?.titulo}`}>
+        <MainLayout titulo={`Tarefa: ${tarefa.titulo}`}>
             <div className="mb-4">
                 <button
                     onClick={() => navigate(-1)}
@@ -85,7 +290,7 @@ const TarefaPage = () => {
 
                             {menuTarefaAberto && (
                                 <div className="absolute right-0 mt-2 w-52 rounded-xl border border-white/10 bg-[#17171C] shadow-xl overflow-hidden z-50">
-                                    <button onClick={() => navigate(`/editar-tarefa/${tarefa.id}`)} className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                                    <button onClick={() => navigate(`/editar-tarefa/${tarefa.id_tarefa}`)} className={classeBotaoMenu}>
                                         <SquarePen size={18} />
                                         Editar
                                     </button>
@@ -94,7 +299,7 @@ const TarefaPage = () => {
 
                                     {tarefa.status === "CONCLUIDA" && (
                                         <div>
-                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                                            <button onClick={() => alterarStatusTarefa("REABRIR")} disabled={alterandoStatus} className={classeBotaoMenu}>
                                                 <RotateCcw size={18} />
                                                 Reabrir
                                             </button>
@@ -105,7 +310,7 @@ const TarefaPage = () => {
 
                                     {tarefa.status === "PENDENTE" && (
                                         <div>
-                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                                            <button onClick={() => alterarStatusTarefa("INICIAR")} disabled={alterandoStatus} className={classeBotaoMenu}>
                                                 <Play size={18} />
                                                 Iniciar
                                             </button>
@@ -116,7 +321,7 @@ const TarefaPage = () => {
 
                                     {tarefa.status === "EM_ANDAMENTO" && (
                                         <div>
-                                            <button className="w-full flex items-center gap-3 px-4 py-3 text-[#E5E1E4] hover:text-[#12B5FD] hover:bg-[#12B5FD]/10 transition text-[15px] cursor-pointer">
+                                            <button onClick={() => alterarStatusTarefa("CONCLUIR")} disabled={alterandoStatus} className={classeBotaoMenu}>
                                                 <Check size={18} />
                                                 Concluir
                                             </button>
@@ -130,8 +335,6 @@ const TarefaPage = () => {
                                         Deletar
                                     </button>
                                 </div>
-
-                                
                             )}
                         </div>
                     </div>
@@ -139,6 +342,15 @@ const TarefaPage = () => {
                     <p className="text-[#C5C6D0] text-sm">
                         {tarefa.descricao}
                     </p>
+
+                    <div className="mt-4">
+                        <SeletorTags
+                            selecionadas={tarefa.tags}
+                            onAdicionar={(tag) => alterarTag(tag, true)}
+                            onRemover={(tag) => alterarTag(tag, false)}
+                            alterando={tagsAlterando}
+                        />
+                    </div>
 
                     <div className="mt-4">
                         <div className="flex items-center justify-between mb-2">
@@ -168,17 +380,18 @@ const TarefaPage = () => {
                         </p>
                         <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                             <CalendarClock size={17} />
-                            Prazo: {tarefa.dataLimite}
+                            Prazo: {formatarData(tarefa.data_limite)}
                         </p>
                         {tarefa.status === "CONCLUIDA" && (
                             <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                                 <CalendarCheck2 size={17} />
-                                Finalizada em: {tarefa.dataConclusao}
+                                Finalizada em: {formatarData(tarefa.data_conclusao)}
                             </p>
                         )}
                         <p className={`rounded-sm px-3 py-0.5 text-[13px] w-fit ${estilosStatusDaTarefa(tarefa.status)}`}>
-                            {formatarStatusDaTarefa(tarefa.status)}
+                            {alterandoStatus ? "Atualizando..." : formatarStatusDaTarefa(tarefa.status)}
                         </p>
+                        {tarefa.atrasada && <SeloAtrasada />}
                     </div>
 
                     <div className="my-6 h-px bg-white/8" />
@@ -186,37 +399,63 @@ const TarefaPage = () => {
                     <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-4">
                         <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                             <Calendar size={17} />
-                            Criado em: {tarefa.criadoEm}
+                            Criado em: {formatarData(tarefa.criado_em)}
                         </p>
 
                         <p className="flex items-center gap-1 text-[#C5C6D0]/60 text-[14px]">
                             <CalendarSync size={17} />
-                            Atualizado em: {tarefa.atualizadoEm}
+                            Atualizado em: {formatarData(tarefa.atualizado_em)}
                         </p>
                     </div>
                 </div>
             </div>
 
+            {erroAcao && (
+                <p className="text-red-400 text-sm mt-4">{erroAcao}</p>
+            )}
+
             <div className="mt-5 flex flex-col gap-3">
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-[#E5E1E4] font-medium text-lg">
-                        Subtarefas <span className="text-[#C5C6D0]/40 text-base">(18)</span>
+                        Subtarefas <span className="text-[#C5C6D0]/40 text-base">({totalSubtarefas})</span>
                     </h3>
-                    
-                    <button onClick={() => navigate("/cadastro-subtarefa")} className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+
+                    <button onClick={() => navigate(`/cadastro-subtarefa/${tarefa.id_tarefa}`)} className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                         <Plus size={22}/>
                         Nova Subtarefa
                     </button>
                 </div>
 
                 <div className="flex flex-col gap-4">
-                    {subtarefas.map((subtarefa) => (
-                        <CardSubtarefa
-                            key={subtarefa.id}
-                            subtarefa={subtarefa}
-                            onDeletar={setSubtarefaSelecionada}
+                    {carregandoSubtarefas && subtarefas.length === 0 ? (
+                        <Carregando texto="Carregando subtarefas..." />
+                    ) : subtarefas.length === 0 ? (
+                        <EstadoVazio
+                            icone={ListChecks}
+                            titulo="Nenhuma subtarefa ainda"
+                            descricao="Divida esta tarefa em etapas menores para acompanhar o progresso com mais facilidade."
                         />
-                    ))}
+                    ) : (
+                        subtarefas.map((subtarefa) => (
+                            <CardSubtarefa
+                                key={subtarefa.id_subtarefa}
+                                subtarefa={subtarefa}
+                                onDeletar={setSubtarefaSelecionada}
+                                onAlternarConclusao={alternarConclusaoSubtarefa}
+                                alterando={idSubtarefaAlterando === subtarefa.id_subtarefa}
+                            />
+                        ))
+                    )}
+
+                    <Paginacao
+                        pagina={pagina}
+                        totalPaginas={totalPaginas}
+                        totalItens={totalItens}
+                        tamanho={tamanho}
+                        onMudarPagina={setPagina}
+                        onMudarTamanho={mudarTamanho}
+                        desabilitado={carregandoSubtarefas}
+                    />
                 </div>
             </div>
 
@@ -226,11 +465,7 @@ const TarefaPage = () => {
                     titulo="Excluir tarefa?"
                     descricao={`A tarefa "${tarefaSelecionada.titulo}" será removida permanentemente. Essa ação não poderá ser desfeita.`}
                     onCancelar={() => setTarefaSelecionada(null)}
-                    onConfirmar={() => {
-                        console.log("Excluir", tarefaSelecionada.id);
-                        
-                        setTarefaSelecionada(null);
-                    }}
+                    onConfirmar={() => excluirTarefa(tarefaSelecionada)}
                 />
             )}
 
@@ -240,11 +475,7 @@ const TarefaPage = () => {
                     titulo="Excluir subtarefa?"
                     descricao={`Você está prestes a excluir a subtarefa "${subtarefaSelecionada.titulo}". Essa ação não poderá ser desfeita.`}
                     onCancelar={() => setSubtarefaSelecionada(null)}
-                    onConfirmar={() => {
-                        console.log("Excluir", subtarefaSelecionada.id);
-                        
-                        setSubtarefaSelecionada(null);
-                    }}
+                    onConfirmar={() => excluirSubtarefa(subtarefaSelecionada)}
                 />
             )}
         </MainLayout>

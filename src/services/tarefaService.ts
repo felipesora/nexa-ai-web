@@ -1,0 +1,353 @@
+import type { Pagina } from "../types/paginacaoType";
+import type { SubtarefaResponseDTO } from "../types/subtarefaTypes";
+import type { ResumoTarefasDTO, TarefaCreateDTO, TarefaResponseDTO, TarefaUpdateDTO } from "../types/tarefaTypes";
+import { getToken } from "./localStorageService";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+export async function buscarTarefaPorId(idTarefa: number | null): Promise<TarefaResponseDTO> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao buscar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
+
+export async function cadastrarTarefa(tarefaDTO: TarefaCreateDTO) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas`, {
+        method: "POST",
+        headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(tarefaDTO)
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao cadastrar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function atualizarTarefa(idTarefa: number | null, tarefaDTO: TarefaUpdateDTO) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}`, {
+        method: "PUT",
+        headers: { 'Authorization': `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify(tarefaDTO)
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao atualizar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function deletarTarefa(idTarefa: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}`, {
+        method: "DELETE",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao deletar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function concluirTarefa(idTarefa: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}/concluir`, {
+        method: "PATCH",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao concluir tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function iniciarTarefa(idTarefa: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}/iniciar`, {
+        method: "PATCH",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao iniciar tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export async function reabrirTarefa(idTarefa: number | null) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}/reabrir`, {
+        method: "PATCH",
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao reabrir tarefa.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+async function alterarVinculoTag(idTarefa: number | null, idTag: number, method: "POST" | "DELETE", mensagemPadrao: string) {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id da tarefa nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}/tags/${idTag}`, {
+        method,
+        headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!response.ok) {
+        let mensagem = mensagemPadrao;
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+}
+
+export function adicionarTagNaTarefa(idTarefa: number | null, idTag: number) {
+    return alterarVinculoTag(idTarefa, idTag, "POST", "Falha ao adicionar a tag.");
+}
+
+export function removerTagDaTarefa(idTarefa: number | null, idTag: number) {
+    return alterarVinculoTag(idTarefa, idTag, "DELETE", "Falha ao remover a tag.");
+}
+
+export async function listarSubtarefasPorIdTarefa(idTarefa: number | null, pageSize = 10, pageNumber = 0): Promise<Pagina<SubtarefaResponseDTO>> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idTarefa == null) throw new Error("Id do tarefa nulo.");
+
+    const params = new URLSearchParams({
+        page: String(pageNumber),
+        size: String(pageSize),
+    });
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/${idTarefa}/subtarefas?${params}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao listar subtarefas.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
+export async function listarTarefasPorUsuario(idUsuario: number | null, pageSize = 10, pageNumber = 0): Promise<Pagina<TarefaResponseDTO>> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idUsuario == null) throw new Error("Id do usuário nulo.");
+
+    const params = new URLSearchParams({
+        page: String(pageNumber),
+        size: String(pageSize),
+    });
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/usuario/${idUsuario}?${params}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao listar tarefas.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
+
+// inicio e fim no formato yyyy-MM-dd; fim é exclusivo
+export async function listarTarefasAgenda(idUsuario: number | null, inicio: string, fim: string): Promise<TarefaResponseDTO[]> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idUsuario == null) throw new Error("Id do usuário nulo.");
+
+    const params = new URLSearchParams({ inicio, fim });
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/usuario/${idUsuario}/agenda?${params}`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao listar tarefas da agenda.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}
+
+export async function buscarResumoTarefas(idUsuario: number | null): Promise<ResumoTarefasDTO> {
+    const token = getToken();
+    if (!token) throw new Error("Erro ao obter o token.");
+
+    if (idUsuario == null) throw new Error("Id do usuário nulo.");
+
+    const response = await fetch(
+        `${API_URL}/v1/tarefas/usuario/${idUsuario}/resumo`, {
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+
+    if (!response.ok) {
+        let mensagem = "Falha ao carregar o resumo das tarefas.";
+
+        try {
+            const erro: { message?: string } = await response.json();
+            mensagem = erro.message || mensagem;
+        } catch {
+            // resposta sem corpo JSON: mantém a mensagem padrão
+        }
+
+        throw new Error(mensagem);
+    }
+
+    return response.json();
+}

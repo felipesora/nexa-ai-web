@@ -1,4 +1,4 @@
-import { CalendarDays, Folders, LayoutDashboard, MessagesSquare, SquareKanban, Tags } from "lucide-react";
+import { Brain, CalendarDays, Folders, LayoutDashboard, SquareKanban, Tags } from "lucide-react";
 import LogoCompleta from "../../assets/logos/logo-completa-nexa-ai.png";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -43,9 +43,9 @@ const BarraLateral = ({ aberto, fechar }:BarraLateralProps) => {
                         </li>
 
                         <li>
-                            <button onClick={() => navigate("/chat-ia")} className={menuClass("/chat-ia")}>
-                                <MessagesSquare size={22} />
-                                Chat IA
+                            <button onClick={() => navigate("/central-ia")} className={menuClass("/central-ia")}>
+                                <Brain size={22} />
+                                Central IA
                             </button>
                         </li>
 
@@ -57,9 +57,9 @@ const BarraLateral = ({ aberto, fechar }:BarraLateralProps) => {
                         </li>
 
                         <li>
-                            <button onClick={() => navigate("/calendario")} className={menuClass("/calendario")}>
+                            <button onClick={() => navigate("/agenda")} className={menuClass("/agenda")}>
                                 <CalendarDays size={22} />
-                                Calendário
+                                Agenda
                             </button>
                         </li>
                         

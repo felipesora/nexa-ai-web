@@ -1,14 +1,19 @@
 import { useState, type SubmitEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, Plus, Type } from "lucide-react";
+import { cadastrarSubtarefa } from "../../services/subtarefaService";
 
 const CadastroSubtarefa = () => {
+    const { idTarefa } = useParams();
     const navigate = useNavigate();
 
     const [form, setForm] = useState({
         titulo: "",
     });
+
+    const [salvando, setSalvando] = useState<boolean>(false);
+    const [erroEnvio, setErroEnvio] = useState<string>("");
 
     const [erros, setErros] = useState({
         titulo: "",
@@ -28,7 +33,7 @@ const CadastroSubtarefa = () => {
         }));
     };
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const novosErros = {
@@ -49,7 +54,27 @@ const CadastroSubtarefa = () => {
 
         if (!valido) return;
 
-        console.log(form);
+        if (!idTarefa || Number.isNaN(Number(idTarefa))) {
+            setErroEnvio("Tarefa inválida. Volte e abra a subtarefa a partir de uma tarefa.");
+            return;
+        }
+
+        setErroEnvio("");
+        setSalvando(true);
+
+        try {
+            await cadastrarSubtarefa({
+                titulo: form.titulo.trim(),
+                id_tarefa: Number(idTarefa),
+            });
+
+            navigate(`/tarefa/${idTarefa}`);
+        } catch (error) {
+            console.error(error);
+            setErroEnvio(error instanceof Error ? error.message : "Erro ao cadastrar subtarefa.");
+        } finally {
+            setSalvando(false);
+        }
     };
 
     return(
@@ -98,6 +123,10 @@ const CadastroSubtarefa = () => {
                         )}
                     </div>
 
+                    {erroEnvio && (
+                        <p className="text-red-400 text-sm mt-5">{erroEnvio}</p>
+                    )}
+
                     <div className="my-6 h-px bg-white/8" />
 
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -105,9 +134,9 @@ const CadastroSubtarefa = () => {
                             Cancelar
                         </button>
 
-                        <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                        <button type="submit" disabled={salvando} className="disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <Plus size={22}/>
-                            Criar Subtarefa
+                            {salvando ? "Criando..." : "Criar Subtarefa"}
                         </button>
                     </div>
                 </form>

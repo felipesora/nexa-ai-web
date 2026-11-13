@@ -1,27 +1,58 @@
-import { useState, type SubmitEvent } from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { tagsColors } from "../../data/tagOptions";
 import MainLayout from "../../layouts/MainLayout";
 import { ArrowLeft, SquarePen, TagIcon, Type } from "lucide-react";
-import { tags } from "../../data/tags";
+import { useOpcoesTag } from "../../hooks/useOpcoesTag";
+import { atualizarTag, buscarTagPorId } from "../../services/tagService";
+import Carregando from "../../components/Carregando";
 
 const EditarTag = () => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const tag = tags.find(t => t.id === Number(id)) ?? null;
+    const { cores, loading: carregandoCores, erro: erroCores } = useOpcoesTag();
 
-    const [form, setForm] = useState({
-        nome: tag?.nome ?? "",
-        cor: tag?.cor ?? "white"
+    const [loading, setLoading] = useState<boolean>(true);
+    const [erro, setErro] = useState<string>("");
+    const [idCorOriginal, setIdCorOriginal] = useState<number | null>(null);
+
+    const [form, setForm] = useState<{ nome: string; id_cor: number | null }>({
+        nome: "",
+        id_cor: null,
     });
+
+    const [salvando, setSalvando] = useState<boolean>(false);
+    const [erroEnvio, setErroEnvio] = useState<string>("");
 
     const [erros, setErros] = useState({
         nome: "",
         cor: "",
     });
 
-    const corSelecionada = tagsColors.find(c => c.id === form.cor);
+    useEffect(() => {
+        const getTag = async () => {
+            try {
+                setLoading(true);
+                setErro("");
+                const response = await buscarTagPorId(Number(id));
+                setForm(prev => ({ ...prev, nome: response.nome ?? "" }));
+                setIdCorOriginal(response.cor_tag?.id_cor ?? null);
+            } catch (error) {
+                console.error(error);
+                setErro(error instanceof Error ? error.message : "Erro ao carregar dados da tag.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getTag();
+    }, [id]);
+
+    // Cor escolhida pelo usuário; se não mexeu, a cor atual da tag (ou a primeira, se ela não existir mais)
+    const idCorPadrao = cores.find(c => c.id_cor === idCorOriginal)?.id_cor ?? cores[0]?.id_cor ?? null;
+    const idCor = form.id_cor ?? idCorPadrao;
+
+    const corSelecionada = cores.find(c => c.id_cor === idCor);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -37,7 +68,7 @@ const EditarTag = () => {
         }));
     };
 
-    const handleSubmit = (e: SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const novosErros = {
@@ -55,13 +86,27 @@ const EditarTag = () => {
             valido = false;
         }
 
+        if (idCor == null) {
+            novosErros.cor = "Selecione uma cor.";
+            valido = false;
+        }
+
         setErros(novosErros);
 
-        if (!valido) return;
+        if (!valido || idCor == null) return;
 
-        console.log(form);
+        try {
+            setSalvando(true);
+            setErroEnvio("");
+            await atualizarTag(Number(id), { nome: form.nome.trim(), id_cor: idCor });
+            navigate("/tags");
+        } catch (error) {
+            setErroEnvio(error instanceof Error ? error.message : "Erro ao atualizar tag.");
+        } finally {
+            setSalvando(false);
+        }
     };
-    
+
     return(
         <MainLayout titulo="Editar Tag">
             <div className="mb-4">
@@ -78,6 +123,11 @@ const EditarTag = () => {
                 </button>
             </div>
 
+            {loading ? (
+                <Carregando texto="Carregando tag..." />
+            ) : erro ? (
+                <p className="text-red-400 text-sm">{erro}</p>
+            ) : (
             <div className="w-full bg-[#111114] rounded-xl border border-white/8 px-4 py-6">
                 <form onSubmit={handleSubmit}>
                     <div className="flex flex-col gap-2">
@@ -87,8 +137,8 @@ const EditarTag = () => {
 
                         <div className="relative">
                             <Type
-                                size={18} 
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" 
+                                size={18}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
                             />
 
                             <input
@@ -109,24 +159,30 @@ const EditarTag = () => {
                     </div>
 
                     <div className="flex flex-col gap-2 mt-5">
-                        <label htmlFor="descricao" className="text-[#C2C6D8] text-sm">
+                        <label className="text-[#C2C6D8] text-sm">
                             Cor da Tag
                         </label>
 
+                        {carregandoCores && (
+                            <Carregando texto="Carregando cores..." tamanho="sm" />
+                        )}
+
+                        {erroCores && (
+                            <p className="text-red-400 text-xs">{erroCores}</p>
+                        )}
+
                         <div className="flex flex-wrap gap-3">
-                            {tagsColors.map(color => (
+                            {cores.map(color => (
                                 <button
-                                    key={color.id}
+                                    key={color.id_cor}
                                     type="button"
-                                    onClick={() =>
-                                        setForm(prev => ({
-                                            ...prev,
-                                            cor: color.id,
-                                        }))
-                                    }
+                                    onClick={() => {
+                                        setForm(prev => ({ ...prev, id_cor: color.id_cor }));
+                                        setErros(prev => ({ ...prev, cor: "" }));
+                                    }}
                                     className={`w-10 h-10 rounded-full border-2 transition cursor-pointer
                                         ${
-                                            form.cor === color.id
+                                            idCor === color.id_cor
                                                 ? "border-white scale-110"
                                                 : "border-transparent"
                                         }`}
@@ -134,10 +190,14 @@ const EditarTag = () => {
                                 />
                             ))}
                         </div>
+
+                        {erros.cor && (
+                            <p className="text-red-400 text-xs mt-1">{erros.cor}</p>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-2 mt-5">
-                        <label htmlFor="descricao" className="text-[#C2C6D8] text-sm">
+                        <label className="text-[#C2C6D8] text-sm">
                             Prévia da tag
                         </label>
 
@@ -156,6 +216,10 @@ const EditarTag = () => {
                         )}
                     </div>
 
+                    {erroEnvio && (
+                        <p className="text-red-400 text-sm mt-5">{erroEnvio}</p>
+                    )}
+
                     <div className="my-6 h-px bg-white/8" />
 
                     <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
@@ -163,13 +227,14 @@ const EditarTag = () => {
                             Cancelar
                         </button>
 
-                        <button type="submit" className="w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
+                        <button type="submit" disabled={salvando || carregandoCores} className="disabled:opacity-60 disabled:cursor-not-allowed w-full sm:w-auto bg-[#12B5FD] hover:bg-[#2BC0FF] transition-colors text-[15px] text-white px-5 py-3 rounded-xl font-medium cursor-pointer flex items-center gap-1 justify-center">
                             <SquarePen size={22}/>
-                            Salvar Alterações
+                            {salvando ? "Salvando..." : "Salvar Alterações"}
                         </button>
                     </div>
                 </form>
             </div>
+            )}
         </MainLayout>
     );
 }
