@@ -1,4 +1,4 @@
-import { useEffect, useState, type SubmitEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useOpcoesTag } from "../../hooks/useOpcoesTag";
 import { cadastrarTag } from "../../services/tagService";
@@ -24,14 +24,10 @@ const CadastrarTag = () => {
         cor: "",
     });
 
-    // Seleciona a primeira cor assim que as opções carregarem
-    useEffect(() => {
-        if (form.id_cor == null && cores.length > 0) {
-            setForm(prev => ({ ...prev, id_cor: cores[0].id_cor }));
-        }
-    }, [cores, form.id_cor]);
+    // Cor escolhida pelo usuário ou, se ainda não escolheu, a primeira da lista
+    const idCor = form.id_cor ?? cores[0]?.id_cor ?? null;
 
-    const corSelecionada = cores.find(c => c.id_cor === form.id_cor);
+    const corSelecionada = cores.find(c => c.id_cor === idCor);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -65,19 +61,19 @@ const CadastrarTag = () => {
             valido = false;
         }
 
-        if (form.id_cor == null) {
+        if (idCor == null) {
             novosErros.cor = "Selecione uma cor.";
             valido = false;
         }
 
         setErros(novosErros);
 
-        if (!valido || form.id_cor == null) return;
+        if (!valido || idCor == null) return;
 
         try {
             setSalvando(true);
             setErroEnvio("");
-            await cadastrarTag({ nome: form.nome.trim(), id_cor: form.id_cor });
+            await cadastrarTag({ nome: form.nome.trim(), id_cor: idCor });
             navigate("/tags");
         } catch (error) {
             setErroEnvio(error instanceof Error ? error.message : "Erro ao cadastrar tag.");
@@ -156,7 +152,7 @@ const CadastrarTag = () => {
                                     }}
                                     className={`w-10 h-10 rounded-full border-2 transition cursor-pointer
                                         ${
-                                            form.id_cor === color.id_cor
+                                            idCor === color.id_cor
                                                 ? "border-white scale-110"
                                                 : "border-transparent"
                                         }`}

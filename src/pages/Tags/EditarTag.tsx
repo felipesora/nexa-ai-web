@@ -48,15 +48,11 @@ const EditarTag = () => {
         getTag();
     }, [id]);
 
-    // Quando as opções chegam, seleciona a cor atual da tag (ou a primeira, se não houver)
-    useEffect(() => {
-        if (form.id_cor != null || cores.length === 0 || loading) return;
+    // Cor escolhida pelo usuário; se não mexeu, a cor atual da tag (ou a primeira, se ela não existir mais)
+    const idCorPadrao = cores.find(c => c.id_cor === idCorOriginal)?.id_cor ?? cores[0]?.id_cor ?? null;
+    const idCor = form.id_cor ?? idCorPadrao;
 
-        const encontrada = cores.find(c => c.id_cor === idCorOriginal);
-        setForm(prev => ({ ...prev, id_cor: (encontrada ?? cores[0]).id_cor }));
-    }, [cores, idCorOriginal, loading, form.id_cor]);
-
-    const corSelecionada = cores.find(c => c.id_cor === form.id_cor);
+    const corSelecionada = cores.find(c => c.id_cor === idCor);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -90,19 +86,19 @@ const EditarTag = () => {
             valido = false;
         }
 
-        if (form.id_cor == null) {
+        if (idCor == null) {
             novosErros.cor = "Selecione uma cor.";
             valido = false;
         }
 
         setErros(novosErros);
 
-        if (!valido || form.id_cor == null) return;
+        if (!valido || idCor == null) return;
 
         try {
             setSalvando(true);
             setErroEnvio("");
-            await atualizarTag(Number(id), { nome: form.nome.trim(), id_cor: form.id_cor });
+            await atualizarTag(Number(id), { nome: form.nome.trim(), id_cor: idCor });
             navigate("/tags");
         } catch (error) {
             setErroEnvio(error instanceof Error ? error.message : "Erro ao atualizar tag.");
@@ -186,7 +182,7 @@ const EditarTag = () => {
                                     }}
                                     className={`w-10 h-10 rounded-full border-2 transition cursor-pointer
                                         ${
-                                            form.id_cor === color.id_cor
+                                            idCor === color.id_cor
                                                 ? "border-white scale-110"
                                                 : "border-transparent"
                                         }`}
